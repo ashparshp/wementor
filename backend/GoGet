@@ -1,0 +1,23 @@
+# Core API & Routing
+go get github.com/go-chi/chi/v5
+go get github.com/go-chi/cors
+
+# Database & Utilities
+go get github.com/jackc/pgx/v5/pgxpool
+go get github.com/google/uuid
+
+# Logging & Configuration
+go get go.uber.org/zap
+go get github.com/joho/godotenv
+
+# Data Validation
+go get github.com/go-playground/validator/v10
+
+# Install Air (for live-reloading)
+go install github.com/air-verse/air@latest
+
+# Install SQLC (for generating Go code from SQL)
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+# Install golang-migrate (for managing Supabase database migrations)
+go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
