@@ -6,6 +6,7 @@ import (
 
 	"github.com/ashparshp/wementor/backend/internal/database/db"
 	"github.com/ashparshp/wementor/backend/pkg/logger"
+	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,6 +25,12 @@ func (s *Service) Register(ctx context.Context, req RegisterRequest) (db.User, e
 	_, err := s.queries.GetUserByEmail(ctx, req.Email)
 	if err == nil {
 		return db.User{}, errors.New("a user with this email already exists")
+	}
+
+	// 
+	if !errors.Is(err, pgx.ErrNoRows) {
+		logger.Log.Error("Failed to check existing user", zap.Error(err))
+		return db.User{}, errors.New("internal server error")
 	}
 
 	// Hash password
