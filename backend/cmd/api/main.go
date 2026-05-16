@@ -8,6 +8,7 @@ import (
 
 	"github.com/ashparshp/wementor/backend/internal/config"
 	"github.com/ashparshp/wementor/backend/internal/database/db"
+	"github.com/ashparshp/wementor/backend/internal/infrastructure/cache"
 	"github.com/ashparshp/wementor/backend/internal/infrastructure/database"
 	"github.com/ashparshp/wementor/backend/internal/modules/user"
 	"github.com/ashparshp/wementor/backend/internal/server"
@@ -34,6 +35,16 @@ func main() {
 	// ConnectSupabase is defined in internal/infrastructure/database/supabase.go
 	dbPool := database.ConnectSupabase(ctx, cfg.SupabaseDBURL, logger.Log)
 	defer dbPool.Close()
+
+	// Connect to Redis (optional)
+	redisClient, err := cache.ConnectRedis(ctx, cfg.RedisURL)
+	if err != nil {
+		logger.Log.Warn("Redis not available; continuing without cache", zap.Error(err))
+	} else if redisClient != nil {
+		defer func() {
+			_ = redisClient.Close()
+		}()
+	}
 
 	// 4. Initialize Dependency Injection
 	// 'db.New' is the generated entry point from sqlc

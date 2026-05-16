@@ -12,6 +12,7 @@ type Config struct {
 	Port                string
 	Env                 string
 	SupabaseDBURL       string
+	RedisURL            string
 	JWTSecret           string
 	RAZORPAY_KEY_ID     string
 	RAZORPAY_KEY_SECRET string
@@ -67,6 +68,12 @@ func Load() *Config {
 		log.Fatal("ZOOM_CLIENT_SECRET is required in .env")
 	}
 
+	// Optional Redis URL for caching/background coordination
+	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		log.Println("REDIS_URL not set; Redis disabled")
+	}
+
 	return &Config{
 		Port:                port,
 		Env:                 os.Getenv("ENV"),
@@ -77,5 +84,6 @@ func Load() *Config {
 		RESEND_API_KEY:      resendAPIKey,
 		ZOOM_CLIENT_ID:      zoomClientID,
 		ZOOM_CLIENT_SECRET:  zoomClientSecret,
+		RedisURL:            redisURL,
 	}
 }

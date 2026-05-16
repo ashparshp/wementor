@@ -17,6 +17,10 @@ run-api:
 run-worker:
 	go run cmd/worker/main.go
 
+# Run a local Redis instance via Docker (optional)
+run-redis:
+	docker run -p 6379:6379 --name wementor-redis -d redis:7 || true
+
 # ==============================================================================
 # Database & SQLC Commands
 
