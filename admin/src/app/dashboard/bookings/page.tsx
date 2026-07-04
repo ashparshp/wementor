@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Search, Filter, MoreHorizontal, Video } from "lucide-react";
+import Link from "next/link";
 
 export default function BookingsPage() {
   const [searchQuery, setSearchQuery] = useState("");
