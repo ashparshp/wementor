@@ -24,11 +24,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex bg-[#FDF8F5] relative overflow-hidden font-sans">
       
-      {/* Full Background Illustration */}
+      {/* Background Illustration */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="/images/login.png" 
-          alt="Login Background" 
+          src="/images/illustration.png" 
+          alt="Login Illustration" 
           fill 
           className="object-contain object-left-bottom"
           priority
@@ -38,17 +38,8 @@ export default function LoginPage() {
       {/* Main Content Area */}
       <div className="w-full h-screen relative z-10 flex flex-col lg:flex-row">
         
-        {/* Left Side: Logo positioned above the illustration */}
-        <div className="hidden lg:flex w-1/2 flex-col items-center justify-center relative">
-          <div className="relative w-[32rem] h-[24rem] -mt-40 z-10">
-            <Image 
-              src="/images/logo.png" 
-              alt="WeMentor Logo" 
-              fill 
-              className="object-contain mix-blend-multiply" 
-              priority
-            />
-          </div>
+        {/* Left Side: Empty space to let the background image show through */}
+        <div className="hidden lg:flex w-1/2">
         </div>
         
         {/* Right Side: Form Container */}
