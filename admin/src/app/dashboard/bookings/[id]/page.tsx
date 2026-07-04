@@ -42,7 +42,7 @@ export default function BookingDetailsPage() {
   const booking = bookingData[id as keyof typeof bookingData] || bookingData["BKG-8891"];
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8">
+    <div className="space-y-6">
       {/* Header & Back Navigation */}
       <div className="flex items-center gap-4">
         <Link 
