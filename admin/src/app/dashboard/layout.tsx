@@ -31,7 +31,7 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] flex font-sans">
+    <div className="min-h-screen bg-[#FDF8F5] flex font-sans">
       
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
