@@ -10,7 +10,8 @@ const bookingData = {
     id: "BKG-8891",
     student: { name: "Rahul Sharma", id: "USR-001", email: "rahul.s@example.com" },
     mentor: { name: "Dr. Alok Nath", id: "MNT-001" },
-    plan: "1 Month Mentorship",
+    sessionTitle: "NEET Preparation Guide for Freshers",
+    duration: "1 hour",
     date: "Oct 12, 2024",
     time: "10:00 AM - 11:00 AM",
     status: "Confirmed",
@@ -23,7 +24,8 @@ const bookingData = {
     id: "BKG-8890",
     student: { name: "Sneha Patel", id: "USR-002", email: "sneha.p@example.com" },
     mentor: { name: "Priya Das", id: "MNT-002" },
-    plan: "Mock Interview",
+    sessionTitle: "Mock Interview & Feedback",
+    duration: "45 mins",
     date: "Oct 11, 2024",
     time: "02:30 PM - 03:30 PM",
     status: "Pending",
@@ -75,8 +77,8 @@ export default function BookingDetailsPage() {
           </div>
           <div className="flex items-center gap-2">
             <div className="text-right">
-              <span className="text-sm font-medium text-gray-500">Plan Type</span>
-              <h3 className="text-lg font-bold text-[#F29440]">{booking.plan}</h3>
+              <span className="text-sm font-medium text-gray-500">Session</span>
+              <h3 className="text-lg font-bold text-[#F29440]">{booking.sessionTitle}</h3>
             </div>
           </div>
         </div>

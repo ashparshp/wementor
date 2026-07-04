@@ -35,7 +35,7 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDF8F5] flex font-sans">
+    <div className="h-screen bg-[#FDF8F5] flex font-sans">
       
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
@@ -54,12 +54,13 @@ export default function DashboardLayout({
           
           {/* Logo Area */}
           <div className="h-20 flex items-center px-6 border-b border-[#E5E7EB]">
-            <div className="relative w-32 h-12">
+            <div className="relative w-56 h-16">
               <Image 
-                src="/images/logo.png" 
+                src="/images/logo-transparent.png" 
                 alt="WeMentor Logo" 
                 fill 
-                className="object-contain object-left mix-blend-multiply" 
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-contain object-left" 
               />
             </div>
           </div>
