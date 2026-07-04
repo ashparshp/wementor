@@ -1,3 +1,7 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
 import { 
   IndianRupee, 
   Users, 
@@ -8,6 +12,7 @@ import {
 } from "lucide-react";
 
 export default function DashboardOverview() {
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   
   const metrics = [
     {
@@ -89,25 +94,25 @@ export default function DashboardOverview() {
       </div>
 
       {/* Recent Activity Table */}
-      <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm">
         <div className="px-6 py-5 border-b border-[#E5E7EB] flex items-center justify-between">
           <h2 className="text-lg font-bold text-[#111827]">Recent Bookings</h2>
-          <button className="text-sm font-semibold text-[#F29440] hover:text-[#E88935] transition-colors">
+          <Link href="/dashboard/bookings" className="text-sm font-semibold text-[#F29440] hover:text-[#E88935] transition-colors">
             View All
-          </button>
+          </Link>
         </div>
         
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto lg:overflow-visible rounded-b-2xl">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-[#E5E7EB]">
-                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Booking ID</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider rounded-tl-2xl">Booking ID</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Student</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Plan</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Date</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Amount</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider text-right rounded-tr-2xl">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E7EB]">
@@ -124,9 +129,22 @@ export default function DashboardOverview() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button className="text-gray-400 hover:text-gray-600 transition-colors">
-                      <MoreHorizontal className="w-5 h-5" />
-                    </button>
+                    <div className="relative inline-block text-left">
+                      <button 
+                        onClick={() => setActiveDropdown(activeDropdown === booking.id ? null : booking.id)}
+                        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all cursor-pointer outline-none"
+                      >
+                        <MoreHorizontal className="w-5 h-5" />
+                      </button>
+                      
+                      {/* Actions Dropdown */}
+                      {activeDropdown === booking.id && (
+                        <div className="absolute right-0 mt-2 w-44 bg-white border border-[#E5E7EB] rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 overflow-hidden">
+                          <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 font-medium transition-colors border-b border-gray-100">View Details</button>
+                          <button className="w-full text-left px-4 py-3 text-sm text-emerald-600 hover:bg-emerald-50 font-medium transition-colors">Mark Complete</button>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
