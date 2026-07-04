@@ -11,11 +11,11 @@ export default function BookingsPage() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const allBookings = [
-    { id: "BKG-8891", student: "Rahul Sharma", plan: "1 Month Mentorship", date: "Oct 12, 2024", time: "10:00 AM", amount: "₹2,500", status: "Confirmed", link: "meet.google.com/abc" },
-    { id: "BKG-8890", student: "Sneha Patel", plan: "Mock Interview", date: "Oct 11, 2024", time: "02:30 PM", amount: "₹500", status: "Pending", link: null },
-    { id: "BKG-8889", student: "Amit Kumar", plan: "Resume Review", date: "Oct 10, 2024", time: "11:00 AM", amount: "₹300", status: "Completed", link: "meet.google.com/xyz" },
-    { id: "BKG-8888", student: "Priya Singh", plan: "3 Months Mentorship", date: "Oct 09, 2024", time: "04:00 PM", amount: "₹6,000", status: "Confirmed", link: "meet.google.com/def" },
-    { id: "BKG-8887", student: "Vikas Verma", plan: "Mock Interview", date: "Oct 08, 2024", time: "01:00 PM", amount: "₹500", status: "Cancelled", link: null },
+    { id: "BKG-8891", student: "Rahul Sharma", sessionTitle: "NEET Preparation Guide for Freshers", duration: "1 hour", date: "Oct 12, 2024", time: "10:00 AM", amount: "₹2,500", status: "Confirmed", link: "meet.google.com/abc" },
+    { id: "BKG-8890", student: "Sneha Patel", sessionTitle: "Mock Interview & Feedback", duration: "45 mins", date: "Oct 11, 2024", time: "02:30 PM", amount: "₹500", status: "Pending", link: null },
+    { id: "BKG-8889", student: "Amit Kumar", sessionTitle: "Resume Review Deep Dive", duration: "30 mins", date: "Oct 10, 2024", time: "11:00 AM", amount: "₹300", status: "Completed", link: "meet.google.com/xyz" },
+    { id: "BKG-8888", student: "Priya Singh", sessionTitle: "Career Transition Strategy", duration: "1 hour", date: "Oct 09, 2024", time: "04:00 PM", amount: "₹6,000", status: "Confirmed", link: "meet.google.com/def" },
+    { id: "BKG-8887", student: "Vikas Verma", sessionTitle: "Mock Interview & Feedback", duration: "45 mins", date: "Oct 08, 2024", time: "01:00 PM", amount: "₹500", status: "Cancelled", link: null },
   ];
 
   // Client-side filtering simulation
@@ -89,7 +89,8 @@ export default function BookingsPage() {
               <tr className="bg-gray-50 border-b border-[#E5E7EB]">
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider rounded-tl-2xl">Booking ID</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Student</th>
-                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Plan</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Session</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Duration</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Date & Time</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Status</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Meeting Link</th>
@@ -101,7 +102,8 @@ export default function BookingsPage() {
                 <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">{booking.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563] font-medium">{booking.student}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.plan}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.sessionTitle}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.duration}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">
                     {booking.date} <span className="text-gray-400">at</span> {booking.time}
                   </td>
