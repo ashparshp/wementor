@@ -61,7 +61,7 @@ func (s *Service) ListUsers(ctx context.Context, limit, offset int32) ([]db.User
 }
 
 // ListBookings returns paginated list of all bookings.
-func (s *Service) ListBookings(ctx context.Context, limit, offset int32) ([]db.Booking, int64, error) {
+func (s *Service) ListBookings(ctx context.Context, limit, offset int32) ([]AdminBookingResponse, int64, error) {
 	bookings, err := s.queries.ListAllBookings(ctx, db.ListAllBookingsParams{
 		Limit:  limit,
 		Offset: offset,
@@ -70,8 +70,42 @@ func (s *Service) ListBookings(ctx context.Context, limit, offset int32) ([]db.B
 		return nil, 0, fmt.Errorf("failed to list bookings: %w", err)
 	}
 
+	var res []AdminBookingResponse
+	for _, b := range bookings {
+		sessionDate := ""
+		if b.SessionDate.Valid {
+			sessionDate = b.SessionDate.Time.Format("2006-01-02")
+		}
+
+		formatPgTime := func(t pgtype.Time) string {
+			if !t.Valid {
+				return ""
+			}
+			seconds := t.Microseconds / 1000000
+			hours := seconds / 3600
+			minutes := (seconds % 3600) / 60
+			return fmt.Sprintf("%02d:%02d", hours, minutes)
+		}
+
+		res = append(res, AdminBookingResponse{
+			ID:             b.ID.String(),
+			StudentID:      b.StudentID.String(),
+			StudentName:    b.StudentName,
+			MentorID:       b.MentorID.String(),
+			MentorName:     b.MentorName,
+			PlanID:         b.PlanID.String(),
+			PlanTitle:      b.PlanTitle,
+			SessionDate:    sessionDate,
+			StartTime:      formatPgTime(b.StartTime),
+			EndTime:        formatPgTime(b.EndTime),
+			GoogleMeetLink: b.GoogleMeetLink,
+			Status:         b.Status,
+			CreatedAt:      b.CreatedAt.Format(time.RFC3339),
+		})
+	}
+	
 	total, _ := s.queries.CountAllBookings(ctx)
-	return bookings, total, nil
+	return res, total, nil
 }
 
 // ListPayments returns paginated list of all payments.

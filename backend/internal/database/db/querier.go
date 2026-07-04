@@ -65,7 +65,7 @@ type Querier interface {
 	IncrementMentorSessions(ctx context.Context, userID uuid.UUID) error
 	IncrementOTPAttempts(ctx context.Context, id uuid.UUID) error
 	InvalidateInviteCode(ctx context.Context, id uuid.UUID) error
-	ListAllBookings(ctx context.Context, arg ListAllBookingsParams) ([]Booking, error)
+	ListAllBookings(ctx context.Context, arg ListAllBookingsParams) ([]ListAllBookingsRow, error)
 	ListAllPayments(ctx context.Context, arg ListAllPaymentsParams) ([]ListAllPaymentsRow, error)
 	ListApprovedPlans(ctx context.Context, arg ListApprovedPlansParams) ([]MentorshipPlan, error)
 	ListApprovedPlansByCategory(ctx context.Context, arg ListApprovedPlansByCategoryParams) ([]MentorshipPlan, error)

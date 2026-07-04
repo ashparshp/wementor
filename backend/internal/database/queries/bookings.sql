@@ -40,7 +40,17 @@ LIMIT $2 OFFSET $3;
 SELECT COUNT(*) FROM bookings WHERE mentor_id = $1;
 
 -- name: ListAllBookings :many
-SELECT * FROM bookings ORDER BY created_at DESC LIMIT $1 OFFSET $2;
+SELECT 
+    b.*,
+    mp.title AS plan_title,
+    su.name AS student_name,
+    mu.name AS mentor_name
+FROM bookings b
+JOIN mentorship_plans mp ON mp.id = b.plan_id
+JOIN users su ON su.id = b.student_id
+JOIN users mu ON mu.id = b.mentor_id
+ORDER BY b.created_at DESC 
+LIMIT $1 OFFSET $2;
 
 -- name: CountAllBookings :one
 SELECT COUNT(*) FROM bookings;

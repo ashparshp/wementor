@@ -150,7 +150,17 @@ func (q *Queries) GetBookingByID(ctx context.Context, id uuid.UUID) (Booking, er
 }
 
 const listAllBookings = `-- name: ListAllBookings :many
-SELECT id, student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, created_at, updated_at, coupon_id FROM bookings ORDER BY created_at DESC LIMIT $1 OFFSET $2
+SELECT 
+    b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.created_at, b.updated_at, b.coupon_id,
+    mp.title AS plan_title,
+    su.name AS student_name,
+    mu.name AS mentor_name
+FROM bookings b
+JOIN mentorship_plans mp ON mp.id = b.plan_id
+JOIN users su ON su.id = b.student_id
+JOIN users mu ON mu.id = b.mentor_id
+ORDER BY b.created_at DESC 
+LIMIT $1 OFFSET $2
 `
 
 type ListAllBookingsParams struct {
@@ -158,15 +168,33 @@ type ListAllBookingsParams struct {
 	Offset int32 `json:"offset"`
 }
 
-func (q *Queries) ListAllBookings(ctx context.Context, arg ListAllBookingsParams) ([]Booking, error) {
+type ListAllBookingsRow struct {
+	ID             uuid.UUID   `json:"id"`
+	StudentID      uuid.UUID   `json:"student_id"`
+	MentorID       uuid.UUID   `json:"mentor_id"`
+	PlanID         uuid.UUID   `json:"plan_id"`
+	SessionDate    pgtype.Date `json:"session_date"`
+	StartTime      pgtype.Time `json:"start_time"`
+	EndTime        pgtype.Time `json:"end_time"`
+	GoogleMeetLink *string     `json:"google_meet_link"`
+	Status         string      `json:"status"`
+	CreatedAt      time.Time   `json:"created_at"`
+	UpdatedAt      time.Time   `json:"updated_at"`
+	CouponID       pgtype.UUID `json:"coupon_id"`
+	PlanTitle      string      `json:"plan_title"`
+	StudentName    string      `json:"student_name"`
+	MentorName     string      `json:"mentor_name"`
+}
+
+func (q *Queries) ListAllBookings(ctx context.Context, arg ListAllBookingsParams) ([]ListAllBookingsRow, error) {
 	rows, err := q.db.Query(ctx, listAllBookings, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Booking{}
+	items := []ListAllBookingsRow{}
 	for rows.Next() {
-		var i Booking
+		var i ListAllBookingsRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.StudentID,
@@ -180,6 +208,9 @@ func (q *Queries) ListAllBookings(ctx context.Context, arg ListAllBookingsParams
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.CouponID,
+			&i.PlanTitle,
+			&i.StudentName,
+			&i.MentorName,
 		); err != nil {
 			return nil, err
 		}

@@ -26,3 +26,19 @@ type CouponResponse struct {
 	DiscountPercentage int32   `json:"discount_percentage"`
 	ExpiresAt          *string `json:"expires_at"`
 }
+
+type AdminBookingResponse struct {
+	ID             string  `json:"id"`
+	StudentID      string  `json:"student_id"`
+	StudentName    string  `json:"student_name"`
+	MentorID       string  `json:"mentor_id"`
+	MentorName     string  `json:"mentor_name"`
+	PlanID         string  `json:"plan_id"`
+	PlanTitle      string  `json:"plan_title"`
+	SessionDate    string  `json:"session_date"`
+	StartTime      string  `json:"start_time"`
+	EndTime        string  `json:"end_time"`
+	GoogleMeetLink *string `json:"google_meet_link,omitempty"`
+	Status         string  `json:"status"`
+	CreatedAt      string  `json:"created_at"`
+}

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchApi } from "@/lib/api";
 import { 
   IndianRupee, 
   Users, 
@@ -13,12 +14,34 @@ import {
 
 export default function DashboardOverview() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  
+  const [stats, setStats] = useState<any>(null);
+  const [recentBookings, setRecentBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const [statsRes, bookingsRes] = await Promise.all([
+          fetchApi<any>("/admin/stats"),
+          fetchApi<any>("/admin/bookings?limit=5")
+        ]);
+        setStats(statsRes.data || statsRes);
+        const bookingsData = bookingsRes.data || bookingsRes || [];
+        setRecentBookings(bookingsData.slice(0, 5));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDashboard();
+  }, []);
+
   const metrics = [
     {
       title: "Total Revenue",
-      value: "₹45,231",
-      change: "+12.5%",
+      value: stats ? `₹${(stats.total_revenue_paise / 100).toLocaleString()}` : "₹0",
+      change: "+0%",
       isPositive: true,
       icon: IndianRupee,
       color: "text-emerald-600",
@@ -26,26 +49,26 @@ export default function DashboardOverview() {
     },
     {
       title: "Total Bookings",
-      value: "128",
-      change: "+8.2%",
+      value: stats ? stats.total_bookings.toString() : "0",
+      change: "+0%",
       isPositive: true,
       icon: CalendarCheck,
       color: "text-[#F29440]",
       bg: "bg-[#FDF1E9]",
     },
     {
-      title: "Active Students",
-      value: "1,492",
-      change: "+24.1%",
+      title: "Total Users",
+      value: stats ? stats.total_users.toString() : "0",
+      change: "+0%",
       isPositive: true,
       icon: Users,
       color: "text-blue-600",
       bg: "bg-blue-100",
     },
     {
-      title: "Conversion Rate",
-      value: "4.8%",
-      change: "-1.2%",
+      title: "Pending Plans",
+      value: stats ? stats.pending_plans.toString() : "0",
+      change: "0%",
       isPositive: false,
       icon: TrendingUp,
       color: "text-purple-600",
@@ -53,22 +76,20 @@ export default function DashboardOverview() {
     },
   ];
 
-  const recentBookings = [
-    { id: "BKG-8891", student: "Rahul Sharma", plan: "1 Month Mentorship", date: "Oct 12, 2024", amount: "₹2,500", status: "Confirmed" },
-    { id: "BKG-8890", student: "Sneha Patel", plan: "Mock Interview", date: "Oct 11, 2024", amount: "₹500", status: "Pending" },
-    { id: "BKG-8889", student: "Amit Kumar", plan: "Resume Review", date: "Oct 10, 2024", amount: "₹300", status: "Completed" },
-    { id: "BKG-8888", student: "Priya Singh", plan: "3 Months Mentorship", date: "Oct 09, 2024", amount: "₹6,000", status: "Confirmed" },
-    { id: "BKG-8887", student: "Vikas Verma", plan: "Mock Interview", date: "Oct 08, 2024", amount: "₹500", status: "Cancelled" },
-  ];
-
   const getStatusStyle = (status: string) => {
-    switch(status) {
-      case "Confirmed": return "bg-emerald-100 text-emerald-700";
-      case "Pending": return "bg-amber-100 text-amber-700";
-      case "Completed": return "bg-blue-100 text-blue-700";
-      case "Cancelled": return "bg-red-100 text-red-700";
+    switch(status.toLowerCase()) {
+      case "confirmed": return "bg-emerald-100 text-emerald-700";
+      case "pending": return "bg-amber-100 text-amber-700";
+      case "completed": return "bg-blue-100 text-blue-700";
+      case "cancelled_by_student": 
+      case "cancelled_by_mentor": return "bg-red-100 text-red-700";
       default: return "bg-gray-100 text-gray-700";
     }
+  };
+
+  const formatStatus = (status: string) => {
+    if (!status) return "";
+    return status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   };
 
   return (
@@ -116,19 +137,23 @@ export default function DashboardOverview() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5E7EB]">
-              {recentBookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">{booking.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.student}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.plan}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">{booking.amount}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusStyle(booking.status)}`}>
-                      {booking.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              {recentBookings.map((booking) => {
+                const dateStr = booking.session_date ? new Date(booking.session_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "-";
+                const displayId = booking.id ? `${booking.id.split('-')[0]}-${booking.id.split('-')[4]?.slice(0,4) || booking.id.slice(0,8)}` : "-";
+                
+                return (
+                  <tr key={booking.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">{displayId}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.student_name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{booking.plan_title}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4B5563]">{dateStr}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111827]">-</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusStyle(booking.status)}`}>
+                        {formatStatus(booking.status)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="relative inline-block text-left">
                       <button 
                         onClick={() => setActiveDropdown(activeDropdown === booking.id ? null : booking.id)}
@@ -147,7 +172,8 @@ export default function DashboardOverview() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
