@@ -5,36 +5,14 @@
 }
 
 :root {
-  --background: #ffffff;
+  --background: #FDF8F5;
   --foreground: #171717;
-  --primary: #4F46E5; /* Indigo 600 */
-  --primary-hover: #4338CA;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --primary: #F29440;
+  --primary-hover: #E88935;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-sans), sans-serif;
-}
-
-@keyframes blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0px, 0px) scale(1); }
-}
-
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
 }
