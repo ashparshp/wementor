@@ -22,7 +22,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-[#FDF8F5] relative overflow-hidden font-sans">
+    <div className="min-h-screen w-full flex bg-[#FDF1E9] relative overflow-hidden font-sans">
       
       {/* Background Illustration */}
       <div className="absolute inset-0 z-0">
