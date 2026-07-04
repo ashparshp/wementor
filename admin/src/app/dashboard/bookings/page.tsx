@@ -93,7 +93,6 @@ export default function BookingsPage() {
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Duration</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Date & Time</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Meeting Link</th>
                 <th className="px-6 py-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider text-right rounded-tr-2xl">Actions</th>
               </tr>
             </thead>
@@ -111,16 +110,6 @@ export default function BookingsPage() {
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusStyle(booking.status)}`}>
                       {booking.status}
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {booking.link ? (
-                      <button className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-1 rounded-md transition-colors">
-                        <Video className="w-3.5 h-3.5" />
-                        Copy Link
-                      </button>
-                    ) : (
-                      <span className="text-xs text-gray-400">-</span>
-                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="relative inline-block text-left">
