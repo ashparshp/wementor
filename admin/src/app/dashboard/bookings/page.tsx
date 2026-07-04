@@ -131,7 +131,7 @@ export default function BookingsPage() {
                       {/* Actions Dropdown */}
                       {activeDropdown === booking.id && (
                         <div className="absolute right-0 mt-2 w-44 bg-white border border-[#E5E7EB] rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] z-50 overflow-hidden">
-                          <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 font-medium transition-colors border-b border-gray-100">View Details</button>
+                          <Link href={`/dashboard/bookings/${booking.id}`} className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 font-medium transition-colors border-b border-gray-100">View Details</Link>
                           <button className="w-full text-left px-4 py-3 text-sm text-emerald-600 hover:bg-emerald-50 font-medium transition-colors border-b border-gray-100">Mark Complete</button>
                           <button className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors">Cancel Booking</button>
                         </div>

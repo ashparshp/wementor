@@ -9,6 +9,8 @@ import {
   CalendarDays, 
   CreditCard, 
   Ticket,
+  Users,
+  GraduationCap,
   LogOut,
   Menu,
   X,
@@ -28,6 +30,8 @@ export default function DashboardLayout({
     { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDays },
     { name: "Payments", href: "/dashboard/payments", icon: CreditCard },
     { name: "Coupons", href: "/dashboard/coupons", icon: Ticket },
+    { name: "Users", href: "/dashboard/users", icon: Users },
+    { name: "Mentors", href: "/dashboard/mentors", icon: GraduationCap },
   ];
 
   return (
