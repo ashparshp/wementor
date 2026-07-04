@@ -103,19 +103,47 @@ func (s *Service) Create(ctx context.Context, studentID uuid.UUID, req CreateBoo
 		return nil, fmt.Errorf("this time slot is already booked")
 	}
 
-	// 6. Get mentor's Google Meet link
+	// 6. Handle Coupon if provided
+	finalAmountPaise := plan.PricePaise
+	var appliedCoupon *db.Coupon
+	var pgCouponID pgtype.UUID
+
+	if req.CouponCode != nil && *req.CouponCode != "" {
+		coupon, err := s.queries.GetValidCoupon(ctx, db.GetValidCouponParams{
+			Code:      *req.CouponCode,
+			StudentID: studentID,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("invalid, expired, or already used coupon code")
+		}
+
+		appliedCoupon = &coupon
+		pgCouponID = pgtype.UUID{Bytes: coupon.ID, Valid: true}
+		
+		discountAmount := (plan.PricePaise * coupon.DiscountPercentage) / 100
+		finalAmountPaise -= discountAmount
+		
+		if finalAmountPaise < 0 {
+			finalAmountPaise = 0
+		}
+	}
+
+	// 7. Get mentor's Google Meet link
 	mentorProfile, err := s.queries.GetMentorProfileByUserID(ctx, plan.MentorID)
 	if err != nil {
 		return nil, fmt.Errorf("mentor profile not found")
 	}
 
-	// 7. Create Razorpay order
-	razorpayOrderID, err := s.createRazorpayOrder(plan.PricePaise, "INR", req.PlanID.String())
-	if err != nil {
-		return nil, fmt.Errorf("failed to create payment order: %w", err)
+	// 8. Create Razorpay order (skip if 100% off)
+	var razorpayOrderID string
+	if finalAmountPaise > 0 {
+		razorpayOrderID, err = s.createRazorpayOrder(finalAmountPaise, "INR", req.PlanID.String())
+		if err != nil {
+			return nil, fmt.Errorf("failed to create payment order: %w", err)
+		}
 	}
 
-	// 8. Create booking record
+	// 9. Create booking record
 	booking, err := s.queries.CreateBooking(ctx, db.CreateBookingParams{
 		StudentID:      studentID,
 		MentorID:       plan.MentorID,
@@ -124,27 +152,64 @@ func (s *Service) Create(ctx context.Context, studentID uuid.UUID, req CreateBoo
 		StartTime:      pgStartTime,
 		EndTime:        pgEndTime,
 		GoogleMeetLink: mentorProfile.GoogleMeetLink,
+		CouponID:       pgCouponID,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create booking: %w", err)
 	}
 
-	// 9. Create payment record
-	_, err = s.queries.CreatePayment(ctx, db.CreatePaymentParams{
+	// 10. Mark coupon as used immediately to lock it to this booking
+	if appliedCoupon != nil {
+		_ = s.queries.MarkCouponUsed(ctx, appliedCoupon.ID)
+	}
+
+	// 11. Create payment record
+	var rzpOrderIDPtr *string
+	if finalAmountPaise > 0 {
+		rzpOrderIDPtr = &razorpayOrderID
+	}
+
+	payment, err := s.queries.CreatePayment(ctx, db.CreatePaymentParams{
 		BookingID:       booking.ID,
 		StudentID:       studentID,
-		AmountPaise:     plan.PricePaise,
-		RazorpayOrderID: &razorpayOrderID,
+		AmountPaise:     finalAmountPaise,
+		RazorpayOrderID: rzpOrderIDPtr,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create payment record: %w", err)
+	}
+
+	if finalAmountPaise == 0 {
+		// Update it properly using the specific captured method if required, 
+		// but since we just created it, we can update status:
+		_ = s.queries.UpdatePaymentCaptured(ctx, db.UpdatePaymentCapturedParams{
+			ID: payment.ID,
+		})
+		
+		// Send confirmation emails for 100% off
+		go func() {
+			student, _ := s.queries.GetUserByID(context.Background(), studentID)
+			mentor, _ := s.queries.GetUserByID(context.Background(), booking.MentorID)
+			plan, _ := s.queries.GetMentorshipPlanByID(context.Background(), booking.PlanID)
+			
+			meetLink := ""
+			if booking.GoogleMeetLink != nil {
+				meetLink = *booking.GoogleMeetLink
+			}
+			
+			dateStr := FormatPgDate(booking.SessionDate)
+			timeStr := FormatPgTime(booking.StartTime) + " - " + FormatPgTime(booking.EndTime)
+
+			_ = s.emailClient.SendBookingConfirmation(student.Email, mentor.Name, plan.Title, dateStr, timeStr, meetLink)
+			_ = s.emailClient.SendMentorBookingNotification(mentor.Email, student.Name, plan.Title, dateStr, timeStr)
+		}()
 	}
 
 	return &CreateBookingResponse{
 		Booking:         s.toBookingResponse(booking),
 		RazorpayOrderID: razorpayOrderID,
 		RazorpayKeyID:   s.razorpayKeyID,
-		AmountPaise:     plan.PricePaise,
+		AmountPaise:     finalAmountPaise,
 		Currency:        "INR",
 	}, nil
 }
@@ -262,6 +327,11 @@ func (s *Service) Cancel(ctx context.Context, bookingID, userID uuid.UUID, role 
 		Status: newStatus,
 	}); err != nil {
 		return fmt.Errorf("failed to cancel booking: %w", err)
+	}
+
+	// Release the coupon if it was used
+	if booking.CouponID.Valid {
+		_ = s.queries.MarkCouponUnused(ctx, booking.CouponID.Bytes)
 	}
 
 	return nil

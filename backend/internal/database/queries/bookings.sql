@@ -1,6 +1,9 @@
 -- name: CreateBooking :one
-INSERT INTO bookings (student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO bookings (
+    student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, coupon_id
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, 'pending', $8
+)
 RETURNING *;
 
 -- name: GetBookingByID :one

@@ -9,9 +9,10 @@ import (
 // ───── Requests ─────
 
 type CreateBookingRequest struct {
-	PlanID    uuid.UUID `json:"plan_id" validate:"required"`
-	Date      string    `json:"date" validate:"required"`       // YYYY-MM-DD
-	StartTime string    `json:"start_time" validate:"required"` // HH:MM
+	PlanID     uuid.UUID `json:"plan_id" validate:"required"`
+	Date       string    `json:"date" validate:"required"`       // YYYY-MM-DD
+	StartTime  string    `json:"start_time" validate:"required"` // HH:MM
+	CouponCode *string   `json:"coupon_code,omitempty"`
 }
 
 type CancelBookingRequest struct {

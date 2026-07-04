@@ -3,7 +3,10 @@ package admin
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 	"go.uber.org/zap"
 
 	db "wementor-backend/internal/database/db"
@@ -83,4 +86,51 @@ func (s *Service) ListPayments(ctx context.Context, limit, offset int32) ([]db.L
 
 	total, _ := s.queries.CountAllPayments(ctx)
 	return payments, total, nil
+}
+
+func (s *Service) GenerateCoupon(ctx context.Context, req CreateCouponRequest) (*CouponResponse, error) {
+	studentID, err := uuid.Parse(req.StudentID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid student_id")
+	}
+
+	// Verify user exists
+	if _, err := s.queries.GetUserByID(ctx, studentID); err != nil {
+		return nil, fmt.Errorf("student not found")
+	}
+
+	// Generate a unique 8-character code
+	code := fmt.Sprintf("WM-%s", uuid.New().String()[:8])
+
+	var expiresAt pgtype.Timestamptz
+	if req.ExpiresInDays != nil && *req.ExpiresInDays > 0 {
+		expiresAt = pgtype.Timestamptz{
+			Time:  time.Now().AddDate(0, 0, *req.ExpiresInDays),
+			Valid: true,
+		}
+	}
+
+	coupon, err := s.queries.CreateCoupon(ctx, db.CreateCouponParams{
+		Code:               code,
+		StudentID:          studentID,
+		DiscountPercentage: req.DiscountPercentage,
+		ExpiresAt:          expiresAt,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create coupon: %w", err)
+	}
+
+	var expiresStr *string
+	if coupon.ExpiresAt.Valid {
+		str := coupon.ExpiresAt.Time.Format(time.RFC3339)
+		expiresStr = &str
+	}
+
+	return &CouponResponse{
+		ID:                 coupon.ID.String(),
+		Code:               coupon.Code,
+		StudentID:          coupon.StudentID.String(),
+		DiscountPercentage: coupon.DiscountPercentage,
+		ExpiresAt:          expiresStr,
+	}, nil
 }

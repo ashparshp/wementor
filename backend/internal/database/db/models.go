@@ -34,6 +34,17 @@ type Booking struct {
 	Status         string      `json:"status"`
 	CreatedAt      time.Time   `json:"created_at"`
 	UpdatedAt      time.Time   `json:"updated_at"`
+	CouponID       pgtype.UUID `json:"coupon_id"`
+}
+
+type Coupon struct {
+	ID                 uuid.UUID          `json:"id"`
+	Code               string             `json:"code"`
+	StudentID          uuid.UUID          `json:"student_id"`
+	DiscountPercentage int32              `json:"discount_percentage"`
+	IsUsed             bool               `json:"is_used"`
+	ExpiresAt          pgtype.Timestamptz `json:"expires_at"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
 }
 
 type MentorApplication struct {

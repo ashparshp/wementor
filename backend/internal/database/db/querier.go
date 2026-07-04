@@ -34,6 +34,7 @@ type Querier interface {
 	// ─────────────────────────────────────────────
 	CreateAvailabilitySlot(ctx context.Context, arg CreateAvailabilitySlotParams) (AvailabilitySlot, error)
 	CreateBooking(ctx context.Context, arg CreateBookingParams) (Booking, error)
+	CreateCoupon(ctx context.Context, arg CreateCouponParams) (Coupon, error)
 	CreateMentorApplication(ctx context.Context, arg CreateMentorApplicationParams) (MentorApplication, error)
 	CreateMentorProfile(ctx context.Context, arg CreateMentorProfileParams) (MentorProfile, error)
 	CreateMentorshipPlan(ctx context.Context, arg CreateMentorshipPlanParams) (MentorshipPlan, error)
@@ -60,6 +61,7 @@ type Querier interface {
 	GetReviewByBookingID(ctx context.Context, bookingID uuid.UUID) (Review, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
+	GetValidCoupon(ctx context.Context, arg GetValidCouponParams) (Coupon, error)
 	IncrementMentorSessions(ctx context.Context, userID uuid.UUID) error
 	IncrementOTPAttempts(ctx context.Context, id uuid.UUID) error
 	InvalidateInviteCode(ctx context.Context, id uuid.UUID) error
@@ -76,6 +78,8 @@ type Querier interface {
 	ListPendingPlans(ctx context.Context, arg ListPendingPlansParams) ([]ListPendingPlansRow, error)
 	ListStudentBookings(ctx context.Context, arg ListStudentBookingsParams) ([]ListStudentBookingsRow, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
+	MarkCouponUnused(ctx context.Context, id uuid.UUID) error
+	MarkCouponUsed(ctx context.Context, id uuid.UUID) error
 	MarkOTPUsed(ctx context.Context, id uuid.UUID) error
 	RejectMentorApplication(ctx context.Context, arg RejectMentorApplicationParams) error
 	RevokeAllUserRefreshTokens(ctx context.Context, userID uuid.UUID) error

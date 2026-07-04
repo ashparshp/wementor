@@ -177,6 +177,7 @@ func SetupRouter(
 			r.Get("/users", adminHandler.ListUsers)
 			r.Get("/bookings", adminHandler.ListBookings)
 			r.Get("/payments", adminHandler.ListPayments)
+			r.Post("/coupons", adminHandler.GenerateCoupon)
 			
 			r.Get("/mentor-applications", mentorHandler.ListApplications)
 			r.Get("/mentor-applications/{id}", mentorHandler.GetApplication)

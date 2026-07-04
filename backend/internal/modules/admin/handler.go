@@ -69,3 +69,24 @@ func (h *Handler) ListPayments(w http.ResponseWriter, r *http.Request) {
 
 	response.Paginated(w, payments, pg.Page, pg.PerPage, int(total))
 }
+
+// GenerateCoupon POST /api/v1/admin/coupons
+func (h *Handler) GenerateCoupon(w http.ResponseWriter, r *http.Request) {
+	var req CreateCouponRequest
+	if err := request.Decode(r, &req); err != nil {
+		if request.IsValidationError(err) {
+			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
+			return
+		}
+		response.Error(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	coupon, err := h.service.GenerateCoupon(r.Context(), req)
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.Created(w, coupon)
+}

@@ -128,6 +128,12 @@ func (s *Service) HandleWebhook(ctx context.Context, payload WebhookPayload) err
 			ID:     payment.BookingID,
 			Status: "cancelled_by_student",
 		})
+		
+		// Unmark coupon
+		booking, err := s.queries.GetBookingByID(ctx, payment.BookingID)
+		if err == nil && booking.CouponID.Valid {
+			_ = s.queries.MarkCouponUnused(ctx, booking.CouponID.Bytes)
+		}
 	}
 
 	return nil
