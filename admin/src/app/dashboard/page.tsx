@@ -102,7 +102,7 @@ export default function DashboardOverview() {
           </Link>
         </div>
         
-        <div className="overflow-x-auto lg:overflow-visible rounded-b-2xl">
+        <div className="overflow-x-auto rounded-b-2xl">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-[#E5E7EB]">

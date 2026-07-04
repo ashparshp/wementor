@@ -80,7 +80,7 @@ export default function PaymentsPage() {
 
       {/* Data Table */}
       <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm">
-        <div className="overflow-x-auto lg:overflow-visible rounded-2xl">
+        <div className="overflow-x-auto rounded-2xl">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-[#E5E7EB]">
