@@ -15,6 +15,7 @@ type Querier interface {
 	ArchivePlan(ctx context.Context, id uuid.UUID) error
 	CheckSlotConflict(ctx context.Context, arg CheckSlotConflictParams) (int64, error)
 	CountAllBookings(ctx context.Context) (int64, error)
+	CountAllCoupons(ctx context.Context) (int64, error)
 	CountAllPayments(ctx context.Context) (int64, error)
 	CountApprovedPlans(ctx context.Context) (int64, error)
 	CountApprovedPlansByCategory(ctx context.Context, category string) (int64, error)
@@ -66,6 +67,7 @@ type Querier interface {
 	IncrementOTPAttempts(ctx context.Context, id uuid.UUID) error
 	InvalidateInviteCode(ctx context.Context, id uuid.UUID) error
 	ListAllBookings(ctx context.Context, arg ListAllBookingsParams) ([]ListAllBookingsRow, error)
+	ListAllCoupons(ctx context.Context, arg ListAllCouponsParams) ([]ListAllCouponsRow, error)
 	ListAllPayments(ctx context.Context, arg ListAllPaymentsParams) ([]ListAllPaymentsRow, error)
 	ListApprovedPlans(ctx context.Context, arg ListApprovedPlansParams) ([]MentorshipPlan, error)
 	ListApprovedPlansByCategory(ctx context.Context, arg ListApprovedPlansByCategoryParams) ([]MentorshipPlan, error)

@@ -42,3 +42,29 @@ type AdminBookingResponse struct {
 	Status         string  `json:"status"`
 	CreatedAt      string  `json:"created_at"`
 }
+
+type AdminMentorResponse struct {
+	ID            string  `json:"id"`
+	UserID        string  `json:"user_id"`
+	Name          string  `json:"name"`
+	Email         string  `json:"email"`
+	AvatarURL     *string `json:"avatar_url,omitempty"`
+	Bio           *string `json:"bio,omitempty"`
+	Phone         *string `json:"phone,omitempty"`
+	AvgRating     float64 `json:"avg_rating"`
+	TotalReviews  int32   `json:"total_reviews"`
+	TotalSessions int32   `json:"total_sessions"`
+	CreatedAt     string  `json:"created_at"`
+}
+
+type AdminCouponResponse struct {
+	ID                 string  `json:"id"`
+	Code               string  `json:"code"`
+	StudentID          string  `json:"student_id"`
+	StudentName        string  `json:"student_name"`
+	StudentEmail       string  `json:"student_email"`
+	DiscountPercentage int32   `json:"discount_percentage"`
+	IsUsed             bool    `json:"is_used"`
+	ExpiresAt          *string `json:"expires_at,omitempty"`
+	CreatedAt          *string `json:"created_at,omitempty"`
+}

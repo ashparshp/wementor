@@ -12,6 +12,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countAllCoupons = `-- name: CountAllCoupons :one
+SELECT COUNT(*) FROM coupons
+`
+
+func (q *Queries) CountAllCoupons(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countAllCoupons)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createCoupon = `-- name: CreateCoupon :one
 INSERT INTO coupons (
     code, student_id, discount_percentage, expires_at
@@ -75,6 +86,63 @@ func (q *Queries) GetValidCoupon(ctx context.Context, arg GetValidCouponParams) 
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const listAllCoupons = `-- name: ListAllCoupons :many
+SELECT
+    c.id, c.code, c.student_id, c.discount_percentage, c.is_used, c.expires_at, c.created_at,
+    u.name AS student_name, u.email AS student_email
+FROM coupons c
+JOIN users u ON u.id = c.student_id
+ORDER BY c.created_at DESC
+LIMIT $1 OFFSET $2
+`
+
+type ListAllCouponsParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+type ListAllCouponsRow struct {
+	ID                 uuid.UUID          `json:"id"`
+	Code               string             `json:"code"`
+	StudentID          uuid.UUID          `json:"student_id"`
+	DiscountPercentage int32              `json:"discount_percentage"`
+	IsUsed             bool               `json:"is_used"`
+	ExpiresAt          pgtype.Timestamptz `json:"expires_at"`
+	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+	StudentName        string             `json:"student_name"`
+	StudentEmail       string             `json:"student_email"`
+}
+
+func (q *Queries) ListAllCoupons(ctx context.Context, arg ListAllCouponsParams) ([]ListAllCouponsRow, error) {
+	rows, err := q.db.Query(ctx, listAllCoupons, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListAllCouponsRow{}
+	for rows.Next() {
+		var i ListAllCouponsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Code,
+			&i.StudentID,
+			&i.DiscountPercentage,
+			&i.IsUsed,
+			&i.ExpiresAt,
+			&i.CreatedAt,
+			&i.StudentName,
+			&i.StudentEmail,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const markCouponUnused = `-- name: MarkCouponUnused :exec

@@ -122,6 +122,78 @@ func (s *Service) ListPayments(ctx context.Context, limit, offset int32) ([]db.L
 	return payments, total, nil
 }
 
+// ListMentors returns paginated list of all mentors with their profiles.
+func (s *Service) ListMentors(ctx context.Context, limit, offset int32) ([]AdminMentorResponse, int64, error) {
+	mentors, err := s.queries.ListMentorProfiles(ctx, db.ListMentorProfilesParams{
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to list mentors: %w", err)
+	}
+
+	var res []AdminMentorResponse
+	for _, m := range mentors {
+		res = append(res, AdminMentorResponse{
+			ID:            m.ID.String(),
+			UserID:        m.UserID.String(),
+			Name:          m.UserName,
+			Email:         m.UserEmail,
+			AvatarURL:     m.UserAvatarUrl,
+			Bio:           m.Bio,
+			Phone:         m.Phone,
+			AvgRating:     m.AvgRating,
+			TotalReviews:  m.TotalReviews,
+			TotalSessions: m.TotalSessions,
+			CreatedAt:     m.CreatedAt.Format(time.RFC3339),
+		})
+	}
+
+	total, _ := s.queries.CountMentorProfiles(ctx)
+	return res, total, nil
+}
+
+// ListCoupons returns paginated list of all coupons.
+func (s *Service) ListCoupons(ctx context.Context, limit, offset int32) ([]AdminCouponResponse, int64, error) {
+	coupons, err := s.queries.ListAllCoupons(ctx, db.ListAllCouponsParams{
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		return nil, 0, fmt.Errorf("failed to list coupons: %w", err)
+	}
+
+	var res []AdminCouponResponse
+	for _, c := range coupons {
+		var expiresStr *string
+		if c.ExpiresAt.Valid {
+			str := c.ExpiresAt.Time.Format(time.RFC3339)
+			expiresStr = &str
+		}
+		var createdStr *string
+		if c.CreatedAt.Valid {
+			str := c.CreatedAt.Time.Format(time.RFC3339)
+			createdStr = &str
+		}
+
+		res = append(res, AdminCouponResponse{
+			ID:                 c.ID.String(),
+			Code:               c.Code,
+			StudentID:          c.StudentID.String(),
+			StudentName:        c.StudentName,
+			StudentEmail:       c.StudentEmail,
+			DiscountPercentage: c.DiscountPercentage,
+			IsUsed:             c.IsUsed,
+			ExpiresAt:          expiresStr,
+			CreatedAt:          createdStr,
+		})
+	}
+
+	total, _ := s.queries.CountAllCoupons(ctx)
+	return res, total, nil
+}
+
+// GenerateCoupon creates a new coupon for a specific student.
 func (s *Service) GenerateCoupon(ctx context.Context, req CreateCouponRequest) (*CouponResponse, error) {
 	studentID, err := uuid.Parse(req.StudentID)
 	if err != nil {

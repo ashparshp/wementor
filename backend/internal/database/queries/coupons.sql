@@ -23,3 +23,15 @@ WHERE id = $1;
 UPDATE coupons
 SET is_used = false
 WHERE id = $1;
+
+-- name: ListAllCoupons :many
+SELECT
+    c.*,
+    u.name AS student_name, u.email AS student_email
+FROM coupons c
+JOIN users u ON u.id = c.student_id
+ORDER BY c.created_at DESC
+LIMIT $1 OFFSET $2;
+
+-- name: CountAllCoupons :one
+SELECT COUNT(*) FROM coupons;

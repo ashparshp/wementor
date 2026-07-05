@@ -70,6 +70,32 @@ func (h *Handler) ListPayments(w http.ResponseWriter, r *http.Request) {
 	response.Paginated(w, payments, pg.Page, pg.PerPage, int(total))
 }
 
+// ListMentors GET /api/v1/admin/mentors
+func (h *Handler) ListMentors(w http.ResponseWriter, r *http.Request) {
+	pg := request.ParsePagination(r)
+
+	mentors, total, err := h.service.ListMentors(r.Context(), int32(pg.PerPage), int32(pg.Offset))
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Paginated(w, mentors, pg.Page, pg.PerPage, int(total))
+}
+
+// ListCoupons GET /api/v1/admin/coupons
+func (h *Handler) ListCoupons(w http.ResponseWriter, r *http.Request) {
+	pg := request.ParsePagination(r)
+
+	coupons, total, err := h.service.ListCoupons(r.Context(), int32(pg.PerPage), int32(pg.Offset))
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.Paginated(w, coupons, pg.Page, pg.PerPage, int(total))
+}
+
 // GenerateCoupon POST /api/v1/admin/coupons
 func (h *Handler) GenerateCoupon(w http.ResponseWriter, r *http.Request) {
 	var req CreateCouponRequest
