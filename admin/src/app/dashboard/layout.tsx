@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { useAuth } from "@/lib/auth";
 import { 
   LayoutDashboard, 
   CalendarDays, 
@@ -24,6 +25,19 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, token, isLoading, logout } = useAuth();
+  const [mounted, setMounted] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    logout();
+  };
 
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -33,6 +47,63 @@ export default function DashboardLayout({
     { name: "Users", href: "/dashboard/users", icon: Users },
     { name: "Mentors", href: "/dashboard/mentors", icon: GraduationCap },
   ];
+
+  // 1. Show unified "Logging you out..." screen if logging out
+  if (isLoggingOut) {
+    return (
+      <div className="h-screen w-full bg-[#FDF1E9] flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-40">
+          <Image 
+            src="/images/bg-v2.png" 
+            alt="Background" 
+            fill 
+            className="object-cover object-left filter blur-[4px]"
+            priority
+          />
+        </div>
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="relative flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full border-4 border-[#F29440]/20 border-t-[#F29440] animate-spin"></div>
+            <div className="absolute w-8 h-8 rounded-full border-4 border-[#E88935]/10 border-b-[#E88935] animate-spin [animation-direction:reverse]"></div>
+          </div>
+          <p className="mt-4 text-[#F29440] font-semibold text-sm tracking-wider animate-pulse">Logging you out...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Show loading screen on initial mount/check
+  if (!mounted || isLoading) {
+    return (
+      <div className="h-screen w-full bg-[#FDF1E9] flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-40">
+          <Image 
+            src="/images/bg-v2.png" 
+            alt="Background" 
+            fill 
+            className="object-cover object-left filter blur-[4px]"
+            priority
+          />
+        </div>
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="relative flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full border-4 border-[#F29440]/20 border-t-[#F29440] animate-spin"></div>
+            <div className="absolute w-8 h-8 rounded-full border-4 border-[#E88935]/10 border-b-[#E88935] animate-spin [animation-direction:reverse]"></div>
+          </div>
+          <p className="mt-4 text-[#F29440] font-semibold text-sm tracking-wider animate-pulse">Securing session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. Fallback: if not authenticated, return null (redirect via AuthProvider)
+  if (!token || !user) {
+    return null;
+  }
+
+  const displayName = user.name || "Admin";
+  const displayRole = user.role === "admin" ? "Administrator" : user.role;
+  const initials = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="h-screen bg-[#FDF8F5] flex font-sans">
@@ -91,7 +162,10 @@ export default function DashboardLayout({
 
           {/* Bottom Area / Logout */}
           <div className="p-4 border-t border-[#E5E7EB]">
-            <button className="flex items-center gap-3 px-3 py-3 w-full rounded-xl transition-all duration-200 font-medium text-sm text-[#ef4444] hover:bg-red-50">
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-3 py-3 w-full rounded-xl transition-all duration-200 font-medium text-sm text-[#ef4444] hover:bg-red-50"
+            >
               <LogOut className="w-5 h-5" />
               Logout
             </button>
@@ -126,14 +200,44 @@ export default function DashboardLayout({
             
             <div className="h-8 w-px bg-gray-200 hidden sm:block"></div>
             
-            <div className="flex items-center gap-3 cursor-pointer">
+            <div 
+              className="relative flex items-center gap-3 cursor-pointer select-none"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+            >
               <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#F29440] to-[#E88935] flex items-center justify-center text-white font-bold shadow-sm">
-                A
+                {initials}
               </div>
               <div className="hidden sm:block">
-                <p className="text-sm font-semibold text-[#111827]">Admin User</p>
-                <p className="text-xs text-[#6B7280]">Superadmin</p>
+                <p className="text-sm font-semibold text-[#111827]">{displayName}</p>
+                <p className="text-xs text-[#6B7280]">{displayRole}</p>
               </div>
+
+              {/* Profile Dropdown */}
+              {isProfileOpen && (
+                <div className="absolute right-0 top-12 w-48 bg-white border border-[#E5E7EB] rounded-xl shadow-lg z-50 py-2 animate-in fade-in duration-200">
+                  <Link 
+                    href="/dashboard/profile"
+                    className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsProfileOpen(false)}
+                  >
+                    My Profile
+                  </Link>
+                  <Link 
+                    href="/dashboard/profile#password"
+                    className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    onClick={() => setIsProfileOpen(false)}
+                  >
+                    Change Password
+                  </Link>
+                  <div className="h-px bg-gray-100 my-1"></div>
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

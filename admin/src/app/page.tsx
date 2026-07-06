@@ -3,35 +3,53 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     
-    // Simulate API call for now
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await login(email, password);
       router.push("/dashboard");
-    }, 1000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen w-full flex bg-[#FDF1E9] relative overflow-hidden font-sans">
       
-      {/* Background Illustration */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="/images/illustration.png" 
-          alt="Login Illustration" 
+          src="/images/bg-v2.png" 
+          alt="Login Background" 
           fill 
-          className="object-contain object-left-bottom"
+          className="object-cover object-left"
           priority
+        />
+      </div>
+
+      {/* Top Left Logo */}
+      <div className="absolute top-4 left-6 z-20">
+        <Image 
+          src="/images/logo-hor-no-bg.png" 
+          alt="Logo" 
+          width={180}
+          height={120}
+          className="object-contain"
         />
       </div>
 
@@ -69,7 +87,9 @@ export default function LoginPage() {
                   </div>
                   <input
                     id="email"
+                    name="email"
                     type="email"
+                    autoComplete="username"
                     placeholder="Enter your email"
                     required
                     value={email}
@@ -91,7 +111,9 @@ export default function LoginPage() {
                   </div>
                   <input
                     id="password"
+                    name="password"
                     type="password"
+                    autoComplete="current-password"
                     placeholder="Enter your password"
                     required
                     value={password}
@@ -112,6 +134,12 @@ export default function LoginPage() {
                   Forgot Password?
                 </a>
               </div>
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
+                  {error}
+                </div>
+              )}
 
               <button
                 type="submit"

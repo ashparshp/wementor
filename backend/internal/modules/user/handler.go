@@ -56,3 +56,25 @@ func (h *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 
 	response.OK(w, profile)
 }
+
+// ChangePassword POST /api/v1/users/change-password
+func (h *Handler) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	userID := middleware.UserIDFromContext(r.Context())
+
+	var req ChangePasswordRequest
+	if err := request.Decode(r, &req); err != nil {
+		if request.IsValidationError(err) {
+			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
+			return
+		}
+		response.Error(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	if err := h.service.ChangePassword(r.Context(), userID, req); err != nil {
+		response.Error(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.Message(w, http.StatusOK, "password updated successfully")
+}

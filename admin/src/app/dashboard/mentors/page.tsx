@@ -28,7 +28,7 @@ export default function MentorsPage() {
   useEffect(() => {
     fetchApi<{ data: Mentor[] }>("/admin/mentors?per_page=100")
       .then((res) => {
-        setMentors(res.data || []);
+        setMentors(Array.isArray(res.data) ? res.data : []);
       })
       .catch(() => setMentors([]))
       .finally(() => setLoading(false));

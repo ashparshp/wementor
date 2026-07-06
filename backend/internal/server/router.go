@@ -112,6 +112,7 @@ func SetupRouter(
 			r.Use(requireAuth)
 			r.Get("/me", userHandler.GetProfile)
 			r.Put("/me", userHandler.UpdateProfile)
+			r.Post("/change-password", userHandler.ChangePassword)
 		})
 
 		// Mentors

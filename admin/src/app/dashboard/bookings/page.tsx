@@ -28,8 +28,8 @@ export default function BookingsPage() {
     async function loadBookings() {
       try {
         const res = await fetchApi<any>("/admin/bookings");
-        // assuming paginated response returns { data: [...], ... } or just array
-        setAllBookings(res.data || res || []);
+        const data = res.data || res || [];
+        setAllBookings(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error(err);
       } finally {

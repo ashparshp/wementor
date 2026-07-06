@@ -9,6 +9,11 @@ type UpdateProfileRequest struct {
 	AvatarURL *string `json:"avatar_url"`
 }
 
+type ChangePasswordRequest struct {
+	CurrentPassword string `json:"current_password" validate:"required"`
+	NewPassword     string `json:"new_password" validate:"required,min=8"`
+}
+
 // ───── Responses ─────
 
 type ProfileResponse struct {

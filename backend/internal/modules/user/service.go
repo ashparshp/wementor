@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 
 	db "wementor-backend/internal/database/db"
 )
@@ -57,4 +58,34 @@ func (s *Service) UpdateProfile(ctx context.Context, userID uuid.UUID, req Updat
 		EmailVerified: user.EmailVerified,
 		AvatarURL:     user.AvatarUrl,
 	}, nil
+}
+
+// ChangePassword updates the user's password after validating their current password.
+func (s *Service) ChangePassword(ctx context.Context, userID uuid.UUID, req ChangePasswordRequest) error {
+	user, err := s.queries.GetUserByID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("user not found")
+	}
+
+	// Verify current password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.CurrentPassword)); err != nil {
+		return fmt.Errorf("invalid current password")
+	}
+
+	// Hash new password
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), 12)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	// Update password in DB
+	err = s.queries.UpdatePassword(ctx, db.UpdatePasswordParams{
+		ID:           userID,
+		PasswordHash: string(hash),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to update password: %w", err)
+	}
+
+	return nil
 }

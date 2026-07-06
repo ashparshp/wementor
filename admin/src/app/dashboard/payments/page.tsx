@@ -29,7 +29,8 @@ export default function PaymentsPage() {
     async function loadPayments() {
       try {
         const res = await fetchApi<any>("/admin/payments");
-        setAllPayments(res.data || res || []);
+        const data = res.data || res || [];
+        setAllPayments(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error(err);
       } finally {

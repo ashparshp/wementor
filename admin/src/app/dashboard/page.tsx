@@ -27,7 +27,7 @@ export default function DashboardOverview() {
         ]);
         setStats(statsRes.data || statsRes);
         const bookingsData = bookingsRes.data || bookingsRes || [];
-        setRecentBookings(bookingsData.slice(0, 5));
+        setRecentBookings(Array.isArray(bookingsData) ? bookingsData.slice(0, 5) : []);
       } catch (err) {
         console.error(err);
       } finally {

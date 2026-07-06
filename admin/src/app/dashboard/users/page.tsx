@@ -26,7 +26,8 @@ export default function UsersPage() {
     async function loadUsers() {
       try {
         const res = await fetchApi<any>("/admin/users");
-        setAllUsers(res.data || res || []);
+        const data = res.data || res || [];
+        setAllUsers(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error(err);
       } finally {
@@ -70,10 +71,35 @@ export default function UsersPage() {
               />
             </div>
             
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm whitespace-nowrap w-full sm:w-auto justify-center">
-              <Filter className="w-4 h-4" />
-              Filter
-            </button>
+            <div className="relative w-full sm:w-auto">
+              <button 
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-[#E5E7EB] rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm whitespace-nowrap w-full sm:w-auto justify-center"
+              >
+                <Filter className="w-4 h-4" />
+                {roleFilter === "All" ? "Filter" : roleFilter}
+              </button>
+
+              {isFilterOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#E5E7EB] rounded-xl shadow-lg z-20 py-2">
+                  <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</div>
+                  {["All", "student", "mentor", "admin"].map((role) => (
+                    <button
+                      key={role}
+                      onClick={() => {
+                        setRoleFilter(role);
+                        setIsFilterOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors capitalize ${
+                        roleFilter.toLowerCase() === role.toLowerCase() ? 'text-[#F29440] font-semibold' : 'text-gray-700'
+                      }`}
+                    >
+                      {role}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Data Table */}

@@ -30,7 +30,7 @@ export default function CouponsPage() {
 
   const loadCoupons = () => {
     fetchApi<{ data: CouponItem[] }>("/admin/coupons?per_page=100")
-      .then((res) => setCoupons(res.data || []))
+      .then((res) => setCoupons(Array.isArray(res.data) ? res.data : []))
       .catch(() => setCoupons([]))
       .finally(() => setLoadingList(false));
   };
