@@ -25,18 +25,18 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[90rem] mx-auto px-4 lg:px-6">
         <div className="flex justify-between h-20 items-center">
           
           {/* Left: Logo */}
           <div className="flex-shrink-0 flex items-center w-1/3">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center -ml-2">
               <Image 
                 src="/logo-hor-no-bg.png" 
                 alt="Logo" 
-                width={400} 
-                height={140} 
-                className="w-48 sm:w-56 lg:w-64 h-auto object-contain" 
+                width={260} 
+                height={80} 
+                className="w-32 sm:w-40 lg:w-44 h-auto object-contain" 
               />
             </Link>
           </div>

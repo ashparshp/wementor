@@ -32,7 +32,7 @@ export default function RootLayout({
         {/* Footer */}
         <footer className="bg-white border-t border-gray-100 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Image src="/logo-hor-no-bg.png" alt="Logo" width={400} height={140} className="w-48 sm:w-56 h-auto mx-auto mb-6 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+            <Image src="/logo-hor-no-bg.png" alt="Logo" width={260} height={80} className="w-40 sm:w-48 h-auto mx-auto mb-6 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
             <p className="text-sm text-gray-500 font-medium">&copy; {new Date().getFullYear()} All rights reserved.</p>
           </div>
         </footer>
