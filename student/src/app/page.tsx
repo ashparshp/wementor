@@ -9,7 +9,7 @@ export default function Home() {
       <section className="relative overflow-hidden pt-24 pb-32 flex-grow flex items-center">
         <div className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/hero-bg.png)' }}>
           {/* Soft overlay to ensure text readability against the image */}
-          <div className="absolute inset-0 bg-[#FDF1E9]/60"></div>
+          <div className="absolute inset-0 bg-background/60"></div>
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="text-center max-w-4xl mx-auto space-y-8">
@@ -24,7 +24,9 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-10">
               <Link href="/book" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-10 py-5 rounded-xl text-xl font-bold transition-all shadow-[0_0_15px_rgba(0,0,0,0.08)] hover:shadow-[0_0_20px_rgba(0,0,0,0.12)] border border-gray-100 active:scale-95">
                 <span>Book a Session</span>
-                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform text-[#F29440]" />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="w-6 h-6 group-hover:translate-x-1.5 transition-transform text-[#F29440]" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 12H20M20 12L15.5 8.5M20 12L15.5 15.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </Link>
             </div>
 

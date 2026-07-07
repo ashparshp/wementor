@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FDF1E9;
+  --background: #FEF1E3;
   --foreground: #171717;
   --brand-orange: #F29440;
   --brand-purple: #6C63FF;
@@ -16,7 +16,8 @@
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(180deg, #FEF1E3 0%, #FEEDDC 35%, #FEE9D4 70%, #FEE1C7 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
 }
