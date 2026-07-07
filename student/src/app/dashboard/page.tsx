@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Calendar, Clock, Video } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Video, Rocket } from "lucide-react";
 import { fetchApi } from "@/lib/api";
 
 export default function DashboardOverview() {
@@ -47,8 +47,8 @@ export default function DashboardOverview() {
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          <div className="hidden sm:block w-32 h-32 rounded-full bg-[#EA8A2F]/10 flex-shrink-0 flex items-center justify-center">
-            <span className="text-5xl">🚀</span>
+          <div className="hidden sm:flex w-32 h-32 rounded-full bg-[#EA8A2F]/10 flex-shrink-0 items-center justify-center">
+            <Rocket className="w-14 h-14 text-[#EA8A2F]" />
           </div>
         </div>
 

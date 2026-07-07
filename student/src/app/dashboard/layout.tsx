@@ -108,7 +108,7 @@ export default function DashboardLayout({
             })}
           </div>
 
-          <div className="mt-auto pt-6 border-t border-[#EADBCB]">
+          <div className="mt-auto pt-6 pb-6 md:pb-2 border-t border-[#EADBCB]">
             <div className="mb-4 px-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-[#EA8A2F]/10 flex items-center justify-center text-[#EA8A2F] font-bold">
                 {user.name.charAt(0).toUpperCase()}
@@ -120,7 +120,7 @@ export default function DashboardLayout({
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-red-600 hover:bg-red-50"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-red-600 hover:bg-red-500/10 hover:text-red-700"
             >
               <LogOut size={20} />
               Log out
