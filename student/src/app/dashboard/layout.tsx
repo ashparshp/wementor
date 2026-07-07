@@ -56,7 +56,6 @@ export default function DashboardLayout({
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: Home },
     { name: "My Bookings", href: "/dashboard/bookings", icon: Calendar },
-    { name: "Browse Mentors", href: "/dashboard/mentors", icon: Users },
     { name: "Profile", href: "/dashboard/profile", icon: User },
   ];
 
@@ -65,7 +64,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#FEF1E3] flex flex-col md:flex-row">
+    <div className="flex-grow bg-[#FEF1E3] flex flex-col md:flex-row">
       {/* Mobile Topbar */}
       <div className="md:hidden flex items-center justify-between bg-[#FFF8F1] p-4 border-b border-[#EADBCB]">
         <Link href="/dashboard" className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -86,11 +85,6 @@ export default function DashboardLayout({
         } md:block w-full md:w-64 bg-[#FFF8F1] border-r border-[#EADBCB] flex-shrink-0 z-20`}
       >
         <div className="p-6 h-full flex flex-col">
-          <div className="hidden md:block mb-8">
-            <Link href="/dashboard" className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-[#EA8A2F]">tv</span>Netra
-            </Link>
-          </div>
 
           <div className="flex-grow space-y-1">
             {navItems.map((item) => {
