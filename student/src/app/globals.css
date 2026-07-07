@@ -16,7 +16,10 @@
 }
 
 body {
-  background: linear-gradient(180deg, #FEF1E3 0%, #FEEDDC 35%, #FEE9D4 70%, #FEE1C7 100%);
+  background:
+    radial-gradient(circle at top center, rgba(255,255,255,.55), transparent 55%),
+    radial-gradient(circle at bottom, rgba(244,180,90,.08), transparent 70%),
+    linear-gradient(180deg, #FEF1E3, #FEEDDC, #FEE9D4, #FEE1C7);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
