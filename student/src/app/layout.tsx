@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.variable} font-sans antialiased bg-gray-50/50 min-h-screen flex flex-col`}>
+      <body className={`${spaceGrotesk.className} antialiased bg-gray-50/50 min-h-screen flex flex-col`}>
         <Navbar />
 
         {/* Main Content */}
