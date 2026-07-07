@@ -29,9 +29,12 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("user");
-      window.location.href = "/";
+      if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+        window.location.href = "/login";
+      }
     }
-    throw new Error("Session expired. Please login again.");
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || errorData.message || "Session expired. Please login again.");
   }
 
   if (!response.ok) {
