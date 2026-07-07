@@ -19,9 +19,10 @@ export default function Home() {
               Book 1-on-1 virtual mentorship sessions with industry experts. Get personalized guidance, resume reviews, and interview prep.
             </p>
             
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-              <Link href="/book" className="w-full sm:w-auto bg-[#111827] hover:bg-gray-900 text-white px-10 py-5 rounded-full text-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 flex items-center justify-center gap-2">
-                Book a Session <ArrowRight className="w-6 h-6" />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-10">
+              <Link href="/book" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-10 py-5 rounded-xl text-xl font-bold transition-all shadow-[0_0_15px_rgba(0,0,0,0.08)] hover:shadow-[0_0_20px_rgba(0,0,0,0.12)] border border-gray-100 active:scale-95">
+                <span>Book a Session</span>
+                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform text-[#F29440]" />
               </Link>
             </div>
 
