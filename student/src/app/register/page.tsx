@@ -56,11 +56,11 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative bg */}
-      <div className="absolute inset-0 bg-[#6C63FF]/5 blur-3xl -z-10 rounded-full w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[#F29440]/5 blur-3xl -z-10 rounded-full w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
 
-      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
         <div>
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
             Create an account
@@ -92,7 +92,7 @@ export default function Register() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#6C63FF]/30 focus:border-[#6C63FF] transition-colors bg-white/50 text-sm"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
                   placeholder="John Doe"
                 />
               </div>
@@ -109,7 +109,7 @@ export default function Register() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#6C63FF]/30 focus:border-[#6C63FF] transition-colors bg-white/50 text-sm"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
                   placeholder="you@example.com"
                 />
               </div>
@@ -127,7 +127,7 @@ export default function Register() {
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#6C63FF]/30 focus:border-[#6C63FF] transition-colors bg-white/50 text-sm"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
                   placeholder="••••••••"
                 />
               </div>
@@ -139,7 +139,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-[#111827] hover:bg-gray-900 focus:outline-none transition-all active:scale-[0.98] disabled:opacity-70 disabled:scale-100"
+              className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.08)] text-sm font-bold text-white bg-[#F29440] hover:bg-[#E88935] focus:outline-none transition-all active:scale-[0.98] disabled:opacity-70 disabled:scale-100"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
