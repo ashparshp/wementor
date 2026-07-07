@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, Mail, Shield, Calendar, Edit3, Check, X } from "lucide-react";
+import { User, Mail, Shield, Calendar, PencilLine, Check, X } from "lucide-react";
 import { fetchApi } from "@/lib/api";
 
 export default function ProfilePage() {
@@ -110,7 +110,7 @@ export default function ProfilePage() {
             onClick={() => setIsEditing(true)}
             className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#111827] text-white text-sm font-bold rounded-xl hover:bg-[#1F2937] transition-colors shadow-sm"
           >
-            <Edit3 size={16} />
+            <PencilLine size={16} />
             Edit Profile
           </button>
         )}
@@ -153,7 +153,7 @@ export default function ProfilePage() {
               onClick={() => isEditing ? handleSave() : setIsEditing(true)}
               className="sm:hidden p-2 text-[#6B7280] hover:text-[#111827] bg-gray-50 rounded-lg border border-gray-200"
             >
-              {isEditing ? <Check size={20} className="text-[#EA8A2F]" /> : <Edit3 size={20} />}
+              {isEditing ? <Check size={20} className="text-[#EA8A2F]" /> : <PencilLine size={20} />}
             </button>
           </div>
 

@@ -101,7 +101,7 @@ export default function DashboardLayout({
                       : "text-[#6B7280] hover:bg-black/5 hover:text-[#374151]"
                   }`}
                 >
-                  <Icon size={20} className={isActive ? "text-[#EA8A2F]" : "text-[#A08D7C]"} />
+                  <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-[#A08D7C]"}`} />
                   {item.name}
                 </Link>
               );
