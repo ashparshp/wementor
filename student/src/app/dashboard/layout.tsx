@@ -97,7 +97,7 @@ export default function DashboardLayout({
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-medium ${
                     isActive
-                      ? "bg-[#EA8A2F]/10 text-[#EA8A2F]"
+                      ? "bg-[#111827] text-white shadow-md"
                       : "text-[#6B7280] hover:bg-black/5 hover:text-[#374151]"
                   }`}
                 >
