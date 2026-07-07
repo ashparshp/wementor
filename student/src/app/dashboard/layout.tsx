@@ -82,9 +82,9 @@ export default function DashboardLayout({
       <div
         className={`${
           isMobileMenuOpen ? "block" : "hidden"
-        } md:block w-full md:w-64 bg-[#FFF8F1] border-r border-[#EADBCB] flex-shrink-0 z-20`}
+        } md:block w-full md:w-60 bg-[#FFF8F1] border-r border-[#EADBCB] flex-shrink-0 z-20`}
       >
-        <div className="p-6 h-full flex flex-col">
+        <div className="p-4 py-6 h-full flex flex-col">
 
           <div className="flex-grow space-y-1">
             {navItems.map((item) => {
@@ -95,7 +95,7 @@ export default function DashboardLayout({
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-medium ${
                     isActive
                       ? "bg-[#EA8A2F]/10 text-[#EA8A2F]"
                       : "text-[#6B7280] hover:bg-black/5 hover:text-[#374151]"
@@ -120,7 +120,7 @@ export default function DashboardLayout({
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-red-600 hover:bg-red-500/10 hover:text-red-700"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-medium text-red-600 hover:bg-red-500/10 hover:text-red-700"
             >
               <LogOut size={20} />
               Log out
