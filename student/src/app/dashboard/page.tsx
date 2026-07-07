@@ -40,7 +40,7 @@ export default function DashboardOverview() {
               Connect with expert mentors tailored to your goals. Book a 1-on-1 session to get personalized advice.
             </p>
             <Link
-              href="/dashboard/mentors"
+              href="/book"
               className="inline-flex items-center gap-2 py-3 px-6 rounded-xl text-sm font-bold text-[#FFFFFF] bg-[#111827] hover:bg-[#1F2937] transition-all shadow-[0_10px_25px_rgba(17,24,39,0.18)]"
             >
               Browse Mentors
@@ -85,7 +85,7 @@ export default function DashboardOverview() {
             </p>
           </div>
           <Link
-            href="/dashboard/mentors"
+            href="/book"
             className="inline-block py-2.5 px-5 rounded-lg text-sm font-bold text-[#EA8A2F] bg-[#EA8A2F]/10 hover:bg-[#EA8A2F]/20 transition-all"
           >
             Find a Mentor

@@ -66,7 +66,7 @@ export default function MyBookings() {
             </p>
           </div>
           <Link
-            href="/dashboard/mentors"
+            href="/book"
             className="inline-block py-2.5 px-5 rounded-lg text-sm font-bold text-[#EA8A2F] bg-[#EA8A2F]/10 hover:bg-[#EA8A2F]/20 transition-all"
           >
             Find a Mentor
