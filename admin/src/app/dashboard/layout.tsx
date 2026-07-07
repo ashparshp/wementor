@@ -127,7 +127,7 @@ export default function DashboardLayout({
           <div className="h-20 flex items-center px-6 border-b border-[#E5E7EB]">
             <div className="relative w-56 h-16">
               <Image 
-                src="/images/logo-transparent.png" 
+                src="/images/logo-hor-no-bg.png" 
                 alt="WeMentor Logo" 
                 fill 
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

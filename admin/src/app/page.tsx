@@ -42,14 +42,15 @@ export default function LoginPage() {
         />
       </div>
 
-      {/* Top Left Logo */}
-      <div className="absolute top-4 left-6 z-20">
+      {/* Top Left Branding */}
+      <div className="absolute top-6 left-6 z-20">
         <Image 
           src="/images/logo-hor-no-bg.png" 
-          alt="Logo" 
-          width={180}
-          height={120}
+          alt="WeMentor Logo" 
+          width={260}
+          height={160}
           className="object-contain"
+          loading="eager"
         />
       </div>
 
