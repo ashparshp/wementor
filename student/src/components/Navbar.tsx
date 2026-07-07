@@ -52,20 +52,20 @@ export default function Navbar() {
           </div>
 
           {/* Right: Auth Buttons */}
-          <div className="flex-shrink-0 flex items-center justify-end w-1/3 gap-4">
+          <div className="flex-shrink-0 flex items-center justify-end w-1/3 gap-3">
             {isLoggedIn ? (
               <button 
                 onClick={handleLogout}
-                className="text-sm font-semibold text-gray-600 hover:text-red-500 transition-colors"
+                className="text-sm font-bold text-gray-600 hover:text-red-500 transition-colors px-4 py-2 hover:bg-red-50 rounded-lg"
               >
-                Log out
+                Logout
               </button>
             ) : (
               <>
-                <Link href="/login" className="hidden sm:block text-sm font-bold text-gray-800 hover:text-[#F29440] transition-colors">
+                <Link href="/login" className="text-sm font-bold text-gray-600 hover:text-gray-900 px-4 py-2.5 hover:bg-black/5 rounded-lg transition-all">
                   Log in
                 </Link>
-                <Link href="/register" className="flex items-center justify-center bg-[#F29440] hover:bg-[#E88935] text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-md hover:shadow-lg active:scale-95">
+                <Link href="/register" className="bg-[#F29440] hover:bg-[#E88935] text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow-md active:scale-95 border border-[#d67b2d]/50">
                   Sign up
                 </Link>
               </>
