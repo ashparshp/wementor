@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.className} antialiased bg-gray-50/50 min-h-screen flex flex-col`}>
+      <body className={`${spaceGrotesk.className} antialiased min-h-screen flex flex-col`}>
         <Navbar />
 
         {/* Main Content */}
@@ -30,7 +30,7 @@ export default function RootLayout({
         </main>
 
         {/* Footer */}
-        <footer className="bg-white border-t border-gray-100 py-12">
+        <footer className="border-t border-[#E88935]/20 py-12 mt-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Image src="/logo-hor-no-bg.png" alt="Logo" width={260} height={80} className="w-40 sm:w-48 h-auto mx-auto mb-6 object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
             <p className="text-sm text-gray-500 font-medium">&copy; {new Date().getFullYear()} All rights reserved.</p>
