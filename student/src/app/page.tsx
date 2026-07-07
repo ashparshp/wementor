@@ -6,9 +6,11 @@ import { ArrowRight, ShieldCheck, Video, Zap } from "lucide-react";
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
       <section className="relative overflow-hidden pt-24 pb-32 flex-grow flex items-center">
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#111827 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
+        <div className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/hero-bg.png)' }}>
+          {/* Soft overlay to ensure text readability against the image */}
+          <div className="absolute inset-0 bg-[#FDF1E9]/60"></div>
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="text-center max-w-4xl mx-auto space-y-8">
             <h1 className="text-5xl md:text-7xl font-black text-[#111827] tracking-tight leading-[1.1]">
