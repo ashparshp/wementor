@@ -56,11 +56,11 @@ export default function Register() {
   }
 
   return (
-    <div className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="flex-grow flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Decorative bg */}
       <div className="absolute inset-0 bg-[#F29440]/5 blur-3xl -z-10 rounded-full w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
 
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
+      <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
         <div>
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
             Create an account
@@ -73,7 +73,7 @@ export default function Register() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-2">
               <AlertCircle className="w-5 h-5" />
@@ -139,15 +139,14 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.08)] text-sm font-bold text-white bg-[#F29440] hover:bg-[#E88935] focus:outline-none transition-all active:scale-[0.98] disabled:opacity-70 disabled:scale-100"
+              className="mt-2 w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#111827] hover:bg-black focus:outline-none transition-all active:scale-[0.98] disabled:opacity-70 disabled:scale-100"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
+            <p className="mt-4 text-xs text-center text-gray-500">
+              By registering, you agree to our Terms of Service and Privacy Policy.
+            </p>
           </div>
-          
-          <p className="text-center text-xs text-gray-500">
-            By registering, you agree to our Terms of Service and Privacy Policy.
-          </p>
         </form>
       </div>
     </div>
