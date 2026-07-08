@@ -20,6 +20,9 @@ type Config struct {
 	// Redis
 	RedisURL string
 
+	// RabbitMQ
+	RabbitMQURL string
+
 	// JWT
 	JWTSecret       string
 	AccessTokenTTL  int // minutes
@@ -48,6 +51,7 @@ func Load() (*Config, error) {
 		Env:               getEnv("ENV", "development"),
 		DatabaseURL:       os.Getenv("DATABASE_URL"),
 		RedisURL:          getEnv("REDIS_URL", "redis://localhost:6379"),
+		RabbitMQURL:       getEnv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/"),
 		JWTSecret:         os.Getenv("JWT_SECRET"),
 		AccessTokenTTL:    getEnvAsInt("ACCESS_TOKEN_TTL_MINUTES", 15),
 		RefreshTokenTTL:   getEnvAsInt("REFRESH_TOKEN_TTL_DAYS", 7),
