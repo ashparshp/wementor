@@ -10,6 +10,7 @@ import (
 	"wementor-backend/internal/config"
 	db "wementor-backend/internal/database/db"
 	"wementor-backend/internal/infrastructure/email"
+	"wementor-backend/internal/infrastructure/queue"
 	mw "wementor-backend/internal/server/middleware"
 
 	"wementor-backend/internal/modules/admin"
@@ -27,6 +28,7 @@ func SetupRouter(
 	cfg *config.Config,
 	queries db.Querier,
 	emailClient *email.Client,
+	rmq *queue.RabbitMQ,
 	logger *zap.Logger,
 ) http.Handler {
 	r := chi.NewRouter()
@@ -75,7 +77,7 @@ func SetupRouter(
 	bookingService := booking.NewService(queries, emailClient, logger, cfg.RazorpayKeyID, cfg.RazorpayKeySecret, cfg.FrontendURL)
 	bookingHandler := booking.NewHandler(bookingService, logger)
 
-	paymentService := payment.NewService(queries, emailClient, logger, cfg.RazorpayKeySecret, cfg.FrontendURL)
+	paymentService := payment.NewService(queries, emailClient, logger, rmq, cfg.RazorpayKeySecret, cfg.FrontendURL)
 	paymentHandler := payment.NewHandler(paymentService, logger, cfg.RazorpayKeySecret)
 
 	reviewService := review.NewService(queries, logger)

@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -12,6 +13,7 @@ import (
 
 	db "wementor-backend/internal/database/db"
 	"wementor-backend/internal/infrastructure/email"
+	"wementor-backend/internal/infrastructure/queue"
 	"wementor-backend/internal/modules/booking"
 )
 
@@ -20,6 +22,7 @@ type Service struct {
 	queries           db.Querier
 	emailClient       *email.Client
 	logger            *zap.Logger
+	rmq               *queue.RabbitMQ
 	razorpayKeySecret string
 	frontendURL       string
 }
@@ -29,15 +32,24 @@ func NewService(
 	queries db.Querier,
 	emailClient *email.Client,
 	logger *zap.Logger,
+	rmq *queue.RabbitMQ,
 	razorpayKeySecret, frontendURL string,
 ) *Service {
 	return &Service{
 		queries:           queries,
 		emailClient:       emailClient,
 		logger:            logger,
+		rmq:               rmq,
 		razorpayKeySecret: razorpayKeySecret,
 		frontendURL:       frontendURL,
 	}
+}
+
+// PaymentEvent represents an event published when a payment status changes.
+type PaymentEvent struct {
+	BookingID string `json:"booking_id"`
+	PaymentID string `json:"payment_id"`
+	Status    string `json:"status"`
 }
 
 // VerifyPayment validates the Razorpay payment signature (HMAC-SHA256) and marks payment as captured.
@@ -73,8 +85,8 @@ func (s *Service) VerifyPayment(ctx context.Context, req VerifyPaymentRequest) (
 		return nil, fmt.Errorf("failed to update payment: %w", err)
 	}
 
-	// 4. Send confirmation emails asynchronously
-	go s.sendBookingConfirmationEmails(payment.BookingID)
+	// 4. Publish Event asynchronously
+	s.publishPaymentEvent(payment.BookingID.String(), payment.ID.String(), "captured")
 
 	return &PaymentResponse{
 		ID:                payment.ID,
@@ -112,7 +124,7 @@ func (s *Service) HandleWebhook(ctx context.Context, payload WebhookPayload) err
 			return fmt.Errorf("failed to capture payment: %w", err)
 		}
 
-		go s.sendBookingConfirmationEmails(payment.BookingID)
+		s.publishPaymentEvent(payment.BookingID.String(), payment.ID.String(), "captured")
 
 	case "payment.failed":
 		orderID := payload.Payload.Payment.Entity.OrderID
@@ -137,6 +149,33 @@ func (s *Service) HandleWebhook(ctx context.Context, payload WebhookPayload) err
 	}
 
 	return nil
+}
+
+func (s *Service) publishPaymentEvent(bookingID, paymentID, status string) {
+	if s.rmq == nil {
+		s.logger.Warn("RabbitMQ client is nil, falling back to synchronous email sending")
+		go s.sendBookingConfirmationEmails(parseUUIDOrPanic(bookingID))
+		return
+	}
+
+	event := PaymentEvent{
+		BookingID: bookingID,
+		PaymentID: paymentID,
+		Status:    status,
+	}
+
+	body, _ := json.Marshal(event)
+	err := s.rmq.Publish(context.Background(), "wementor.events", "payment."+status, body)
+	if err != nil {
+		s.logger.Error("failed to publish payment event", zap.Error(err))
+		// Fallback
+		go s.sendBookingConfirmationEmails(parseUUIDOrPanic(bookingID))
+	}
+}
+
+func parseUUIDOrPanic(s string) uuid.UUID {
+	id, _ := uuid.Parse(s)
+	return id
 }
 
 // sendBookingConfirmationEmails sends confirmation emails to both student and mentor.

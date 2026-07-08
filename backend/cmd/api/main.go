@@ -16,6 +16,7 @@ import (
 	"wementor-backend/internal/database/db"
 	"wementor-backend/internal/infrastructure/database"
 	"wementor-backend/internal/infrastructure/email"
+	"wementor-backend/internal/infrastructure/queue"
 	"wementor-backend/internal/server"
 	"wementor-backend/pkg/logger"
 )
@@ -47,8 +48,20 @@ func main() {
 	// Initialize Email Client (Resend)
 	emailClient := email.NewClient(cfg.ResendAPIKey, cfg.FromEmail)
 
+	// Initialize RabbitMQ
+	var rmq *queue.RabbitMQ
+	if cfg.RabbitMQURL != "" {
+		rmq, err = queue.Connect(cfg.RabbitMQURL)
+		if err != nil {
+			log.Error("failed to connect to RabbitMQ, running without queue", zap.Error(err))
+		} else {
+			defer rmq.Close()
+			log.Info("connected to rabbitmq successfully")
+		}
+	}
+
 	// Initialize Router
-	router := server.SetupRouter(cfg, queries, emailClient, log)
+	router := server.SetupRouter(cfg, queries, emailClient, rmq, log)
 
 	// Setup HTTP Server
 	srv := &http.Server{
