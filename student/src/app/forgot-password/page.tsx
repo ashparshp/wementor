@@ -73,7 +73,7 @@ export default function ForgotPassword() {
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
             Reset your password
           </h2>
-          <p className="text-gray-600 mb-6 text-center">
+          <p className="mt-3 text-center text-sm text-gray-600 mb-6">
             Enter your email address and we'll send you your new password.
           </p>
         </div>
