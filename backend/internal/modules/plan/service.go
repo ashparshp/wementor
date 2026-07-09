@@ -40,7 +40,8 @@ func (s *Service) Create(ctx context.Context, mentorID uuid.UUID, req CreatePlan
 		return nil, fmt.Errorf("failed to create plan: %w", err)
 	}
 
-	return s.toPlanResponse(plan, nil), nil
+	profile, _ := s.queries.GetMentorProfileByUserID(ctx, mentorID)
+	return s.toPlanResponse(plan, nil, &profile), nil
 }
 
 // GetByID returns a plan with its availability slots.

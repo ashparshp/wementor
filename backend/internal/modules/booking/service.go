@@ -67,14 +67,19 @@ func (s *Service) Create(ctx context.Context, studentID uuid.UUID, req CreateBoo
 		return nil, fmt.Errorf("invalid time format, use HH:MM")
 	}
 
-	// 3. Check minimum booking notice
+	// 3. Check minimum booking notice from Mentor Profile
+	profile, err := s.queries.GetMentorProfileByUserID(ctx, plan.MentorID)
+	if err != nil {
+		return nil, fmt.Errorf("mentor profile not found")
+	}
+
 	sessionDateTime := time.Date(
 		sessionDate.Year(), sessionDate.Month(), sessionDate.Day(),
 		startTimeParsed.Hour(), startTimeParsed.Minute(), 0, 0, time.UTC,
 	)
-	minNotice := time.Duration(plan.MinBookingNoticeHours) * time.Hour
+	minNotice := time.Duration(profile.MinBookingNoticeHours) * time.Hour
 	if time.Until(sessionDateTime) < minNotice {
-		return nil, fmt.Errorf("booking must be made at least %d hours in advance", plan.MinBookingNoticeHours)
+		return nil, fmt.Errorf("booking must be made at least %d hours in advance", profile.MinBookingNoticeHours)
 	}
 
 	// 4. Build pgtype values
