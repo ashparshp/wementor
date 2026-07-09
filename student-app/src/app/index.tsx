@@ -196,11 +196,11 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   tagline: {
-    fontFamily: 'SpaceGrotesk_500Medium',
-    fontSize: 13,
+    fontFamily: 'Doto_500Medium',
+    fontSize: 14, // Slightly increased since Doto is highly stylistic and can be small
     fontWeight: '500',
     color: '#6B7280', // Elegant sophisticated grey
-    letterSpacing: 1,
+    letterSpacing: 2, // Added more spacing since Doto is a dotted matrix font
     marginTop: -8, // Pulls it up closer to the logo
     marginBottom: 28,
     textAlign: 'center',

@@ -10,6 +10,7 @@ import {
   SpaceGrotesk_600SemiBold,
   SpaceGrotesk_700Bold 
 } from '@expo-google-fonts/space-grotesk';
+import { Doto_500Medium } from '@expo-google-fonts/doto';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,6 +21,7 @@ export default function RootLayout() {
     SpaceGrotesk_500Medium,
     SpaceGrotesk_600SemiBold,
     SpaceGrotesk_700Bold,
+    Doto_500Medium,
   });
 
   useEffect(() => {
