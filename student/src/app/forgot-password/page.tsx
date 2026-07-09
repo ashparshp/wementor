@@ -46,7 +46,7 @@ export default function ForgotPassword() {
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Check your email</h2>
             <p className="mt-2 text-gray-600">
-              We've sent a password reset link to <span className="font-medium text-gray-900">{email}</span>.
+              We've sent your new password to <strong>{email}</strong>
             </p>
           </div>
           <div className="pt-4">
@@ -73,8 +73,8 @@ export default function ForgotPassword() {
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
             Reset your password
           </h2>
-          <p className="mt-3 text-center text-sm text-gray-600">
-            Enter your email address and we'll send you a link to reset your password.
+          <p className="text-gray-600 mb-6 text-center">
+            Enter your email address and we'll send you your new password.
           </p>
         </div>
 
