@@ -21,6 +21,11 @@
       },
       "predictiveBackGestureEnabled": false
     },
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#FAF6EE"
+    },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
@@ -30,9 +35,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "backgroundColor": "#FAF6EE",
+          "image": "./assets/images/splash.png",
+          "resizeMode": "cover"
         }
       ]
     ],
