@@ -221,8 +221,8 @@ func (s *Service) SetAvailability(ctx context.Context, mentorID uuid.UUID, req S
 			SlotType:     slot.SlotType,
 			DayOfWeek:    slot.DayOfWeek,
 			SpecificDate: specificDate,
-			StartTime:    slot.StartTime,
-			EndTime:      slot.EndTime,
+			StartTime:    formatPgTime(slot.StartTime),
+			EndTime:      formatPgTime(slot.EndTime),
 		})
 	}
 
@@ -249,8 +249,8 @@ func (s *Service) GetMyAvailability(ctx context.Context, mentorID uuid.UUID) (*M
 			SlotType:     slot.SlotType,
 			DayOfWeek:    slot.DayOfWeek,
 			SpecificDate: specificDate,
-			StartTime:    slot.StartTime,
-			EndTime:      slot.EndTime,
+			StartTime:    formatPgTime(slot.StartTime),
+			EndTime:      formatPgTime(slot.EndTime),
 		})
 	}
 
@@ -497,11 +497,20 @@ func (s *Service) toPlanResponse(p db.MentorshipPlan, slots []db.AvailabilitySlo
 				SlotType:     sl.SlotType,
 				DayOfWeek:    sl.DayOfWeek,
 				SpecificDate: specificDate,
-				StartTime:    sl.StartTime,
-				EndTime:      sl.EndTime,
+				StartTime:    formatPgTime(sl.StartTime),
+				EndTime:      formatPgTime(sl.EndTime),
 			}
 		}
 	}
 
 	return resp
+}
+
+func formatPgTime(t pgtype.Time) string {
+	if !t.Valid {
+		return ""
+	}
+	hours := t.Microseconds / 3600000000
+	minutes := (t.Microseconds % 3600000000) / 60000000
+	return fmt.Sprintf("%02d:%02d", hours, minutes)
 }

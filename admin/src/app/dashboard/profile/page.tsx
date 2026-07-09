@@ -238,17 +238,41 @@ export default function ProfilePage() {
                     <div key={index} className="flex flex-col sm:flex-row gap-4 items-start sm:items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
                       
                       <div className="flex-1 w-full">
-                        <label className="text-xs font-bold text-gray-700 block mb-1">Day</label>
+                        <label className="text-xs font-bold text-gray-700 block mb-1">Type</label>
                         <select
-                          value={slot.day_of_week ?? 1}
-                          onChange={(e) => updateSlot(index, "day_of_week", parseInt(e.target.value))}
+                          value={slot.slot_type}
+                          onChange={(e) => updateSlot(index, "slot_type", e.target.value)}
                           className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#F29440] outline-none"
                         >
-                          {daysOfWeek.map((day, dIdx) => (
-                            <option key={dIdx} value={dIdx}>{day}</option>
-                          ))}
+                          <option value="recurring">Weekly (Recurring)</option>
+                          <option value="fixed">Specific Date</option>
                         </select>
                       </div>
+
+                      {slot.slot_type === "recurring" ? (
+                        <div className="flex-1 w-full">
+                          <label className="text-xs font-bold text-gray-700 block mb-1">Day</label>
+                          <select
+                            value={slot.day_of_week ?? 1}
+                            onChange={(e) => updateSlot(index, "day_of_week", parseInt(e.target.value))}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#F29440] outline-none"
+                          >
+                            {daysOfWeek.map((day, dIdx) => (
+                              <option key={dIdx} value={dIdx}>{day}</option>
+                            ))}
+                          </select>
+                        </div>
+                      ) : (
+                        <div className="flex-1 w-full">
+                          <label className="text-xs font-bold text-gray-700 block mb-1">Date</label>
+                          <input
+                            type="date"
+                            value={slot.specific_date || ""}
+                            onChange={(e) => updateSlot(index, "specific_date", e.target.value)}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#F29440] outline-none"
+                          />
+                        </div>
+                      )}
 
                       <div className="flex-1 w-full">
                         <label className="text-xs font-bold text-gray-700 block mb-1">Start Time</label>
