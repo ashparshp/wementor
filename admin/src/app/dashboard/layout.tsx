@@ -39,15 +39,17 @@ export default function DashboardLayout({
     logout();
   };
 
-  const navItems = [
-    { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDays },
-    { name: "My Sessions", href: "/dashboard/plans", icon: CalendarDays },
-    { name: "Payments", href: "/dashboard/payments", icon: CreditCard },
-    { name: "Coupons", href: "/dashboard/coupons", icon: Ticket },
-    { name: "Users", href: "/dashboard/users", icon: Users },
-    { name: "Mentors", href: "/dashboard/mentors", icon: GraduationCap },
+  const baseNavItems = [
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "mentor"] },
+    { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDays, roles: ["admin", "mentor"] },
+    { name: "My Sessions", href: "/dashboard/plans", icon: CalendarDays, roles: ["mentor"] },
+    { name: "Payments", href: "/dashboard/payments", icon: CreditCard, roles: ["admin"] },
+    { name: "Coupons", href: "/dashboard/coupons", icon: Ticket, roles: ["admin"] },
+    { name: "Users", href: "/dashboard/users", icon: Users, roles: ["admin"] },
+    { name: "Mentors", href: "/dashboard/mentors", icon: GraduationCap, roles: ["admin"] },
   ];
+
+  const navItems = baseNavItems.filter(item => item.roles.includes(user?.role || ""));
 
   // 1. Show unified "Logging you out..." screen if logging out
   if (isLoggingOut) {
