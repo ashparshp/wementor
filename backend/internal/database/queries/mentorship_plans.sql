@@ -1,6 +1,6 @@
 -- name: CreateMentorshipPlan :one
-INSERT INTO mentorship_plans (mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO mentorship_plans (mentor_id, title, description, category, price_paise, duration_minutes)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
 -- name: GetMentorshipPlanByID :one
@@ -32,7 +32,7 @@ ORDER BY created_at DESC;
 -- name: UpdateMentorshipPlan :one
 UPDATE mentorship_plans
 SET title = $2, description = $3, category = $4, price_paise = $5,
-    duration_minutes = $6, min_booking_notice_hours = $7,
+    duration_minutes = $6,
     status = 'pending_review', rejection_reason = NULL, updated_at = NOW()
 WHERE id = $1
 RETURNING *;
