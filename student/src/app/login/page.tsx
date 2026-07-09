@@ -55,7 +55,7 @@ export default function Login() {
           </h2>
           <p className="mt-3 text-center text-sm text-gray-600">
             Don't have an account?{" "}
-            <Link href="/register" className="font-semibold text-[#F29440] hover:text-[#E88935] transition-colors">
+            <Link href="/register" className="font-semibold text-[#6C63FF] hover:text-[#5850E5] transition-colors">
               Sign up for free
             </Link>
           </p>
@@ -113,7 +113,7 @@ export default function Login() {
             </div>
 
             <div className="text-sm">
-              <Link href="/forgot-password" className="font-semibold text-[#EA8A2F] hover:text-[#D97706] transition-colors">
+              <Link href="/forgot-password" className="font-semibold text-[#6C63FF] hover:text-[#5850E5] transition-colors">
                 Forgot password?
               </Link>
             </div>
