@@ -63,7 +63,7 @@ export default function LoginPage() {
         
         {/* Right Side: Form Container */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
-          <div className="w-full max-w-md bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl p-10 shadow-[0_12px_40px_rgba(0,0,0,0.06)] relative overflow-hidden">
+          <div className="w-full max-w-md bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl border border-white/40 rounded-3xl p-10 shadow-[0_12px_40px_rgba(0,0,0,0.06)] relative overflow-hidden">
             
             {/* Subtle glow effect behind the form */}
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-white/40 rounded-full blur-3xl pointer-events-none"></div>
