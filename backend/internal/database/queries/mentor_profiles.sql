@@ -47,3 +47,9 @@ WHERE user_id = $1;
 UPDATE mentor_profiles
 SET total_sessions = total_sessions + 1, updated_at = NOW()
 WHERE user_id = $1;
+
+-- name: UpdateMentorAvailabilitySettings :one
+UPDATE mentor_profiles
+SET min_booking_notice_hours = $2, max_booking_advance_days = $3, updated_at = NOW()
+WHERE user_id = $1
+RETURNING *;
