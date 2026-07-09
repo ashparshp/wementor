@@ -36,7 +36,8 @@
           "image": "./assets/images/splash.png",
           "resizeMode": "cover"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

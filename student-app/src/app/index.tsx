@@ -192,6 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   tagline: {
+    fontFamily: 'SpaceGrotesk_500Medium',
     fontSize: 13,
     fontWeight: '500',
     color: '#F29440', // Theme orange
@@ -209,6 +210,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   label: {
+    fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 12,
     fontWeight: 'bold',
     color: '#1F2937',
@@ -219,6 +221,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   forgotText: {
+    fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 11,
     color: '#F29440',
     fontWeight: 'bold',
@@ -231,6 +234,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     borderRadius: 12,
     paddingHorizontal: 16,
+    fontFamily: 'SpaceGrotesk_400Regular',
     fontSize: 14,
     color: '#1F2937',
   },
@@ -256,6 +260,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   eyeText: {
+    fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 12,
     fontWeight: 'bold',
     color: '#9CA3AF',
@@ -275,6 +280,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   buttonText: {
+    fontFamily: 'SpaceGrotesk_600SemiBold',
     color: '#FFF',
     fontSize: 15,
     fontWeight: 'bold',
@@ -286,10 +292,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   footerText: {
+    fontFamily: 'SpaceGrotesk_400Regular',
     fontSize: 13,
     color: '#6B7280',
   },
   signUpText: {
+    fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 13,
     color: '#F29440',
     fontWeight: 'bold',
