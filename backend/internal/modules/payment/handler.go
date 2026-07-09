@@ -61,20 +61,19 @@ func (h *Handler) Webhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. Verify Razorpay webhook signature
+	// 2. Verify Razorpay webhook signature (Made optional as requested)
 	signature := r.Header.Get("X-Razorpay-Signature")
-	if signature == "" {
-		response.Error(w, http.StatusUnauthorized, "missing webhook signature")
-		return
-	}
+	if signature != "" {
+		mac := hmac.New(sha256.New, []byte(h.razorpayKeySecret))
+		mac.Write(body)
+		expectedSignature := hex.EncodeToString(mac.Sum(nil))
 
-	mac := hmac.New(sha256.New, []byte(h.razorpayKeySecret))
-	mac.Write(body)
-	expectedSignature := hex.EncodeToString(mac.Sum(nil))
-
-	if !hmac.Equal([]byte(expectedSignature), []byte(signature)) {
-		response.Error(w, http.StatusUnauthorized, "invalid webhook signature")
-		return
+		if !hmac.Equal([]byte(expectedSignature), []byte(signature)) {
+			response.Error(w, http.StatusUnauthorized, "invalid webhook signature")
+			return
+		}
+	} else {
+		h.logger.Warn("Webhook received without a signature! (Insecure)")
 	}
 
 	// 3. Parse payload
