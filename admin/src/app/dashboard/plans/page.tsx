@@ -36,7 +36,7 @@ export default function PlansPage() {
     },
     askBeforePasteHTML: false,
     askBeforePasteFromWord: false,
-    defaultActionOnPaste: "insert_as_html",
+    defaultActionOnPaste: "insert_as_html" as any,
   }), []);
 
   useEffect(() => {

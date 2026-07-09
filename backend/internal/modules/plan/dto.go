@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // ───── Requests ─────
@@ -67,8 +66,8 @@ type AvailabilitySlot struct {
 	SlotType     string      `json:"slot_type"`
 	DayOfWeek    *int32      `json:"day_of_week,omitempty"`
 	SpecificDate *string     `json:"specific_date,omitempty"`
-	StartTime    pgtype.Time `json:"start_time"`
-	EndTime      pgtype.Time `json:"end_time"`
+	StartTime    string      `json:"start_time"`
+	EndTime      string      `json:"end_time"`
 }
 
 type MentorAvailabilityResponse struct {
