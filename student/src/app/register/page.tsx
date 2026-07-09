@@ -65,7 +65,7 @@ export default function Register() {
           className="object-cover object-left w-full h-full"
         />
         {/* Semi-transparent overlay to ensure form readability */}
-        <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-white/20"></div>
       </div>
 
       <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
