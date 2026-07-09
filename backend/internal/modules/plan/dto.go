@@ -15,7 +15,6 @@ type CreatePlanRequest struct {
 	Category              string `json:"category" validate:"required,oneof=jee neet gsoc placements upsc gate cat other"`
 	PricePaise            int32  `json:"price_paise" validate:"required,gte=100"`
 	DurationMinutes       int32  `json:"duration_minutes" validate:"required,gte=15,lte=180"`
-	MinBookingNoticeHours int32  `json:"min_booking_notice_hours" validate:"required,gte=1"`
 }
 
 type UpdatePlanRequest struct {
@@ -24,11 +23,12 @@ type UpdatePlanRequest struct {
 	Category              string `json:"category" validate:"required,oneof=jee neet gsoc placements upsc gate cat other"`
 	PricePaise            int32  `json:"price_paise" validate:"required,gte=100"`
 	DurationMinutes       int32  `json:"duration_minutes" validate:"required,gte=15,lte=180"`
-	MinBookingNoticeHours int32  `json:"min_booking_notice_hours" validate:"required,gte=1"`
 }
 
 type SetAvailabilityRequest struct {
-	Slots []AvailabilitySlotRequest `json:"slots" validate:"required,dive"`
+	MinBookingNoticeHours int32                     `json:"min_booking_notice_hours" validate:"required,gte=1"`
+	MaxBookingAdvanceDays int32                     `json:"max_booking_advance_days" validate:"required,gte=1"`
+	Slots                 []AvailabilitySlotRequest `json:"slots" validate:"required,dive"`
 }
 
 type AvailabilitySlotRequest struct {
@@ -54,6 +54,7 @@ type PlanResponse struct {
 	PricePaise            int32              `json:"price_paise"`
 	DurationMinutes       int32              `json:"duration_minutes"`
 	MinBookingNoticeHours int32              `json:"min_booking_notice_hours"`
+	MaxBookingAdvanceDays int32              `json:"max_booking_advance_days"`
 	Status                string             `json:"status"`
 	RejectionReason       *string            `json:"rejection_reason,omitempty"`
 	Availability          []AvailabilitySlot `json:"availability,omitempty"`
@@ -68,6 +69,12 @@ type AvailabilitySlot struct {
 	SpecificDate *string     `json:"specific_date,omitempty"`
 	StartTime    pgtype.Time `json:"start_time"`
 	EndTime      pgtype.Time `json:"end_time"`
+}
+
+type MentorAvailabilityResponse struct {
+	MinBookingNoticeHours int32              `json:"min_booking_notice_hours"`
+	MaxBookingAdvanceDays int32              `json:"max_booking_advance_days"`
+	Slots                 []AvailabilitySlot `json:"availability"`
 }
 
 type PendingPlanResponse struct {

@@ -35,7 +35,6 @@ func (s *Service) Create(ctx context.Context, mentorID uuid.UUID, req CreatePlan
 		Category:              req.Category,
 		PricePaise:            req.PricePaise,
 		DurationMinutes:       req.DurationMinutes,
-		MinBookingNoticeHours: req.MinBookingNoticeHours,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create plan: %w", err)
@@ -52,7 +51,8 @@ func (s *Service) GetByID(ctx context.Context, planID uuid.UUID) (*PlanResponse,
 	}
 
 	slots, _ := s.queries.GetAvailabilitySlotsByMentorID(ctx, plan.MentorID)
-	return s.toPlanResponse(plan, slots), nil
+	profile, _ := s.queries.GetMentorProfileByUserID(ctx, plan.MentorID)
+	return s.toPlanResponse(plan, slots, &profile), nil
 }
 
 // ListApproved returns paginated approved plans, optionally filtered by category.
@@ -84,7 +84,8 @@ func (s *Service) ListApproved(ctx context.Context, category string, limit, offs
 
 	result := make([]PlanResponse, len(plans))
 	for i, p := range plans {
-		result[i] = *s.toPlanResponse(p, nil)
+		profile, _ := s.queries.GetMentorProfileByUserID(ctx, p.MentorID)
+		result[i] = *s.toPlanResponse(p, nil, &profile)
 	}
 
 	return result, total, nil
@@ -100,7 +101,8 @@ func (s *Service) ListMentorPlans(ctx context.Context, mentorID uuid.UUID) ([]Pl
 	result := make([]PlanResponse, len(plans))
 	for i, p := range plans {
 		slots, _ := s.queries.GetAvailabilitySlotsByMentorID(ctx, p.MentorID)
-		result[i] = *s.toPlanResponse(p, slots)
+		profile, _ := s.queries.GetMentorProfileByUserID(ctx, p.MentorID)
+		result[i] = *s.toPlanResponse(p, slots, &profile)
 	}
 
 	return result, nil
@@ -125,14 +127,14 @@ func (s *Service) Update(ctx context.Context, planID, mentorID uuid.UUID, req Up
 		Category:              req.Category,
 		PricePaise:            req.PricePaise,
 		DurationMinutes:       req.DurationMinutes,
-		MinBookingNoticeHours: req.MinBookingNoticeHours,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to update plan: %w", err)
 	}
 
 	slots, _ := s.queries.GetAvailabilitySlotsByMentorID(ctx, existing.MentorID)
-	return s.toPlanResponse(plan, slots), nil
+	profile, _ := s.queries.GetMentorProfileByUserID(ctx, existing.MentorID)
+	return s.toPlanResponse(plan, slots, &profile), nil
 }
 
 // Archive archives (soft-deletes) a plan.
@@ -151,6 +153,18 @@ func (s *Service) Archive(ctx context.Context, planID, mentorID uuid.UUID) error
 
 // SetAvailability replaces all availability slots for a mentor.
 func (s *Service) SetAvailability(ctx context.Context, mentorID uuid.UUID, req SetAvailabilityRequest) ([]AvailabilitySlot, error) {
+	// Update mentor profile config
+	_, err := s.queries.UpdateMentorAvailabilitySettings(ctx, db.UpdateMentorAvailabilitySettingsParams{
+		UserID: mentorID,
+		MinBookingNoticeHours: req.MinBookingNoticeHours,
+		MaxBookingAdvanceDays: req.MaxBookingAdvanceDays,
+	})
+	if err != nil {
+		s.logger.Error("failed to update mentor availability settings", zap.Error(err))
+		// continue anyway for slots? Or return error.
+		return nil, fmt.Errorf("failed to save config: %w", err)
+	}
+
 	// Delete existing slots and replace
 	_ = s.queries.DeleteAvailabilitySlotsByMentorID(ctx, mentorID)
 
@@ -214,8 +228,8 @@ func (s *Service) SetAvailability(ctx context.Context, mentorID uuid.UUID, req S
 	return result, nil
 }
 
-// GetMyAvailability returns the availability slots for a mentor.
-func (s *Service) GetMyAvailability(ctx context.Context, mentorID uuid.UUID) ([]AvailabilitySlot, error) {
+// GetMyAvailability returns the availability slots and settings for a mentor.
+func (s *Service) GetMyAvailability(ctx context.Context, mentorID uuid.UUID) (*MentorAvailabilityResponse, error) {
 	slots, err := s.queries.GetAvailabilitySlotsByMentorID(ctx, mentorID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch availability slots: %w", err)
@@ -353,7 +367,6 @@ func (s *Service) ListPending(ctx context.Context, limit, offset int32) ([]Pendi
 				Category:              p.Category,
 				PricePaise:            p.PricePaise,
 				DurationMinutes:       p.DurationMinutes,
-				MinBookingNoticeHours: p.MinBookingNoticeHours,
 				Status:                p.Status,
 				RejectionReason:       p.RejectionReason,
 				CreatedAt:             p.CreatedAt,
@@ -441,7 +454,13 @@ func (s *Service) Reject(ctx context.Context, planID, adminID uuid.UUID, reason 
 
 // ───── Internal helpers ─────
 
-func (s *Service) toPlanResponse(p db.MentorshipPlan, slots []db.AvailabilitySlot) *PlanResponse {
+func (s *Service) toPlanResponse(p db.MentorshipPlan, slots []db.AvailabilitySlot, profile *db.MentorProfile) *PlanResponse {
+	var minNotice, maxAdvance int32
+	if profile != nil {
+		minNotice = profile.MinBookingNoticeHours
+		maxAdvance = profile.MaxBookingAdvanceDays
+	}
+
 	resp := &PlanResponse{
 		ID:                    p.ID,
 		MentorID:              p.MentorID,
@@ -450,7 +469,8 @@ func (s *Service) toPlanResponse(p db.MentorshipPlan, slots []db.AvailabilitySlo
 		Category:              p.Category,
 		PricePaise:            p.PricePaise,
 		DurationMinutes:       p.DurationMinutes,
-		MinBookingNoticeHours: p.MinBookingNoticeHours,
+		MinBookingNoticeHours: minNotice,
+		MaxBookingAdvanceDays: maxAdvance,
 		Status:                p.Status,
 		RejectionReason:       p.RejectionReason,
 		CreatedAt:             p.CreatedAt,

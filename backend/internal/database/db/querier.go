@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
@@ -45,10 +44,10 @@ type Querier interface {
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (RefreshToken, error)
 	CreateReview(ctx context.Context, arg CreateReviewParams) (Review, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID pgtype.UUID) error
+	DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) error
 	DeleteExpiredOTPs(ctx context.Context) error
 	DeleteExpiredRefreshTokens(ctx context.Context) error
-	GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID pgtype.UUID) ([]AvailabilitySlot, error)
+	GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) ([]AvailabilitySlot, error)
 	GetBookingByID(ctx context.Context, id uuid.UUID) (Booking, error)
 	GetBookingsByMentorAndDate(ctx context.Context, arg GetBookingsByMentorAndDateParams) ([]Booking, error)
 	GetLatestOTP(ctx context.Context, arg GetLatestOTPParams) (OtpCode, error)
