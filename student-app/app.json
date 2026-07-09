@@ -2,7 +2,7 @@
   "expo": {
     "name": "TvaNetra",
     "slug": "tvanetra",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tvanetra",
@@ -41,6 +41,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "cac763fe-2cd0-49ed-b0e6-e5d133ba22af"
+      }
+    },
+    "owner": "ashparshp"
   }
 }
