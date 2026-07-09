@@ -13,13 +13,14 @@ import (
 
 type AvailabilitySlot struct {
 	ID           uuid.UUID   `json:"id"`
+	PlanID       uuid.UUID   `json:"plan_id"`
 	SlotType     string      `json:"slot_type"`
 	DayOfWeek    *int32      `json:"day_of_week"`
 	SpecificDate pgtype.Date `json:"specific_date"`
 	StartTime    pgtype.Time `json:"start_time"`
 	EndTime      pgtype.Time `json:"end_time"`
 	CreatedAt    time.Time   `json:"created_at"`
-	MentorID     uuid.UUID   `json:"mentor_id"`
+	MentorID     pgtype.UUID `json:"mentor_id"`
 }
 
 type Booking struct {
@@ -61,34 +62,35 @@ type MentorApplication struct {
 }
 
 type MentorProfile struct {
-	ID             uuid.UUID `json:"id"`
-	UserID         uuid.UUID `json:"user_id"`
-	Bio            *string   `json:"bio"`
-	Achievements   []string  `json:"achievements"`
-	Documents      []string  `json:"documents"`
-	GoogleMeetLink *string   `json:"google_meet_link"`
-	Phone          *string   `json:"phone"`
-	AvgRating      float64   `json:"avg_rating"`
-	TotalReviews   int32     `json:"total_reviews"`
-	TotalSessions  int32     `json:"total_sessions"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
+	ID                    uuid.UUID `json:"id"`
+	UserID                uuid.UUID `json:"user_id"`
+	Bio                   *string   `json:"bio"`
+	Achievements          []string  `json:"achievements"`
+	Documents             []string  `json:"documents"`
+	GoogleMeetLink        *string   `json:"google_meet_link"`
+	Phone                 *string   `json:"phone"`
+	AvgRating             float64   `json:"avg_rating"`
+	TotalReviews          int32     `json:"total_reviews"`
+	TotalSessions         int32     `json:"total_sessions"`
+	CreatedAt             time.Time `json:"created_at"`
+	UpdatedAt             time.Time `json:"updated_at"`
+	MinBookingNoticeHours int32     `json:"min_booking_notice_hours"`
+	MaxBookingAdvanceDays int32     `json:"max_booking_advance_days"`
 }
 
 type MentorshipPlan struct {
-	ID                    uuid.UUID   `json:"id"`
-	MentorID              uuid.UUID   `json:"mentor_id"`
-	Title                 string      `json:"title"`
-	Description           *string     `json:"description"`
-	Category              string      `json:"category"`
-	PricePaise            int32       `json:"price_paise"`
-	DurationMinutes       int32       `json:"duration_minutes"`
-	MinBookingNoticeHours int32       `json:"min_booking_notice_hours"`
-	Status                string      `json:"status"`
-	RejectionReason       *string     `json:"rejection_reason"`
-	ReviewedBy            pgtype.UUID `json:"reviewed_by"`
-	CreatedAt             time.Time   `json:"created_at"`
-	UpdatedAt             time.Time   `json:"updated_at"`
+	ID              uuid.UUID   `json:"id"`
+	MentorID        uuid.UUID   `json:"mentor_id"`
+	Title           string      `json:"title"`
+	Description     *string     `json:"description"`
+	Category        string      `json:"category"`
+	PricePaise      int32       `json:"price_paise"`
+	DurationMinutes int32       `json:"duration_minutes"`
+	Status          string      `json:"status"`
+	RejectionReason *string     `json:"rejection_reason"`
+	ReviewedBy      pgtype.UUID `json:"reviewed_by"`
+	CreatedAt       time.Time   `json:"created_at"`
+	UpdatedAt       time.Time   `json:"updated_at"`
 }
 
 type OtpCode struct {

@@ -59,11 +59,11 @@ const createAvailabilitySlot = `-- name: CreateAvailabilitySlot :one
 
 INSERT INTO availability_slots (mentor_id, slot_type, day_of_week, specific_date, start_time, end_time)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id
+RETURNING id, plan_id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id
 `
 
 type CreateAvailabilitySlotParams struct {
-	MentorID     uuid.UUID   `json:"mentor_id"`
+	MentorID     pgtype.UUID `json:"mentor_id"`
 	SlotType     string      `json:"slot_type"`
 	DayOfWeek    *int32      `json:"day_of_week"`
 	SpecificDate pgtype.Date `json:"specific_date"`
@@ -86,6 +86,7 @@ func (q *Queries) CreateAvailabilitySlot(ctx context.Context, arg CreateAvailabi
 	var i AvailabilitySlot
 	err := row.Scan(
 		&i.ID,
+		&i.PlanID,
 		&i.SlotType,
 		&i.DayOfWeek,
 		&i.SpecificDate,
@@ -98,19 +99,18 @@ func (q *Queries) CreateAvailabilitySlot(ctx context.Context, arg CreateAvailabi
 }
 
 const createMentorshipPlan = `-- name: CreateMentorshipPlan :one
-INSERT INTO mentorship_plans (mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours, status, rejection_reason, reviewed_by, created_at, updated_at
+INSERT INTO mentorship_plans (mentor_id, title, description, category, price_paise, duration_minutes)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, mentor_id, title, description, category, price_paise, duration_minutes, status, rejection_reason, reviewed_by, created_at, updated_at
 `
 
 type CreateMentorshipPlanParams struct {
-	MentorID              uuid.UUID `json:"mentor_id"`
-	Title                 string    `json:"title"`
-	Description           *string   `json:"description"`
-	Category              string    `json:"category"`
-	PricePaise            int32     `json:"price_paise"`
-	DurationMinutes       int32     `json:"duration_minutes"`
-	MinBookingNoticeHours int32     `json:"min_booking_notice_hours"`
+	MentorID        uuid.UUID `json:"mentor_id"`
+	Title           string    `json:"title"`
+	Description     *string   `json:"description"`
+	Category        string    `json:"category"`
+	PricePaise      int32     `json:"price_paise"`
+	DurationMinutes int32     `json:"duration_minutes"`
 }
 
 func (q *Queries) CreateMentorshipPlan(ctx context.Context, arg CreateMentorshipPlanParams) (MentorshipPlan, error) {
@@ -121,7 +121,6 @@ func (q *Queries) CreateMentorshipPlan(ctx context.Context, arg CreateMentorship
 		arg.Category,
 		arg.PricePaise,
 		arg.DurationMinutes,
-		arg.MinBookingNoticeHours,
 	)
 	var i MentorshipPlan
 	err := row.Scan(
@@ -132,7 +131,6 @@ func (q *Queries) CreateMentorshipPlan(ctx context.Context, arg CreateMentorship
 		&i.Category,
 		&i.PricePaise,
 		&i.DurationMinutes,
-		&i.MinBookingNoticeHours,
 		&i.Status,
 		&i.RejectionReason,
 		&i.ReviewedBy,
@@ -146,18 +144,18 @@ const deleteAvailabilitySlotsByMentorID = `-- name: DeleteAvailabilitySlotsByMen
 DELETE FROM availability_slots WHERE mentor_id = $1
 `
 
-func (q *Queries) DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) error {
+func (q *Queries) DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, deleteAvailabilitySlotsByMentorID, mentorID)
 	return err
 }
 
 const getAvailabilitySlotsByMentorID = `-- name: GetAvailabilitySlotsByMentorID :many
-SELECT id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id FROM availability_slots
+SELECT id, plan_id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id FROM availability_slots
 WHERE mentor_id = $1
 ORDER BY COALESCE(day_of_week, 7), specific_date, start_time
 `
 
-func (q *Queries) GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) ([]AvailabilitySlot, error) {
+func (q *Queries) GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID pgtype.UUID) ([]AvailabilitySlot, error) {
 	rows, err := q.db.Query(ctx, getAvailabilitySlotsByMentorID, mentorID)
 	if err != nil {
 		return nil, err
@@ -168,6 +166,7 @@ func (q *Queries) GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID u
 		var i AvailabilitySlot
 		if err := rows.Scan(
 			&i.ID,
+			&i.PlanID,
 			&i.SlotType,
 			&i.DayOfWeek,
 			&i.SpecificDate,
@@ -187,7 +186,7 @@ func (q *Queries) GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID u
 }
 
 const getMentorshipPlanByID = `-- name: GetMentorshipPlanByID :one
-SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans WHERE id = $1
+SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans WHERE id = $1
 `
 
 func (q *Queries) GetMentorshipPlanByID(ctx context.Context, id uuid.UUID) (MentorshipPlan, error) {
@@ -201,7 +200,6 @@ func (q *Queries) GetMentorshipPlanByID(ctx context.Context, id uuid.UUID) (Ment
 		&i.Category,
 		&i.PricePaise,
 		&i.DurationMinutes,
-		&i.MinBookingNoticeHours,
 		&i.Status,
 		&i.RejectionReason,
 		&i.ReviewedBy,
@@ -212,7 +210,7 @@ func (q *Queries) GetMentorshipPlanByID(ctx context.Context, id uuid.UUID) (Ment
 }
 
 const listApprovedPlans = `-- name: ListApprovedPlans :many
-SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans
+SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans
 WHERE status = 'approved'
 ORDER BY created_at DESC
 LIMIT $1 OFFSET $2
@@ -240,7 +238,6 @@ func (q *Queries) ListApprovedPlans(ctx context.Context, arg ListApprovedPlansPa
 			&i.Category,
 			&i.PricePaise,
 			&i.DurationMinutes,
-			&i.MinBookingNoticeHours,
 			&i.Status,
 			&i.RejectionReason,
 			&i.ReviewedBy,
@@ -258,7 +255,7 @@ func (q *Queries) ListApprovedPlans(ctx context.Context, arg ListApprovedPlansPa
 }
 
 const listApprovedPlansByCategory = `-- name: ListApprovedPlansByCategory :many
-SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans
+SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans
 WHERE status = 'approved' AND category = $1
 ORDER BY created_at DESC
 LIMIT $2 OFFSET $3
@@ -287,7 +284,6 @@ func (q *Queries) ListApprovedPlansByCategory(ctx context.Context, arg ListAppro
 			&i.Category,
 			&i.PricePaise,
 			&i.DurationMinutes,
-			&i.MinBookingNoticeHours,
 			&i.Status,
 			&i.RejectionReason,
 			&i.ReviewedBy,
@@ -305,7 +301,7 @@ func (q *Queries) ListApprovedPlansByCategory(ctx context.Context, arg ListAppro
 }
 
 const listMentorPlans = `-- name: ListMentorPlans :many
-SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans
+SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans
 WHERE mentor_id = $1
 ORDER BY created_at DESC
 `
@@ -327,7 +323,6 @@ func (q *Queries) ListMentorPlans(ctx context.Context, mentorID uuid.UUID) ([]Me
 			&i.Category,
 			&i.PricePaise,
 			&i.DurationMinutes,
-			&i.MinBookingNoticeHours,
 			&i.Status,
 			&i.RejectionReason,
 			&i.ReviewedBy,
@@ -346,7 +341,7 @@ func (q *Queries) ListMentorPlans(ctx context.Context, mentorID uuid.UUID) ([]Me
 
 const listPendingPlans = `-- name: ListPendingPlans :many
 SELECT
-    mp.id, mp.mentor_id, mp.title, mp.description, mp.category, mp.price_paise, mp.duration_minutes, mp.min_booking_notice_hours, mp.status, mp.rejection_reason, mp.reviewed_by, mp.created_at, mp.updated_at,
+    mp.id, mp.mentor_id, mp.title, mp.description, mp.category, mp.price_paise, mp.duration_minutes, mp.status, mp.rejection_reason, mp.reviewed_by, mp.created_at, mp.updated_at,
     u.name AS mentor_name, u.email AS mentor_email
 FROM mentorship_plans mp
 JOIN users u ON u.id = mp.mentor_id
@@ -361,21 +356,20 @@ type ListPendingPlansParams struct {
 }
 
 type ListPendingPlansRow struct {
-	ID                    uuid.UUID   `json:"id"`
-	MentorID              uuid.UUID   `json:"mentor_id"`
-	Title                 string      `json:"title"`
-	Description           *string     `json:"description"`
-	Category              string      `json:"category"`
-	PricePaise            int32       `json:"price_paise"`
-	DurationMinutes       int32       `json:"duration_minutes"`
-	MinBookingNoticeHours int32       `json:"min_booking_notice_hours"`
-	Status                string      `json:"status"`
-	RejectionReason       *string     `json:"rejection_reason"`
-	ReviewedBy            pgtype.UUID `json:"reviewed_by"`
-	CreatedAt             time.Time   `json:"created_at"`
-	UpdatedAt             time.Time   `json:"updated_at"`
-	MentorName            string      `json:"mentor_name"`
-	MentorEmail           string      `json:"mentor_email"`
+	ID              uuid.UUID   `json:"id"`
+	MentorID        uuid.UUID   `json:"mentor_id"`
+	Title           string      `json:"title"`
+	Description     *string     `json:"description"`
+	Category        string      `json:"category"`
+	PricePaise      int32       `json:"price_paise"`
+	DurationMinutes int32       `json:"duration_minutes"`
+	Status          string      `json:"status"`
+	RejectionReason *string     `json:"rejection_reason"`
+	ReviewedBy      pgtype.UUID `json:"reviewed_by"`
+	CreatedAt       time.Time   `json:"created_at"`
+	UpdatedAt       time.Time   `json:"updated_at"`
+	MentorName      string      `json:"mentor_name"`
+	MentorEmail     string      `json:"mentor_email"`
 }
 
 func (q *Queries) ListPendingPlans(ctx context.Context, arg ListPendingPlansParams) ([]ListPendingPlansRow, error) {
@@ -395,7 +389,6 @@ func (q *Queries) ListPendingPlans(ctx context.Context, arg ListPendingPlansPara
 			&i.Category,
 			&i.PricePaise,
 			&i.DurationMinutes,
-			&i.MinBookingNoticeHours,
 			&i.Status,
 			&i.RejectionReason,
 			&i.ReviewedBy,
@@ -417,20 +410,19 @@ func (q *Queries) ListPendingPlans(ctx context.Context, arg ListPendingPlansPara
 const updateMentorshipPlan = `-- name: UpdateMentorshipPlan :one
 UPDATE mentorship_plans
 SET title = $2, description = $3, category = $4, price_paise = $5,
-    duration_minutes = $6, min_booking_notice_hours = $7,
+    duration_minutes = $6,
     status = 'pending_review', rejection_reason = NULL, updated_at = NOW()
 WHERE id = $1
-RETURNING id, mentor_id, title, description, category, price_paise, duration_minutes, min_booking_notice_hours, status, rejection_reason, reviewed_by, created_at, updated_at
+RETURNING id, mentor_id, title, description, category, price_paise, duration_minutes, status, rejection_reason, reviewed_by, created_at, updated_at
 `
 
 type UpdateMentorshipPlanParams struct {
-	ID                    uuid.UUID `json:"id"`
-	Title                 string    `json:"title"`
-	Description           *string   `json:"description"`
-	Category              string    `json:"category"`
-	PricePaise            int32     `json:"price_paise"`
-	DurationMinutes       int32     `json:"duration_minutes"`
-	MinBookingNoticeHours int32     `json:"min_booking_notice_hours"`
+	ID              uuid.UUID `json:"id"`
+	Title           string    `json:"title"`
+	Description     *string   `json:"description"`
+	Category        string    `json:"category"`
+	PricePaise      int32     `json:"price_paise"`
+	DurationMinutes int32     `json:"duration_minutes"`
 }
 
 func (q *Queries) UpdateMentorshipPlan(ctx context.Context, arg UpdateMentorshipPlanParams) (MentorshipPlan, error) {
@@ -441,7 +433,6 @@ func (q *Queries) UpdateMentorshipPlan(ctx context.Context, arg UpdateMentorship
 		arg.Category,
 		arg.PricePaise,
 		arg.DurationMinutes,
-		arg.MinBookingNoticeHours,
 	)
 	var i MentorshipPlan
 	err := row.Scan(
@@ -452,7 +443,6 @@ func (q *Queries) UpdateMentorshipPlan(ctx context.Context, arg UpdateMentorship
 		&i.Category,
 		&i.PricePaise,
 		&i.DurationMinutes,
-		&i.MinBookingNoticeHours,
 		&i.Status,
 		&i.RejectionReason,
 		&i.ReviewedBy,

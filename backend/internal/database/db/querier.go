@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
@@ -44,10 +45,10 @@ type Querier interface {
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (RefreshToken, error)
 	CreateReview(ctx context.Context, arg CreateReviewParams) (Review, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) error
+	DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID pgtype.UUID) error
 	DeleteExpiredOTPs(ctx context.Context) error
 	DeleteExpiredRefreshTokens(ctx context.Context) error
-	GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) ([]AvailabilitySlot, error)
+	GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID pgtype.UUID) ([]AvailabilitySlot, error)
 	GetBookingByID(ctx context.Context, id uuid.UUID) (Booking, error)
 	GetBookingsByMentorAndDate(ctx context.Context, arg GetBookingsByMentorAndDateParams) ([]Booking, error)
 	GetLatestOTP(ctx context.Context, arg GetLatestOTPParams) (OtpCode, error)
@@ -90,6 +91,7 @@ type Querier interface {
 	SumCapturedPayments(ctx context.Context) (int64, error)
 	UpdateBookingStatus(ctx context.Context, arg UpdateBookingStatusParams) error
 	UpdateEmailVerified(ctx context.Context, id uuid.UUID) error
+	UpdateMentorAvailabilitySettings(ctx context.Context, arg UpdateMentorAvailabilitySettingsParams) (MentorProfile, error)
 	UpdateMentorProfile(ctx context.Context, arg UpdateMentorProfileParams) (MentorProfile, error)
 	UpdateMentorRating(ctx context.Context, arg UpdateMentorRatingParams) error
 	UpdateMentorshipPlan(ctx context.Context, arg UpdateMentorshipPlanParams) (MentorshipPlan, error)
