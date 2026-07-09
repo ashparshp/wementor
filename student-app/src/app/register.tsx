@@ -19,8 +19,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
-const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
-
 export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -67,11 +65,14 @@ export default function RegisterScreen() {
             showsVerticalScrollIndicator={false}
           >
             {/* Register Card */}
-            <AnimatedGradient 
-              colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
-              style={styles.card}
-              entering={FadeInDown.duration(800).springify()}
+            <Animated.View 
+              entering={FadeInDown.duration(800).springify()} 
+              style={{ width: '100%', alignItems: 'center' }}
             >
+              <LinearGradient 
+                colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
+                style={styles.card}
+              >
               {/* Logo Area */}
               <Image
                 source={require('@/assets/images/logo-hor-no-bg.png')}
@@ -182,7 +183,8 @@ export default function RegisterScreen() {
                 </View>
 
               </Animated.View>
-            </AnimatedGradient>
+              </LinearGradient>
+            </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>

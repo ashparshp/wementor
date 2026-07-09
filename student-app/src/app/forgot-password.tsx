@@ -19,8 +19,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
-const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
-
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -62,11 +60,14 @@ export default function ForgotPasswordScreen() {
             showsVerticalScrollIndicator={false}
           >
             {/* Forgot Password Card */}
-            <AnimatedGradient 
-              colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
-              style={styles.card}
-              entering={FadeInDown.duration(800).springify()}
+            <Animated.View 
+              entering={FadeInDown.duration(800).springify()} 
+              style={{ width: '100%', alignItems: 'center' }}
             >
+              <LinearGradient 
+                colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
+                style={styles.card}
+              >
               {/* Logo Area */}
               <Image
                 source={require('@/assets/images/logo-hor-no-bg.png')}
@@ -130,7 +131,8 @@ export default function ForgotPasswordScreen() {
                 </View>
 
               </Animated.View>
-            </AnimatedGradient>
+              </LinearGradient>
+            </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
