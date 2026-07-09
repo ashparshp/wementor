@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
 import { fetchApi } from "@/lib/api";
 import dynamic from "next/dynamic";
 import { Plus, Edit3, Trash2, CalendarDays, DollarSign, Clock, X } from "lucide-react";
-import "react-quill/dist/quill.snow.css";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 
 export default function PlansPage() {
   const { user } = useAuth();
@@ -26,6 +25,20 @@ export default function PlansPage() {
   const [durationMinutes, setDurationMinutes] = useState(60);
   const [minBookingNoticeHours, setMinBookingNoticeHours] = useState(24);
   const [formLoading, setFormLoading] = useState(false);
+
+  const editor = useRef(null);
+  const config = useMemo(() => ({
+    readonly: false,
+    placeholder: 'Start typing description...',
+    height: 300,
+    enableDragAndDropFileToEditor: true,
+    uploader: {
+      insertImageAsBase64URI: true
+    },
+    askBeforePasteHTML: false,
+    askBeforePasteFromWord: false,
+    defaultActionOnPaste: "insert_as_html",
+  }), []);
 
   useEffect(() => {
     if (user) {
@@ -232,12 +245,13 @@ export default function PlansPage() {
 
                   <div className="md:col-span-2">
                     <label className="text-sm font-bold text-gray-700 block mb-2">Description (Rich Text)</label>
-                    <div className="h-64 mb-12">
-                      <ReactQuill 
-                        theme="snow"
+                    <div className="mb-6">
+                      <JoditEditor 
+                        ref={editor}
                         value={description} 
-                        onChange={setDescription} 
-                        className="h-48"
+                        config={config}
+                        onBlur={newContent => setDescription(newContent)}
+                        onChange={() => {}} 
                       />
                     </div>
                   </div>
