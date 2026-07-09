@@ -21,11 +21,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.className} antialiased min-h-screen flex flex-col`}>
+      <body className={`${spaceGrotesk.className} antialiased min-h-screen flex flex-col relative`}>
+        {/* Universal Background */}
+        <div className="fixed inset-0 -z-50 bg-cover bg-center bg-no-repeat bg-[#FDF8F5]" style={{ backgroundImage: 'url(/hero-bg.png)' }}>
+          <div className="absolute inset-0 bg-white/60"></div>
+        </div>
+
         <Navbar />
 
         {/* Main Content */}
-        <main className="flex-grow flex flex-col">
+        <main className="flex-grow flex flex-col relative z-0">
           {children}
         </main>
       </body>
