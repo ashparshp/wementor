@@ -72,6 +72,7 @@ export default function RegisterScreen() {
               <Image
                 source={require('@/assets/images/logo-hor-no-bg.png')}
                 style={styles.logo}
+                resizeMode="contain"
               />
               
               <Text style={styles.tagline}>We wanna be your eyes</Text>
@@ -218,7 +219,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 240,
     height: 100,
-    resizeMode: 'contain',
     marginBottom: 0,
   },
   tagline: {
