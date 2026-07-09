@@ -60,7 +60,7 @@ export default function LoginScreen() {
           >
             {/* Login Card */}
             <LinearGradient 
-              colors={['rgba(255, 255, 255, 0.85)', 'rgba(255, 255, 255, 0.4)']}
+              colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
               style={styles.card}
             >
               {/* Logo Area */}
