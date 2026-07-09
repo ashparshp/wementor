@@ -1,1 +1,11 @@
 credentials.zoom
+node_modules/
+**/node_modules/
+.expo/
+**/.expo/
+.next/
+**/.next/
+dist/
+web-build/
+*.log
+.DS_Store
