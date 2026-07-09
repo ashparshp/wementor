@@ -218,9 +218,8 @@ export default function SessionDetailsPage() {
 
     try {
       const payload: any = {
-        mentor_id: plan.mentor_id,
         plan_id: plan.id,
-        session_date: date,
+        date: date,
         start_time: time,
       };
       if (coupon) payload.coupon_code = coupon;
