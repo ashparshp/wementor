@@ -60,7 +60,7 @@ export default function LoginScreen() {
           >
             {/* Login Card */}
             <LinearGradient 
-              colors={['rgba(255, 255, 255, 0.98)', 'rgba(235, 240, 245, 0.9)']}
+              colors={['rgba(255, 255, 255, 0.85)', 'rgba(255, 255, 255, 0.4)']}
               style={styles.card}
             >
               {/* Logo Area */}
@@ -180,7 +180,6 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 360,
-    backgroundColor: '#FFFFFF',
     borderRadius: 28,
     paddingHorizontal: 24,
     paddingVertical: 32,
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   logo: {
     width: 240,
