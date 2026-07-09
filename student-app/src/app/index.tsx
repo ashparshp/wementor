@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  ImageBackground,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -40,7 +41,11 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.background}>
+    <ImageBackground
+      source={require('@/assets/images/bg-img.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <StatusBar style="dark" />
 
       <SafeAreaView style={styles.safeArea}>
@@ -146,7 +151,7 @@ export default function LoginScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -155,7 +160,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    backgroundColor: '#F3F4F6',
   },
   safeArea: {
     flex: 1,
@@ -195,7 +199,7 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceGrotesk_500Medium',
     fontSize: 13,
     fontWeight: '500',
-    color: '#F29440', // Theme orange
+    color: '#6B7280', // Elegant sophisticated grey
     letterSpacing: 1,
     marginTop: -8, // Pulls it up closer to the logo
     marginBottom: 28,
