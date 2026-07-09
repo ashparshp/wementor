@@ -260,6 +260,7 @@ func (s *Service) GetMyAvailability(ctx context.Context, mentorID uuid.UUID) (*M
 		MaxBookingAdvanceDays: profile.MaxBookingAdvanceDays,
 		Slots:                 result,
 	}, nil
+}
 
 // GetAvailableTimeSlots calculates the exact bookable time chunks for a given date, subtracting existing bookings.
 func (s *Service) GetAvailableTimeSlots(ctx context.Context, planID uuid.UUID, targetDateStr string) ([]string, error) {
