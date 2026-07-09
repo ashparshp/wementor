@@ -120,14 +120,44 @@ func (s *Service) ResendOTP(ctx context.Context, req ResendOTPRequest) error {
 	return s.sendOTP(ctx, req.Email, req.Purpose)
 }
 
-// ForgotPassword sends a password reset OTP.
+// ForgotPassword generates and sends a new password directly to the user.
 func (s *Service) ForgotPassword(ctx context.Context, req ForgotPasswordRequest) error {
 	// Always return success to prevent email enumeration
-	if _, err := s.queries.GetUserByEmail(ctx, req.Email); err != nil {
+	user, err := s.queries.GetUserByEmail(ctx, req.Email)
+	if err != nil {
 		return nil
 	}
 
-	return s.sendOTP(ctx, req.Email, "password_reset")
+	newPassword, err := GenerateRandomPassword()
+	if err != nil {
+		s.logger.Error("failed to generate random password", zap.Error(err))
+		return nil
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
+	if err != nil {
+		s.logger.Error("failed to hash new password", zap.Error(err))
+		return nil
+	}
+
+	if err := s.queries.UpdatePassword(ctx, db.UpdatePasswordParams{
+		PasswordHash: string(hash),
+		ID:           user.ID,
+	}); err != nil {
+		s.logger.Error("failed to update password in db", zap.Error(err))
+		return nil
+	}
+
+	// Revoke all existing refresh tokens
+	_ = s.queries.RevokeAllUserRefreshTokens(ctx, user.ID)
+
+	go func() {
+		if err := s.emailClient.SendNewPassword(user.Email, newPassword); err != nil {
+			s.logger.Error("failed to send new password email", zap.String("email", user.Email), zap.Error(err))
+		}
+	}()
+
+	return nil
 }
 
 // ResetPassword verifies the OTP and updates the user's password.
