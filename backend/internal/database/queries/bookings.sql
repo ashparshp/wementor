@@ -13,10 +13,12 @@ SELECT * FROM bookings WHERE id = $1;
 SELECT
     b.*,
     mp.title AS plan_title,
-    u.name AS mentor_name
+    u.name AS mentor_name,
+    p.status AS payment_status
 FROM bookings b
 JOIN mentorship_plans mp ON mp.id = b.plan_id
 JOIN users u ON u.id = b.mentor_id
+LEFT JOIN payments p ON p.booking_id = b.id
 WHERE b.student_id = $1
 ORDER BY b.session_date DESC, b.start_time DESC
 LIMIT $2 OFFSET $3;

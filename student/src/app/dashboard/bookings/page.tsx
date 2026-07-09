@@ -87,12 +87,12 @@ export default function MyBookings() {
                   </span>
                   <div className="text-[#6B7280] text-sm flex items-center gap-1">
                     <Clock size={14} />
-                    {new Date(booking.start_time).toLocaleDateString()}
+                    {new Date(booking.session_date).toLocaleDateString()} at {booking.start_time.substring(0, 5)}
                   </div>
                 </div>
                 
                 <h3 className="text-lg font-bold text-gray-900 mb-1">
-                  Session with Mentor
+                  {booking.plan_title} with {booking.mentor_name}
                 </h3>
                 <p className="text-[#6B7280] text-sm mb-4">
                   Topic/Notes: {booking.notes || 'General discussion'}
@@ -101,10 +101,10 @@ export default function MyBookings() {
               
               <div className="pt-4 border-t border-[#EADBCB] flex justify-between items-center">
                 <span className="font-semibold text-gray-900">
-                  {booking.payment_status === 'paid' ? 'Paid' : 'Pending Payment'}
+                  {booking.status === 'confirmed' ? 'Paid & Confirmed' : 'Pending Payment'}
                 </span>
-                {booking.meeting_link && (
-                  <a href={booking.meeting_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-[#EA8A2F] hover:text-[#D97706] transition-colors">
+                {booking.google_meet_link && (
+                  <a href={booking.google_meet_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-[#EA8A2F] hover:text-[#D97706] transition-colors">
                     <Video size={16} />
                     Join Meeting
                   </a>
