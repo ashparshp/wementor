@@ -1,16 +1,18 @@
 {
   "expo": {
-    "name": "student-app",
-    "slug": "student-app",
+    "name": "TvaNetra",
+    "slug": "tvanetra",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "studentapp",
+    "scheme": "tvanetra",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.tvanetra.student",
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "com.tvanetra.student",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
