@@ -63,6 +63,8 @@ export default function SessionDetailsPage() {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [mentor, setMentor] = useState<Mentor | null>(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  
   
   // Booking state
   const [date, setDate] = useState<string>("");
@@ -175,6 +177,14 @@ export default function SessionDetailsPage() {
   };
 
   useEffect(() => {
+    // Load user from local storage
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        setUser(JSON.parse(userStr));
+      } catch (e) {}
+    }
+
     // Fetch plan details
     fetchApi<Plan>(`/plans/${id}`)
       .then(p => {
@@ -206,6 +216,20 @@ export default function SessionDetailsPage() {
     }
   }, [date, plan]);
 
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      if ((window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handleBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!plan || !date || !time) {
@@ -224,15 +248,72 @@ export default function SessionDetailsPage() {
       };
       if (coupon) payload.coupon_code = coupon;
 
-      await fetchApi("/bookings", {
+      const data = await fetchApi<any>("/bookings", {
         method: "POST",
         body: JSON.stringify(payload),
       });
 
-      setBookingSuccess(true);
+      if (data && data.razorpay_order_id) {
+        // Needs payment
+        const res = await loadRazorpay();
+        if (!res) {
+          setError("Razorpay SDK failed to load. Are you online?");
+          setBookingLoading(false);
+          return;
+        }
+
+        const options = {
+          key: data.razorpay_key_id,
+          amount: data.amount_paise,
+          currency: data.currency,
+          name: "WeMentor",
+          description: `Booking for ${plan.title}`,
+          order_id: data.razorpay_order_id,
+          handler: async function (response: any) {
+            try {
+              await fetchApi("/payments/verify", {
+                method: "POST",
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              });
+              setBookingSuccess(true);
+              setBookingLoading(false);
+            } catch (err: any) {
+              setError("Payment verification failed: " + err.message);
+              setBookingLoading(false);
+            }
+          },
+          prefill: {
+            name: user?.name || "Student",
+            email: user?.email || "student@example.com",
+          },
+          theme: {
+            color: "#F29440",
+          },
+          modal: {
+            ondismiss: function () {
+              setError("Payment cancelled.");
+              setBookingLoading(false);
+            }
+          }
+        };
+
+        const paymentObject = new (window as any).Razorpay(options);
+        paymentObject.on("payment.failed", function (response: any) {
+          setError("Payment failed: " + response.error.description);
+          setBookingLoading(false);
+        });
+        paymentObject.open();
+      } else {
+        // Free plan or 100% coupon used
+        setBookingSuccess(true);
+        setBookingLoading(false);
+      }
     } catch (err: any) {
       setError(err.message || "Failed to create booking. Please ensure you are logged in.");
-    } finally {
       setBookingLoading(false);
     }
   };

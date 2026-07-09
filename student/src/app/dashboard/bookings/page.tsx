@@ -20,9 +20,9 @@ export default function MyBookings() {
 
     const loadBookings = async () => {
       try {
-        const data = await fetchApi<{ bookings: any[] }>("/bookings/me");
-        if (data && data.bookings) {
-          setBookings(data.bookings);
+        const data = await fetchApi<{ data: any[] }>("/bookings/me");
+        if (data && data.data) {
+          setBookings(data.data);
         }
       } catch (error) {
         console.error("Failed to load bookings:", error);
