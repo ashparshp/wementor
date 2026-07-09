@@ -199,10 +199,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Doto_500Medium',
     fontSize: 14, // Slightly increased since Doto is highly stylistic and can be small
     fontWeight: '500',
-    color: '#6B7280', // Elegant sophisticated grey
+    color: '#F29440', // Vibrant brand orange to make the dots pop
     letterSpacing: 2, // Added more spacing since Doto is a dotted matrix font
-    marginTop: -8, // Pulls it up closer to the logo
-    marginBottom: 28,
+    marginTop: -16, // Pulled up even tighter to the logo
+    marginBottom: 32, // Compensating for the top margin
     textAlign: 'center',
   },
   form: {
