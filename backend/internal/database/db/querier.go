@@ -44,10 +44,10 @@ type Querier interface {
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (RefreshToken, error)
 	CreateReview(ctx context.Context, arg CreateReviewParams) (Review, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	DeleteAvailabilitySlotsByPlanID(ctx context.Context, planID uuid.UUID) error
+	DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) error
 	DeleteExpiredOTPs(ctx context.Context) error
 	DeleteExpiredRefreshTokens(ctx context.Context) error
-	GetAvailabilitySlotsByPlanID(ctx context.Context, planID uuid.UUID) ([]AvailabilitySlot, error)
+	GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) ([]AvailabilitySlot, error)
 	GetBookingByID(ctx context.Context, id uuid.UUID) (Booking, error)
 	GetBookingsByMentorAndDate(ctx context.Context, arg GetBookingsByMentorAndDateParams) ([]Booking, error)
 	GetLatestOTP(ctx context.Context, arg GetLatestOTPParams) (OtpCode, error)

@@ -13,13 +13,13 @@ import (
 
 type AvailabilitySlot struct {
 	ID           uuid.UUID   `json:"id"`
-	PlanID       uuid.UUID   `json:"plan_id"`
 	SlotType     string      `json:"slot_type"`
 	DayOfWeek    *int32      `json:"day_of_week"`
 	SpecificDate pgtype.Date `json:"specific_date"`
 	StartTime    pgtype.Time `json:"start_time"`
 	EndTime      pgtype.Time `json:"end_time"`
 	CreatedAt    time.Time   `json:"created_at"`
+	MentorID     uuid.UUID   `json:"mentor_id"`
 }
 
 type Booking struct {

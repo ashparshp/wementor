@@ -42,6 +42,7 @@ export default function DashboardLayout({
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDays },
+    { name: "My Sessions", href: "/dashboard/plans", icon: CalendarDays },
     { name: "Payments", href: "/dashboard/payments", icon: CreditCard },
     { name: "Coupons", href: "/dashboard/coupons", icon: Ticket },
     { name: "Users", href: "/dashboard/users", icon: Users },

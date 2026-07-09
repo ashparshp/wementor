@@ -137,15 +137,9 @@ func (h *Handler) ListMyPlans(w http.ResponseWriter, r *http.Request) {
 	response.OK(w, plans)
 }
 
-// SetAvailability PUT /api/v1/plans/:id/availability (mentor owner)
+// SetAvailability PUT /api/v1/plans/availability (mentor owner)
 func (h *Handler) SetAvailability(w http.ResponseWriter, r *http.Request) {
 	mentorID := middleware.UserIDFromContext(r.Context())
-
-	id, err := uuid.Parse(chi.URLParam(r, "id"))
-	if err != nil {
-		response.Error(w, http.StatusBadRequest, "invalid plan ID")
-		return
-	}
 
 	var req SetAvailabilityRequest
 	if err := request.Decode(r, &req); err != nil {
@@ -157,7 +151,7 @@ func (h *Handler) SetAvailability(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slots, err := h.service.SetAvailability(r.Context(), id, mentorID, req)
+	slots, err := h.service.SetAvailability(r.Context(), mentorID, req)
 	if err != nil {
 		response.Error(w, http.StatusBadRequest, err.Error())
 		return
@@ -181,6 +175,19 @@ func (h *Handler) GetAvailability(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.OK(w, plan.Availability)
+}
+
+// GetMyAvailability GET /api/v1/plans/availability (mentor)
+func (h *Handler) GetMyAvailability(w http.ResponseWriter, r *http.Request) {
+	mentorID := middleware.UserIDFromContext(r.Context())
+
+	slots, err := h.service.GetMyAvailability(r.Context(), mentorID)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.OK(w, slots)
 }
 
 // GetAvailableTimeSlots GET /api/v1/plans/:id/slots?date=YYYY-MM-DD

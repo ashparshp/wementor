@@ -57,13 +57,13 @@ func (q *Queries) CountPendingPlans(ctx context.Context) (int64, error) {
 
 const createAvailabilitySlot = `-- name: CreateAvailabilitySlot :one
 
-INSERT INTO availability_slots (plan_id, slot_type, day_of_week, specific_date, start_time, end_time)
+INSERT INTO availability_slots (mentor_id, slot_type, day_of_week, specific_date, start_time, end_time)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, plan_id, slot_type, day_of_week, specific_date, start_time, end_time, created_at
+RETURNING id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id
 `
 
 type CreateAvailabilitySlotParams struct {
-	PlanID       uuid.UUID   `json:"plan_id"`
+	MentorID     uuid.UUID   `json:"mentor_id"`
 	SlotType     string      `json:"slot_type"`
 	DayOfWeek    *int32      `json:"day_of_week"`
 	SpecificDate pgtype.Date `json:"specific_date"`
@@ -76,7 +76,7 @@ type CreateAvailabilitySlotParams struct {
 // ─────────────────────────────────────────────
 func (q *Queries) CreateAvailabilitySlot(ctx context.Context, arg CreateAvailabilitySlotParams) (AvailabilitySlot, error) {
 	row := q.db.QueryRow(ctx, createAvailabilitySlot,
-		arg.PlanID,
+		arg.MentorID,
 		arg.SlotType,
 		arg.DayOfWeek,
 		arg.SpecificDate,
@@ -86,13 +86,13 @@ func (q *Queries) CreateAvailabilitySlot(ctx context.Context, arg CreateAvailabi
 	var i AvailabilitySlot
 	err := row.Scan(
 		&i.ID,
-		&i.PlanID,
 		&i.SlotType,
 		&i.DayOfWeek,
 		&i.SpecificDate,
 		&i.StartTime,
 		&i.EndTime,
 		&i.CreatedAt,
+		&i.MentorID,
 	)
 	return i, err
 }
@@ -142,23 +142,23 @@ func (q *Queries) CreateMentorshipPlan(ctx context.Context, arg CreateMentorship
 	return i, err
 }
 
-const deleteAvailabilitySlotsByPlanID = `-- name: DeleteAvailabilitySlotsByPlanID :exec
-DELETE FROM availability_slots WHERE plan_id = $1
+const deleteAvailabilitySlotsByMentorID = `-- name: DeleteAvailabilitySlotsByMentorID :exec
+DELETE FROM availability_slots WHERE mentor_id = $1
 `
 
-func (q *Queries) DeleteAvailabilitySlotsByPlanID(ctx context.Context, planID uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteAvailabilitySlotsByPlanID, planID)
+func (q *Queries) DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteAvailabilitySlotsByMentorID, mentorID)
 	return err
 }
 
-const getAvailabilitySlotsByPlanID = `-- name: GetAvailabilitySlotsByPlanID :many
-SELECT id, plan_id, slot_type, day_of_week, specific_date, start_time, end_time, created_at FROM availability_slots
-WHERE plan_id = $1
+const getAvailabilitySlotsByMentorID = `-- name: GetAvailabilitySlotsByMentorID :many
+SELECT id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id FROM availability_slots
+WHERE mentor_id = $1
 ORDER BY COALESCE(day_of_week, 7), specific_date, start_time
 `
 
-func (q *Queries) GetAvailabilitySlotsByPlanID(ctx context.Context, planID uuid.UUID) ([]AvailabilitySlot, error) {
-	rows, err := q.db.Query(ctx, getAvailabilitySlotsByPlanID, planID)
+func (q *Queries) GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID uuid.UUID) ([]AvailabilitySlot, error) {
+	rows, err := q.db.Query(ctx, getAvailabilitySlotsByMentorID, mentorID)
 	if err != nil {
 		return nil, err
 	}
@@ -168,13 +168,13 @@ func (q *Queries) GetAvailabilitySlotsByPlanID(ctx context.Context, planID uuid.
 		var i AvailabilitySlot
 		if err := rows.Scan(
 			&i.ID,
-			&i.PlanID,
 			&i.SlotType,
 			&i.DayOfWeek,
 			&i.SpecificDate,
 			&i.StartTime,
 			&i.EndTime,
 			&i.CreatedAt,
+			&i.MentorID,
 		); err != nil {
 			return nil, err
 		}

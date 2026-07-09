@@ -51,7 +51,7 @@ func (s *Service) GetByID(ctx context.Context, planID uuid.UUID) (*PlanResponse,
 		return nil, fmt.Errorf("plan not found")
 	}
 
-	slots, _ := s.queries.GetAvailabilitySlotsByPlanID(ctx, planID)
+	slots, _ := s.queries.GetAvailabilitySlotsByMentorID(ctx, plan.MentorID)
 	return s.toPlanResponse(plan, slots), nil
 }
 
@@ -99,7 +99,7 @@ func (s *Service) ListMentorPlans(ctx context.Context, mentorID uuid.UUID) ([]Pl
 
 	result := make([]PlanResponse, len(plans))
 	for i, p := range plans {
-		slots, _ := s.queries.GetAvailabilitySlotsByPlanID(ctx, p.ID)
+		slots, _ := s.queries.GetAvailabilitySlotsByMentorID(ctx, p.MentorID)
 		result[i] = *s.toPlanResponse(p, slots)
 	}
 
@@ -131,7 +131,7 @@ func (s *Service) Update(ctx context.Context, planID, mentorID uuid.UUID, req Up
 		return nil, fmt.Errorf("failed to update plan: %w", err)
 	}
 
-	slots, _ := s.queries.GetAvailabilitySlotsByPlanID(ctx, planID)
+	slots, _ := s.queries.GetAvailabilitySlotsByMentorID(ctx, existing.MentorID)
 	return s.toPlanResponse(plan, slots), nil
 }
 
@@ -149,24 +149,15 @@ func (s *Service) Archive(ctx context.Context, planID, mentorID uuid.UUID) error
 	return s.queries.ArchivePlan(ctx, planID)
 }
 
-// SetAvailability replaces all availability slots for a plan.
-func (s *Service) SetAvailability(ctx context.Context, planID, mentorID uuid.UUID, req SetAvailabilityRequest) ([]AvailabilitySlot, error) {
-	existing, err := s.queries.GetMentorshipPlanByID(ctx, planID)
-	if err != nil {
-		return nil, fmt.Errorf("plan not found")
-	}
-
-	if existing.MentorID != mentorID {
-		return nil, fmt.Errorf("you do not own this plan")
-	}
-
+// SetAvailability replaces all availability slots for a mentor.
+func (s *Service) SetAvailability(ctx context.Context, mentorID uuid.UUID, req SetAvailabilityRequest) ([]AvailabilitySlot, error) {
 	// Delete existing slots and replace
-	_ = s.queries.DeleteAvailabilitySlotsByPlanID(ctx, planID)
+	_ = s.queries.DeleteAvailabilitySlotsByMentorID(ctx, mentorID)
 
 	result := make([]AvailabilitySlot, 0, len(req.Slots))
 	for _, slotReq := range req.Slots {
 		params := db.CreateAvailabilitySlotParams{
-			PlanID:   planID,
+			MentorID: mentorID,
 			SlotType: slotReq.SlotType,
 		}
 
@@ -184,7 +175,6 @@ func (s *Service) SetAvailability(ctx context.Context, planID, mentorID uuid.UUI
 			}
 		}
 
-		// Parse start_time HH:MM
 		if st, err := time.Parse("15:04", slotReq.StartTime); err == nil {
 			params.StartTime = pgtype.Time{
 				Microseconds: int64(st.Hour()*3600+st.Minute()*60) * 1_000_000,
@@ -192,7 +182,6 @@ func (s *Service) SetAvailability(ctx context.Context, planID, mentorID uuid.UUI
 			}
 		}
 
-		// Parse end_time HH:MM
 		if et, err := time.Parse("15:04", slotReq.EndTime); err == nil {
 			params.EndTime = pgtype.Time{
 				Microseconds: int64(et.Hour()*3600+et.Minute()*60) * 1_000_000,
@@ -243,7 +232,7 @@ func (s *Service) GetAvailableTimeSlots(ctx context.Context, planID uuid.UUID, t
 	}
 
 	// 1. Get raw availability slots
-	slots, err := s.queries.GetAvailabilitySlotsByPlanID(ctx, planID)
+	slots, err := s.queries.GetAvailabilitySlotsByMentorID(ctx, plan.MentorID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get availability slots: %w", err)
 	}

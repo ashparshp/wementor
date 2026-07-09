@@ -63,14 +63,14 @@ SELECT COUNT(*) FROM mentorship_plans WHERE status = 'pending_review';
 -- ─────────────────────────────────────────────
 
 -- name: CreateAvailabilitySlot :one
-INSERT INTO availability_slots (plan_id, slot_type, day_of_week, specific_date, start_time, end_time)
+INSERT INTO availability_slots (mentor_id, slot_type, day_of_week, specific_date, start_time, end_time)
 VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
--- name: DeleteAvailabilitySlotsByPlanID :exec
-DELETE FROM availability_slots WHERE plan_id = $1;
+-- name: DeleteAvailabilitySlotsByMentorID :exec
+DELETE FROM availability_slots WHERE mentor_id = $1;
 
--- name: GetAvailabilitySlotsByPlanID :many
+-- name: GetAvailabilitySlotsByMentorID :many
 SELECT * FROM availability_slots
-WHERE plan_id = $1
+WHERE mentor_id = $1
 ORDER BY COALESCE(day_of_week, 7), specific_date, start_time;

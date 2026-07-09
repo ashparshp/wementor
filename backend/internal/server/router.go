@@ -151,7 +151,8 @@ func SetupRouter(
 				r.Get("/me", planHandler.ListMyPlans)
 				r.Put("/{id}", planHandler.Update)
 				r.Delete("/{id}", planHandler.Delete)
-				r.Put("/{id}/availability", planHandler.SetAvailability)
+				r.Put("/availability", planHandler.SetAvailability)
+				r.Get("/availability", planHandler.GetMyAvailability)
 			})
 		})
 
