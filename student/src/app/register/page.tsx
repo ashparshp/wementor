@@ -68,7 +68,7 @@ export default function Register() {
         <div className="absolute inset-0 bg-white/20"></div>
       </div>
 
-      <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
+      <div className="max-w-md w-full space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
         <div>
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
             Create an account
