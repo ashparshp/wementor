@@ -3,8 +3,33 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/api";
-import { Calendar, Clock, Star, ShieldCheck, Tag, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, Star, ShieldCheck, Tag, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import {
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  isBefore,
+  addDays,
+  addHours,
+  addMonths,
+  subMonths,
+  format,
+  getDay
+} from "date-fns";
+
+interface AvailabilitySlot {
+  id: string;
+  slot_type: "recurring" | "fixed";
+  day_of_week?: number;
+  specific_date?: string;
+  start_time: string;
+  end_time: string;
+}
 
 interface Plan {
   id: string;
@@ -14,6 +39,8 @@ interface Plan {
   category: string;
   price_paise: number;
   duration_minutes: number;
+  min_booking_notice_hours: number;
+  availability: AvailabilitySlot[];
 }
 
 interface Mentor {

@@ -1,6 +1,6 @@
 INSERT INTO users (id, name, email, password_hash, role, email_verified, avatar_url) VALUES 
-('11111111-1111-1111-1111-111111111111', 'Dr. Alice Smith', 'alice.mentor@example.com', 'dummyhash', 'mentor', true, 'https://i.pravatar.cc/150?u=alice'),
-('22222222-2222-2222-2222-222222222222', 'Bob Johnson', 'bob.mentor@example.com', 'dummyhash', 'mentor', true, 'https://i.pravatar.cc/150?u=bob')
+('11111111-1111-1111-1111-111111111111', 'Dr. Alice Smith', 'alice.mentor@example.com', '$2a$12$9omek66XlzxpD20mha/CWOuDTgfaStbajAcS/Bpc.SxUGq7fMPezS', 'mentor', true, 'https://i.pravatar.cc/150?u=alice'),
+('22222222-2222-2222-2222-222222222222', 'Bob Johnson', 'bob.mentor@example.com', '$2a$12$9omek66XlzxpD20mha/CWOuDTgfaStbajAcS/Bpc.SxUGq7fMPezS', 'mentor', true, 'https://i.pravatar.cc/150?u=bob')
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO mentor_profiles (user_id, bio, achievements, avg_rating, total_reviews, total_sessions) VALUES
