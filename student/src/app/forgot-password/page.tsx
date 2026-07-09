@@ -33,10 +33,13 @@ export default function ForgotPassword() {
   if (success) {
     return (
       <div className="flex-grow flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Decorative bg */}
-        <div className="absolute inset-0 bg-[#F29440]/5 blur-3xl -z-10 rounded-full w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+        {/* Background Image */}
+        <div className="absolute inset-0 -z-20">
+          <img src="/images/bg-v2.png" alt="Background" className="object-cover object-left w-full h-full" />
+          <div className="absolute inset-0 bg-white/20"></div>
+        </div>
 
-        <div className="max-w-md w-full text-center space-y-6 bg-white p-10 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
+        <div className="max-w-md w-full text-center space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-10 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
           <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 text-emerald-600">
             <Mail className="h-10 w-10" />
           </div>
@@ -59,10 +62,13 @@ export default function ForgotPassword() {
 
   return (
     <div className="flex-grow flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Decorative bg */}
-      <div className="absolute inset-0 bg-[#F29440]/5 blur-3xl -z-10 rounded-full w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+      {/* Background Image */}
+      <div className="absolute inset-0 -z-20">
+        <img src="/images/bg-v2.png" alt="Background" className="object-cover object-left w-full h-full" />
+        <div className="absolute inset-0 bg-white/20"></div>
+      </div>
 
-      <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
+      <div className="max-w-md w-full space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
         <div>
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
             Reset your password
