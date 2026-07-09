@@ -19,7 +19,9 @@ import {
   addMonths,
   subMonths,
   format,
-  getDay
+  getDay,
+  startOfDay,
+  parseISO
 } from "date-fns";
 
 interface AvailabilitySlot {
@@ -67,9 +69,106 @@ export default function SessionDetailsPage() {
   const [coupon, setCoupon] = useState("");
   const [fetchingTimes, setFetchingTimes] = useState(false);
   
+  // Calendar state
+  const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
+
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isDateBookable = (dateToCheck: Date) => {
+    if (!plan) return false;
+    
+    const now = new Date();
+    const minNoticeDate = addHours(now, plan.min_booking_notice_hours || 0);
+    const maxBookingDate = addDays(now, 60); // 60 days advance max
+
+    if (isBefore(dateToCheck, startOfDay(minNoticeDate))) return false;
+    if (isAfter(dateToCheck, maxBookingDate)) return false;
+
+    const dayOfWeek = getDay(dateToCheck);
+    const dateString = format(dateToCheck, "yyyy-MM-dd");
+
+    return plan.availability?.some(slot => {
+      if (slot.slot_type === "recurring" && slot.day_of_week === dayOfWeek) {
+        return true;
+      }
+      if (slot.slot_type === "fixed" && slot.specific_date && slot.specific_date.startsWith(dateString)) {
+        return true;
+      }
+      return false;
+    }) || false;
+  };
+
+  const renderCalendar = () => {
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(monthStart);
+    const startDate = startOfWeek(monthStart);
+    const endDate = endOfWeek(monthEnd);
+
+    const days = [];
+    let day = startDate;
+
+    while (day <= endDate) {
+      const cloneDay = day;
+      const bookable = isDateBookable(cloneDay);
+      const isSelected = date === format(cloneDay, "yyyy-MM-dd");
+      const isCurrentMonth = isSameMonth(cloneDay, monthStart);
+
+      days.push(
+        <button
+          key={cloneDay.toString()}
+          type="button"
+          disabled={!bookable || !isCurrentMonth}
+          onClick={() => {
+            setDate(format(cloneDay, "yyyy-MM-dd"));
+            setTime("");
+          }}
+          className={`h-10 w-full flex items-center justify-center rounded-xl text-sm font-medium transition-colors
+            ${!isCurrentMonth ? "text-transparent" : ""}
+            ${isSelected ? "bg-[#F29440] text-white shadow-md" : ""}
+            ${!isSelected && bookable && isCurrentMonth ? "bg-white text-gray-900 hover:bg-[#FDF1E9] hover:text-[#F29440] border border-gray-100" : ""}
+            ${!isSelected && !bookable && isCurrentMonth ? "text-gray-300 cursor-not-allowed" : ""}
+          `}
+        >
+          {isCurrentMonth ? format(cloneDay, "d") : ""}
+        </button>
+      );
+      day = addDays(day, 1);
+    }
+
+    return (
+      <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4">
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            type="button"
+            onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+            className="p-1.5 hover:bg-white rounded-lg transition-colors text-gray-600 border border-transparent hover:border-gray-200"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="font-bold text-gray-900">
+            {format(currentMonth, "MMMM yyyy")}
+          </span>
+          <button 
+            type="button"
+            onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+            className="p-1.5 hover:bg-white rounded-lg transition-colors text-gray-600 border border-transparent hover:border-gray-200"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-1 mb-2 text-center">
+          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+            <div key={d} className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{d}</div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1">
+          {days}
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     // Fetch plan details
@@ -251,17 +350,10 @@ export default function SessionDetailsPage() {
             <form onSubmit={handleBooking} className="space-y-6">
               
               <div className="space-y-3">
-                <label className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <label className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-2">
                   <Calendar className="w-4 h-4 text-[#F29440]" /> Select Date
                 </label>
-                <input 
-                  type="date" 
-                  required
-                  min={new Date().toISOString().split('T')[0]} // prevent past dates
-                  value={date}
-                  onChange={e => setDate(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#F29440] transition-all" 
-                />
+                {renderCalendar()}
               </div>
 
               <div className="space-y-3">

@@ -79,9 +79,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const refreshToken = data.refresh_token;
     const userData = data.user as User;
 
-    // Only allow admin role
-    if (userData.role !== "admin") {
-      throw new Error("Access denied. Admin privileges required.");
+    // Only allow admin and mentor roles
+    if (userData.role !== "admin" && userData.role !== "mentor") {
+      throw new Error("Access denied. Admin or Mentor privileges required.");
     }
 
     localStorage.setItem("access_token", accessToken);
