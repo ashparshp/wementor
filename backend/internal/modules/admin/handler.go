@@ -104,7 +104,7 @@ func (h *Handler) GenerateCoupon(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 

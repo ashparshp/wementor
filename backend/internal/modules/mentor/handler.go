@@ -31,7 +31,7 @@ func (h *Handler) Apply(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -172,7 +172,7 @@ func (h *Handler) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 

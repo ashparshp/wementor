@@ -29,7 +29,7 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -50,7 +50,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -71,7 +71,7 @@ func (h *Handler) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -91,7 +91,7 @@ func (h *Handler) ResendOTP(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -111,7 +111,7 @@ func (h *Handler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -129,7 +129,7 @@ func (h *Handler) ResetPassword(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -145,7 +145,7 @@ func (h *Handler) ResetPassword(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	var req RefreshTokenRequest
 	if err := request.Decode(r, &req); err != nil {
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -162,7 +162,7 @@ func (h *Handler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	var req RefreshTokenRequest
 	if err := request.Decode(r, &req); err != nil {
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -178,7 +178,7 @@ func (h *Handler) MentorRegister(w http.ResponseWriter, r *http.Request) {
 			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
 			return
 		}
-		response.Error(w, http.StatusBadRequest, "invalid request body")
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
