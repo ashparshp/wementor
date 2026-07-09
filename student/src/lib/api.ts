@@ -7,7 +7,7 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost
 export async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  let token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -18,23 +18,57 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(url, {
+  let response = await fetch(url, {
     ...options,
     headers,
   });
 
-  if (response.status === 401) {
-    // Token expired or invalid — clear auth and redirect to login
-    if (typeof window !== "undefined") {
+  if (response.status === 401 && typeof window !== "undefined") {
+    const refreshToken = localStorage.getItem("refresh_token");
+    if (refreshToken && !endpoint.includes("/auth/refresh")) {
+      try {
+        const refreshRes = await fetch(`${API_BASE_URL}/auth/refresh`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: refreshToken })
+        });
+        
+        if (refreshRes.ok) {
+          const data = await refreshRes.json();
+          localStorage.setItem("access_token", data.access_token);
+          if (data.refresh_token) {
+            localStorage.setItem("refresh_token", data.refresh_token);
+          }
+          if (data.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+          }
+          
+          headers["Authorization"] = `Bearer ${data.access_token}`;
+          response = await fetch(url, {
+            ...options,
+            headers,
+          });
+        } else {
+          throw new Error("Refresh failed");
+        }
+      } catch (err) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user");
+        if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+          window.location.href = "/login";
+        }
+        throw new Error("Session expired. Please login again.");
+      }
+    } else {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
       localStorage.removeItem("user");
       if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
         window.location.href = "/login";
       }
+      throw new Error("Session expired. Please login again.");
     }
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || errorData.message || "Session expired. Please login again.");
   }
 
   if (!response.ok) {
