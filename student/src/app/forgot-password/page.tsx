@@ -32,7 +32,7 @@ export default function ForgotPassword() {
 
   if (success) {
     return (
-      <div className="flex-grow flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <div className="flex-grow flex items-center justify-center lg:justify-end py-8 px-4 sm:px-6 lg:pr-24 xl:pr-32 relative overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0 -z-20">
           <img src="/images/bg-v2.png" alt="Background" className="object-cover object-left w-full h-full" />
@@ -61,7 +61,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="flex-grow flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="flex-grow flex items-center justify-center lg:justify-end py-8 px-4 sm:px-6 lg:pr-24 xl:pr-32 relative overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 -z-20">
         <img src="/images/bg-v2.png" alt="Background" className="object-cover object-left w-full h-full" />
