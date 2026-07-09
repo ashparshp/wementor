@@ -214,6 +214,34 @@ func (s *Service) SetAvailability(ctx context.Context, mentorID uuid.UUID, req S
 	return result, nil
 }
 
+// GetMyAvailability returns the availability slots for a mentor.
+func (s *Service) GetMyAvailability(ctx context.Context, mentorID uuid.UUID) ([]AvailabilitySlot, error) {
+	slots, err := s.queries.GetAvailabilitySlotsByMentorID(ctx, mentorID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch availability slots: %w", err)
+	}
+
+	result := make([]AvailabilitySlot, 0, len(slots))
+	for _, slot := range slots {
+		var specificDate *string
+		if slot.SpecificDate.Valid {
+			dateStr := slot.SpecificDate.Time.Format("2006-01-02")
+			specificDate = &dateStr
+		}
+
+		result = append(result, AvailabilitySlot{
+			ID:           slot.ID,
+			SlotType:     slot.SlotType,
+			DayOfWeek:    slot.DayOfWeek,
+			SpecificDate: specificDate,
+			StartTime:    slot.StartTime,
+			EndTime:      slot.EndTime,
+		})
+	}
+
+	return result, nil
+}
+
 // GetAvailableTimeSlots calculates the exact bookable time chunks for a given date, subtracting existing bookings.
 func (s *Service) GetAvailableTimeSlots(ctx context.Context, planID uuid.UUID, targetDateStr string) ([]string, error) {
 	plan, err := s.queries.GetMentorshipPlanByID(ctx, planID)
