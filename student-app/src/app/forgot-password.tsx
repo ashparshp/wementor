@@ -16,29 +16,28 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
-export default function LoginScreen() {
+export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   // Styling helpers for focus states
   const [emailFocused, setEmailFocused] = useState(false);
-  const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields.');
+  const handleResetPassword = () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter your email address.');
       return;
     }
     
     setLoading(true);
-    // Simulate API validation
+    // Simulate API request
     setTimeout(() => {
       setLoading(false);
-      Alert.alert('Success', 'Logged in successfully!');
+      Alert.alert('Check Your Email', `We've sent a password reset link to ${email}`);
+      router.push('/');
     }, 1500);
   };
 
@@ -59,7 +58,7 @@ export default function LoginScreen() {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* Login Card */}
+            {/* Forgot Password Card */}
             <LinearGradient 
               colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
               style={styles.card}
@@ -75,6 +74,10 @@ export default function LoginScreen() {
               {/* Form Fields */}
               <View style={styles.form}>
                 
+                <Text style={styles.instructionText}>
+                  Enter your email address and we'll send you a link to reset your password.
+                </Text>
+
                 {/* Email Input */}
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Email Address</Text>
@@ -95,62 +98,25 @@ export default function LoginScreen() {
                   />
                 </View>
 
-                {/* Password Input */}
-                <View style={styles.inputContainer}>
-                  <View style={styles.passwordHeader}>
-                    <Text style={styles.label}>Password</Text>
-                    <Link href="/forgot-password" asChild>
-                      <TouchableOpacity>
-                        <Text style={styles.forgotText}>Forgot?</Text>
-                      </TouchableOpacity>
-                    </Link>
-                  </View>
-                  <View style={styles.passwordWrapper}>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        styles.passwordInput,
-                        passwordFocused && styles.inputActive
-                      ]}
-                      placeholder="Enter your password"
-                      placeholderTextColor="#9CA3AF"
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                      autoComplete="password"
-                      value={password}
-                      onChangeText={setPassword}
-                      onFocus={() => setPasswordFocused(true)}
-                      onBlur={() => setPasswordFocused(false)}
-                    />
-                    <TouchableOpacity
-                      style={styles.eyeButton}
-                      onPress={() => setShowPassword(!showPassword)}
-                    >
-                      <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
                 {/* Submit Button */}
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={handleLogin}
+                  onPress={handleResetPassword}
                   disabled={loading}
                   activeOpacity={0.8}
                 >
                   {loading ? (
                     <ActivityIndicator color="#FFF" />
                   ) : (
-                    <Text style={styles.buttonText}>Sign In</Text>
+                    <Text style={styles.buttonText}>Reset Password</Text>
                   )}
                 </TouchableOpacity>
 
-                {/* Register Link */}
+                {/* Back to Login Link */}
                 <View style={styles.footer}>
-                  <Text style={styles.footerText}>Don't have an account? </Text>
-                  <Link href="/register" asChild>
+                  <Link href="/" asChild>
                     <TouchableOpacity>
-                      <Text style={styles.signUpText}>Sign Up</Text>
+                      <Text style={styles.signUpText}>Back to Sign In</Text>
                     </TouchableOpacity>
                   </Link>
                 </View>
@@ -205,9 +171,9 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontFamily: 'Doto_500Medium',
-    fontSize: 16, // Increased for better visibility
-    fontWeight: '900', // Thicker weight for visibility
-    color: '#000000', // Pure black for maximum contrast and pop
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#000000',
     letterSpacing: 2,
     marginTop: -16,
     marginBottom: 32,
@@ -216,6 +182,13 @@ const styles = StyleSheet.create({
   form: {
     width: '100%',
     gap: 20,
+  },
+  instructionText: {
+    fontFamily: 'SpaceGrotesk_500Medium',
+    fontSize: 13,
+    color: '#374151',
+    textAlign: 'center',
+    marginBottom: 4,
   },
   inputContainer: {
     width: '100%',
@@ -226,17 +199,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     color: '#1F2937',
-  },
-  passwordHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  forgotText: {
-    fontFamily: 'SpaceGrotesk_600SemiBold',
-    fontSize: 11,
-    color: '#6C63FF',
-    fontWeight: 'bold',
   },
   input: {
     width: '100%',
@@ -256,26 +218,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-  },
-  passwordWrapper: {
-    position: 'relative',
-    width: '100%',
-    justifyContent: 'center',
-  },
-  passwordInput: {
-    paddingRight: 50,
-  },
-  eyeButton: {
-    position: 'absolute',
-    right: 16,
-    height: '100%',
-    justifyContent: 'center',
-  },
-  eyeText: {
-    fontFamily: 'SpaceGrotesk_600SemiBold',
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#9CA3AF',
   },
   button: {
     width: '100%',
@@ -302,11 +244,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 4,
-  },
-  footerText: {
-    fontFamily: 'SpaceGrotesk_400Regular',
-    fontSize: 13,
-    color: '#6B7280',
   },
   signUpText: {
     fontFamily: 'SpaceGrotesk_600SemiBold',

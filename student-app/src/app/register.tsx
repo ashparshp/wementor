@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   forgotText: {
     fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 11,
-    color: '#F29440',
+    color: '#6C63FF',
     fontWeight: 'bold',
   },
   input: {
@@ -298,12 +298,12 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 48,
-    backgroundColor: '#F29440',
+    backgroundColor: '#111827',
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
-    shadowColor: '#F29440',
+    shadowColor: '#111827',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   signUpText: {
     fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 13,
-    color: '#F29440',
+    color: '#6C63FF',
     fontWeight: 'bold',
   },
 });
