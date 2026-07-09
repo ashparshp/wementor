@@ -56,11 +56,11 @@ export default function LoginScreen() {
             <View style={styles.card}>
               {/* Logo Area */}
               <Image
-                source={require('@/assets/images/logo.png')}
+                source={require('@/assets/images/logo-hor-no-bg.png')}
                 style={styles.logo}
               />
               
-              <Text style={styles.tagline}>WE WANNA BE YOUR EYES</Text>
+              <Text style={styles.tagline}>We wanna be your eyes</Text>
 
               {/* Form Fields */}
               <View style={styles.form}>
@@ -186,17 +186,18 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 240,
+    height: 100,
     resizeMode: 'contain',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   tagline: {
-    fontSize: 10,
-    fontWeight: 'bold',
+    fontSize: 13,
+    fontWeight: '500',
     color: '#F29440', // Theme orange
-    letterSpacing: 2,
-    marginBottom: 24,
+    letterSpacing: 1,
+    marginTop: -8, // Pulls it up closer to the logo
+    marginBottom: 28,
     textAlign: 'center',
   },
   form: {
