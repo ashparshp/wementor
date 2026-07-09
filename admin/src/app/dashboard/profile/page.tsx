@@ -65,7 +65,13 @@ export default function ProfilePage() {
       await fetchApi("/plans/availability", {
         method: "PUT",
         body: JSON.stringify({ 
-          slots,
+          slots: slots.map((s: any) => ({
+            slot_type: s.slot_type,
+            day_of_week: s.day_of_week,
+            specific_date: s.specific_date,
+            start_time: s.start_time,
+            end_time: s.end_time
+          })),
           min_booking_notice_hours: Number(minBookingNoticeHours),
           max_booking_advance_days: Number(maxBookingAdvanceDays)
         }),
