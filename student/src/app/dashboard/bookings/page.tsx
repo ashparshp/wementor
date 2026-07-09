@@ -101,7 +101,7 @@ export default function MyBookings() {
               
               <div className="pt-4 border-t border-[#EADBCB] flex justify-between items-center">
                 <span className="font-semibold text-gray-900">
-                  {booking.status === 'confirmed' ? 'Paid & Confirmed' : 'Pending Payment'}
+                  {booking.payment_status === 'captured' ? 'Paid & Confirmed' : 'Pending Payment'}
                 </span>
                 {booking.google_meet_link && (
                   <a href={booking.google_meet_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-[#EA8A2F] hover:text-[#D97706] transition-colors">
