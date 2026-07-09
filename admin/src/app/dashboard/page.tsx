@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { 
   IndianRupee, 
   Users, 
