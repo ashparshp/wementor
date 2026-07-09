@@ -5,7 +5,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -41,13 +40,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <ImageBackground
-      source={require('@/assets/images/splash.png')}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <View style={styles.overlay} />
-      <StatusBar style="light" />
+    <View style={styles.background}>
+      <StatusBar style="dark" />
 
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
@@ -152,7 +146,7 @@ export default function LoginScreen() {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -161,10 +155,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(9, 27, 41, 0.25)', // Subtle dark overlay matching TvaNetra navy tone
+    backgroundColor: '#F3F4F6',
   },
   safeArea: {
     flex: 1,
@@ -181,18 +172,18 @@ const styles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 360,
-    backgroundColor: 'rgba(255, 255, 255, 0.92)', // Glassmorphic translucent white
+    backgroundColor: '#FFFFFF',
     borderRadius: 28,
     paddingHorizontal: 24,
     paddingVertical: 32,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.18,
+    shadowOpacity: 0.08,
     shadowRadius: 20,
-    elevation: 10,
+    elevation: 5,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderColor: '#E5E7EB',
   },
   logo: {
     width: 150,
