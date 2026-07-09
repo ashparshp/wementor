@@ -291,9 +291,9 @@ func (s *Service) GetAvailableTimeSlots(ctx context.Context, planID uuid.UUID, t
 	dayOfWeek := int32(targetDate.Weekday()) // 0 = Sunday, 1 = Monday
 	
 	for _, slot := range slots {
-		if slot.SlotType == "weekly" && slot.DayOfWeek != nil && *slot.DayOfWeek == dayOfWeek {
+		if slot.SlotType == "recurring" && slot.DayOfWeek != nil && *slot.DayOfWeek == dayOfWeek {
 			matchingSlots = append(matchingSlots, slot)
-		} else if slot.SlotType == "specific_date" && slot.SpecificDate.Valid {
+		} else if slot.SlotType == "fixed" && slot.SpecificDate.Valid {
 			if slot.SpecificDate.Time.Format("2006-01-02") == targetDateStr {
 				matchingSlots = append(matchingSlots, slot)
 			}
