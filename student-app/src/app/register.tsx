@@ -16,29 +16,33 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   // Styling helpers for focus states
+  const [nameFocused, setNameFocused] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const handleLogin = () => {
-    if (!email || !password) {
+  const handleRegister = () => {
+    if (!name || !email || !password) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
     
     setLoading(true);
-    // Simulate API validation
+    // Simulate API registration
     setTimeout(() => {
       setLoading(false);
-      Alert.alert('Success', 'Logged in successfully!');
+      Alert.alert('Success', 'Account created successfully!');
+      router.push('/');
     }, 1500);
   };
 
@@ -59,7 +63,7 @@ export default function LoginScreen() {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* Login Card */}
+            {/* Register Card */}
             <LinearGradient 
               colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
               style={styles.card}
@@ -75,6 +79,25 @@ export default function LoginScreen() {
               {/* Form Fields */}
               <View style={styles.form}>
                 
+                {/* Name Input */}
+                <View style={styles.inputContainer}>
+                  <Text style={styles.label}>Full Name</Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      nameFocused && styles.inputActive
+                    ]}
+                    placeholder="Enter your full name"
+                    placeholderTextColor="#9CA3AF"
+                    autoCapitalize="words"
+                    autoComplete="name"
+                    value={name}
+                    onChangeText={setName}
+                    onFocus={() => setNameFocused(true)}
+                    onBlur={() => setNameFocused(false)}
+                  />
+                </View>
+
                 {/* Email Input */}
                 <View style={styles.inputContainer}>
                   <Text style={styles.label}>Email Address</Text>
@@ -99,9 +122,6 @@ export default function LoginScreen() {
                 <View style={styles.inputContainer}>
                   <View style={styles.passwordHeader}>
                     <Text style={styles.label}>Password</Text>
-                    <TouchableOpacity>
-                      <Text style={styles.forgotText}>Forgot?</Text>
-                    </TouchableOpacity>
                   </View>
                   <View style={styles.passwordWrapper}>
                     <TextInput
@@ -110,11 +130,11 @@ export default function LoginScreen() {
                         styles.passwordInput,
                         passwordFocused && styles.inputActive
                       ]}
-                      placeholder="Enter your password"
+                      placeholder="Create a password"
                       placeholderTextColor="#9CA3AF"
                       secureTextEntry={!showPassword}
                       autoCapitalize="none"
-                      autoComplete="password"
+                      autoComplete="password-new"
                       value={password}
                       onChangeText={setPassword}
                       onFocus={() => setPasswordFocused(true)}
@@ -132,23 +152,23 @@ export default function LoginScreen() {
                 {/* Submit Button */}
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={handleLogin}
+                  onPress={handleRegister}
                   disabled={loading}
                   activeOpacity={0.8}
                 >
                   {loading ? (
                     <ActivityIndicator color="#FFF" />
                   ) : (
-                    <Text style={styles.buttonText}>Sign In</Text>
+                    <Text style={styles.buttonText}>Sign Up</Text>
                   )}
                 </TouchableOpacity>
 
-                {/* Register Link */}
+                {/* Login Link */}
                 <View style={styles.footer}>
-                  <Text style={styles.footerText}>Don't have an account? </Text>
-                  <Link href="/register" asChild>
+                  <Text style={styles.footerText}>Already have an account? </Text>
+                  <Link href="/" asChild>
                     <TouchableOpacity>
-                      <Text style={styles.signUpText}>Sign Up</Text>
+                      <Text style={styles.signUpText}>Sign In</Text>
                     </TouchableOpacity>
                   </Link>
                 </View>
@@ -203,9 +223,9 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontFamily: 'Doto_500Medium',
-    fontSize: 16, // Increased for better visibility
-    fontWeight: '900', // Thicker weight for visibility
-    color: '#000000', // Pure black for maximum contrast and pop
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#000000',
     letterSpacing: 2,
     marginTop: -16,
     marginBottom: 32,
