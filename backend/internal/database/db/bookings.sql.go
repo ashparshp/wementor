@@ -270,10 +270,12 @@ const listMentorBookings = `-- name: ListMentorBookings :many
 SELECT
     b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.created_at, b.updated_at, b.coupon_id,
     mp.title AS plan_title,
-    u.name AS student_name
+    u.name AS student_name,
+    p.status AS payment_status
 FROM bookings b
 JOIN mentorship_plans mp ON mp.id = b.plan_id
 JOIN users u ON u.id = b.student_id
+LEFT JOIN payments p ON p.booking_id = b.id
 WHERE b.mentor_id = $1
 ORDER BY b.session_date DESC, b.start_time DESC
 LIMIT $2 OFFSET $3
@@ -300,6 +302,7 @@ type ListMentorBookingsRow struct {
 	CouponID       pgtype.UUID `json:"coupon_id"`
 	PlanTitle      string      `json:"plan_title"`
 	StudentName    string      `json:"student_name"`
+	PaymentStatus  *string     `json:"payment_status"`
 }
 
 func (q *Queries) ListMentorBookings(ctx context.Context, arg ListMentorBookingsParams) ([]ListMentorBookingsRow, error) {
@@ -326,6 +329,7 @@ func (q *Queries) ListMentorBookings(ctx context.Context, arg ListMentorBookings
 			&i.CouponID,
 			&i.PlanTitle,
 			&i.StudentName,
+			&i.PaymentStatus,
 		); err != nil {
 			return nil, err
 		}
@@ -341,10 +345,12 @@ const listStudentBookings = `-- name: ListStudentBookings :many
 SELECT
     b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.created_at, b.updated_at, b.coupon_id,
     mp.title AS plan_title,
-    u.name AS mentor_name
+    u.name AS mentor_name,
+    p.status AS payment_status
 FROM bookings b
 JOIN mentorship_plans mp ON mp.id = b.plan_id
 JOIN users u ON u.id = b.mentor_id
+LEFT JOIN payments p ON p.booking_id = b.id
 WHERE b.student_id = $1
 ORDER BY b.session_date DESC, b.start_time DESC
 LIMIT $2 OFFSET $3
@@ -371,6 +377,7 @@ type ListStudentBookingsRow struct {
 	CouponID       pgtype.UUID `json:"coupon_id"`
 	PlanTitle      string      `json:"plan_title"`
 	MentorName     string      `json:"mentor_name"`
+	PaymentStatus  *string     `json:"payment_status"`
 }
 
 func (q *Queries) ListStudentBookings(ctx context.Context, arg ListStudentBookingsParams) ([]ListStudentBookingsRow, error) {
@@ -397,6 +404,7 @@ func (q *Queries) ListStudentBookings(ctx context.Context, arg ListStudentBookin
 			&i.CouponID,
 			&i.PlanTitle,
 			&i.MentorName,
+			&i.PaymentStatus,
 		); err != nil {
 			return nil, err
 		}

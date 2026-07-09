@@ -30,10 +30,12 @@ SELECT COUNT(*) FROM bookings WHERE student_id = $1;
 SELECT
     b.*,
     mp.title AS plan_title,
-    u.name AS student_name
+    u.name AS student_name,
+    p.status AS payment_status
 FROM bookings b
 JOIN mentorship_plans mp ON mp.id = b.plan_id
 JOIN users u ON u.id = b.student_id
+LEFT JOIN payments p ON p.booking_id = b.id
 WHERE b.mentor_id = $1
 ORDER BY b.session_date DESC, b.start_time DESC
 LIMIT $2 OFFSET $3;
