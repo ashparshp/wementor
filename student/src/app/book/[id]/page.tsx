@@ -69,6 +69,7 @@ export default function SessionDetailsPage() {
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [coupon, setCoupon] = useState("");
   const [fetchingTimes, setFetchingTimes] = useState(false);
+  const [bookingStep, setBookingStep] = useState<"date" | "time">("date");
   
   // Calendar state
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
@@ -124,6 +125,7 @@ export default function SessionDetailsPage() {
           onClick={() => {
             setDate(format(cloneDay, "yyyy-MM-dd"));
             setTime("");
+            setBookingStep("time");
           }}
           className={`h-10 w-full flex items-center justify-center rounded-xl text-sm font-medium transition-colors
             ${!isCurrentMonth ? "text-transparent" : ""}
@@ -350,45 +352,54 @@ export default function SessionDetailsPage() {
 
             <form onSubmit={handleBooking} className="space-y-6">
               
-              <div className="space-y-3">
-                <label className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-2">
-                  <Calendar className="w-4 h-4 text-[#F29440]" /> Select Date
-                </label>
-                {renderCalendar()}
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#F29440]" /> Select Time
-                </label>
-                
-                {fetchingTimes ? (
-                  <div className="text-sm text-gray-500 py-2">Loading available slots...</div>
-                ) : date && availableTimes.length > 0 ? (
-                  <div className="grid grid-cols-3 gap-2">
-                    {availableTimes.map(t => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setTime(t)}
-                        className={`py-2 rounded-lg text-sm font-bold border transition-all ${
-                          time === t 
-                            ? 'bg-[#FDF1E9] border-[#F29440] text-[#F29440]' 
-                            : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
+              {bookingStep === "date" ? (
+                <div className="space-y-3 animate-in fade-in duration-300">
+                  <label className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-2">
+                    <Calendar className="w-4 h-4 text-[#F29440]" /> Select Date
+                  </label>
+                  {renderCalendar()}
+                </div>
+              ) : (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-[#F29440]" /> Time Slots
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setBookingStep("date")}
+                      className="text-xs font-bold text-[#6C63FF] hover:underline flex items-center gap-1"
+                    >
+                      <ArrowLeft className="w-3 h-3" /> Change Date
+                    </button>
                   </div>
-                ) : date ? (
-                  <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-xl border border-amber-100 font-medium">
-                    No available time slots on this date.
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500">Select a date first</div>
-                )}
-              </div>
+                  
+                  {fetchingTimes ? (
+                    <div className="text-sm text-gray-500 py-8 text-center bg-gray-50 rounded-xl border border-gray-100">Loading available slots...</div>
+                  ) : availableTimes.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-2">
+                      {availableTimes.map(t => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setTime(t)}
+                          className={`py-3 rounded-lg text-sm font-bold border transition-all ${
+                            time === t 
+                              ? 'bg-[#FDF1E9] border-[#F29440] text-[#F29440] shadow-sm' 
+                              : 'bg-white border-gray-200 text-gray-700 hover:border-[#F29440] hover:text-[#F29440]'
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-amber-600 bg-amber-50 p-4 rounded-xl border border-amber-100 font-medium text-center">
+                      No available time slots on this date.
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-3 pt-2">
                 <label className="text-sm font-bold text-gray-900">Coupon Code (Optional)</label>

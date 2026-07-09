@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 export default function DashboardOverview() {
+  const { user } = useAuth();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [stats, setStats] = useState<any>(null);
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
@@ -20,14 +21,30 @@ export default function DashboardOverview() {
 
   useEffect(() => {
     async function loadDashboard() {
+      if (!user) return;
       try {
-        const [statsRes, bookingsRes] = await Promise.all([
-          fetchApi<any>("/admin/stats"),
-          fetchApi<any>("/admin/bookings?limit=5")
-        ]);
-        setStats(statsRes.data || statsRes);
-        const bookingsData = bookingsRes.data || bookingsRes || [];
-        setRecentBookings(Array.isArray(bookingsData) ? bookingsData.slice(0, 5) : []);
+        if (user.role === "admin") {
+          const [statsRes, bookingsRes] = await Promise.all([
+            fetchApi<any>("/admin/stats"),
+            fetchApi<any>("/admin/bookings?limit=5")
+          ]);
+          setStats(statsRes.data || statsRes);
+          const bookingsData = bookingsRes.data || bookingsRes || [];
+          setRecentBookings(Array.isArray(bookingsData) ? bookingsData.slice(0, 5) : []);
+        } else {
+          // Mentor view
+          const bookingsRes = await fetchApi<any>("/bookings/me");
+          const bookingsData = bookingsRes.data || bookingsRes || [];
+          const allBookings = Array.isArray(bookingsData) ? bookingsData : [];
+          setRecentBookings(allBookings.slice(0, 5));
+          
+          setStats({
+            total_revenue_paise: 0, // Hidden for now or calculate later
+            total_bookings: allBookings.length,
+            total_users: 0, 
+            pending_plans: allBookings.filter((b: any) => b.status === "pending").length,
+          });
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -35,7 +52,7 @@ export default function DashboardOverview() {
       }
     }
     loadDashboard();
-  }, []);
+  }, [user]);
 
   const metrics = [
     {
