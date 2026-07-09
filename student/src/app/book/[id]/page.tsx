@@ -43,6 +43,7 @@ interface Plan {
   price_paise: number;
   duration_minutes: number;
   min_booking_notice_hours: number;
+  max_booking_advance_days: number;
   availability: AvailabilitySlot[];
 }
 
@@ -83,7 +84,7 @@ export default function SessionDetailsPage() {
     
     const now = new Date();
     const minNoticeDate = addHours(now, plan.min_booking_notice_hours || 0);
-    const maxBookingDate = addDays(now, 60); // 60 days advance max
+    const maxBookingDate = addDays(now, plan.max_booking_advance_days || 60);
 
     if (isBefore(dateToCheck, startOfDay(minNoticeDate))) return false;
     if (isAfter(dateToCheck, maxBookingDate)) return false;

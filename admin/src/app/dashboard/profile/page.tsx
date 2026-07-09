@@ -25,6 +25,8 @@ export default function ProfilePage() {
   
   // Availability State
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
+  const [minBookingNoticeHours, setMinBookingNoticeHours] = useState(24);
+  const [maxBookingAdvanceDays, setMaxBookingAdvanceDays] = useState(60);
   const [availLoading, setAvailLoading] = useState(false);
   const [fetchingAvail, setFetchingAvail] = useState(false);
 
@@ -44,7 +46,9 @@ export default function ProfilePage() {
       // Since it's not strictly built yet, we'll try to fetch it if possible, else empty
       const res = await fetchApi<any>("/plans/availability").catch(() => null);
       if (res) {
-        setSlots(res || []);
+        setSlots(res.availability || []);
+        if (res.min_booking_notice_hours) setMinBookingNoticeHours(res.min_booking_notice_hours);
+        if (res.max_booking_advance_days) setMaxBookingAdvanceDays(res.max_booking_advance_days);
       }
     } catch (err) {
       console.error(err);
@@ -60,7 +64,11 @@ export default function ProfilePage() {
     try {
       await fetchApi("/plans/availability", {
         method: "PUT",
-        body: JSON.stringify({ slots }),
+        body: JSON.stringify({ 
+          slots,
+          min_booking_notice_hours: Number(minBookingNoticeHours),
+          max_booking_advance_days: Number(maxBookingAdvanceDays)
+        }),
       });
       setSuccess("Availability updated globally!");
     } catch (err: any) {
@@ -201,6 +209,31 @@ export default function ProfilePage() {
                 <div className="py-8 text-center text-sm text-gray-500">Loading availability...</div>
               ) : (
                 <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4 border-b border-gray-100">
+                    <div>
+                      <label className="text-sm font-bold text-gray-700 block mb-2">Minimum Booking Notice (Hours)</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={minBookingNoticeHours}
+                        onChange={e => setMinBookingNoticeHours(Number(e.target.value))}
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-[#F29440] outline-none text-sm"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Students cannot book a session sooner than this.</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold text-gray-700 block mb-2">Maximum Booking Window (Days)</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={maxBookingAdvanceDays}
+                        onChange={e => setMaxBookingAdvanceDays(Number(e.target.value))}
+                        className="w-full px-4 py-2 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-[#F29440] outline-none text-sm"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">How far in advance students can book a session.</p>
+                    </div>
+                  </div>
+
                   {slots.map((slot, index) => (
                     <div key={index} className="flex flex-col sm:flex-row gap-4 items-start sm:items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
                       

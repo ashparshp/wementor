@@ -22,8 +22,7 @@ export default function PlansPage() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("jee");
   const [pricePaise, setPricePaise] = useState(50000); // 500 INR
-  const [durationMinutes, setDurationMinutes] = useState(60);
-  const [minBookingNoticeHours, setMinBookingNoticeHours] = useState(24);
+  const [durationMinutes, setDurationMinutes] = useState(30);
   const [formLoading, setFormLoading] = useState(false);
 
   const editor = useRef(null);
@@ -65,16 +64,14 @@ export default function PlansPage() {
       setDescription(plan.description || "");
       setCategory(plan.category);
       setPricePaise(plan.price_paise);
-      setDurationMinutes(plan.duration_minutes);
-      setMinBookingNoticeHours(plan.min_booking_notice_hours);
+      setDurationMinutes(plan.duration_minutes || 30);
     } else {
       setEditingPlan(null);
       setTitle("");
       setDescription("");
       setCategory("jee");
       setPricePaise(50000);
-      setDurationMinutes(60);
-      setMinBookingNoticeHours(24);
+      setDurationMinutes(30);
     }
     setIsModalOpen(true);
   };
@@ -92,9 +89,8 @@ export default function PlansPage() {
       title,
       description,
       category,
-      price_paise: Number(pricePaise),
-      duration_minutes: Number(durationMinutes),
-      min_booking_notice_hours: Number(minBookingNoticeHours),
+      price_paise: pricePaise,
+      duration_minutes: durationMinutes,
     };
 
     try {
@@ -295,18 +291,6 @@ export default function PlansPage() {
                       max={180}
                       value={durationMinutes}
                       onChange={e => setDurationMinutes(Number(e.target.value))}
-                      className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] focus:ring-2 focus:ring-[#F29440] outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-bold text-gray-700 block mb-2">Min Booking Notice (Hours)</label>
-                    <input
-                      type="number"
-                      required
-                      min={1}
-                      value={minBookingNoticeHours}
-                      onChange={e => setMinBookingNoticeHours(Number(e.target.value))}
                       className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] focus:ring-2 focus:ring-[#F29440] outline-none"
                     />
                   </div>
