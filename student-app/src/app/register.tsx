@@ -17,6 +17,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+
+const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
@@ -64,9 +67,10 @@ export default function RegisterScreen() {
             showsVerticalScrollIndicator={false}
           >
             {/* Register Card */}
-            <LinearGradient 
+            <AnimatedGradient 
               colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
               style={styles.card}
+              entering={FadeInDown.duration(800).springify()}
             >
               {/* Logo Area */}
               <Image
@@ -78,7 +82,10 @@ export default function RegisterScreen() {
               <Text style={styles.tagline}>We wanna be your eyes</Text>
 
               {/* Form Fields */}
-              <View style={styles.form}>
+              <Animated.View 
+                style={styles.form}
+                entering={FadeInUp.delay(300).duration(800).springify()}
+              >
                 
                 {/* Name Input */}
                 <View style={styles.inputContainer}>
@@ -174,8 +181,8 @@ export default function RegisterScreen() {
                   </Link>
                 </View>
 
-              </View>
-            </LinearGradient>
+              </Animated.View>
+            </AnimatedGradient>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>

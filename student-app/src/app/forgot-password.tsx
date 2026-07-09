@@ -17,6 +17,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+
+const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
@@ -59,9 +62,10 @@ export default function ForgotPasswordScreen() {
             showsVerticalScrollIndicator={false}
           >
             {/* Forgot Password Card */}
-            <LinearGradient 
+            <AnimatedGradient 
               colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
               style={styles.card}
+              entering={FadeInDown.duration(800).springify()}
             >
               {/* Logo Area */}
               <Image
@@ -73,7 +77,10 @@ export default function ForgotPasswordScreen() {
               <Text style={styles.tagline}>We wanna be your eyes</Text>
 
               {/* Form Fields */}
-              <View style={styles.form}>
+              <Animated.View 
+                style={styles.form}
+                entering={FadeInUp.delay(300).duration(800).springify()}
+              >
                 
                 <Text style={styles.instructionText}>
                   Enter your email address and we'll send you a link to reset your password.
@@ -122,8 +129,8 @@ export default function ForgotPasswordScreen() {
                   </Link>
                 </View>
 
-              </View>
-            </LinearGradient>
+              </Animated.View>
+            </AnimatedGradient>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>

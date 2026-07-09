@@ -81,3 +81,17 @@ func GenerateOTP() (string, error) {
 func GenerateInviteCode() (string, error) {
 	return GenerateOTP()
 }
+
+// GenerateRandomPassword creates a cryptographically secure random 10-character password.
+func GenerateRandomPassword() (string, error) {
+	const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"
+	b := make([]byte, 10)
+	for i := range b {
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+		if err != nil {
+			return "", err
+		}
+		b[i] = chars[num.Int64()]
+	}
+	return string(b), nil
+}

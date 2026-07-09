@@ -87,6 +87,21 @@ func (c *Client) SendOTP(to, otp, purpose string) error {
 	return c.Send(to, subject, html)
 }
 
+// SendNewPassword sends a newly generated plaintext password to the user.
+func (c *Client) SendNewPassword(to, newPassword string) error {
+	subject := "Your New WeMentor Password"
+
+	html := fmt.Sprintf(`
+	<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px">
+		<h2 style="color:#6C63FF;margin-bottom:24px">WeMentor</h2>
+		<p style="font-size:16px;color:#333">Your password has been reset. Your new password is:</p>
+		<div style="font-size:36px;letter-spacing:4px;font-weight:700;color:#1a1a2e;background:#f0f0f5;padding:24px;text-align:center;border-radius:12px;margin:24px 0">%s</div>
+		<p style="font-size:14px;color:#888">Please change this password after your next login.</p>
+	</div>`, newPassword)
+
+	return c.Send(to, subject, html)
+}
+
 // SendMentorInvite sends the approved mentor their invite code and admin panel link.
 func (c *Client) SendMentorInvite(to, inviteCode, adminPanelURL string) error {
 	html := fmt.Sprintf(`
