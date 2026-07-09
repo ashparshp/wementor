@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Search, Filter, MoreHorizontal, Video } from "lucide-react";
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 
 interface Booking {
   id: string;
@@ -21,13 +22,16 @@ export default function BookingsPage() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const { user } = useAuth();
   const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadBookings() {
+      if (!user) return;
       try {
-        const res = await fetchApi<any>("/admin/bookings");
+        const endpoint = user.role === "admin" ? "/admin/bookings" : "/bookings/me";
+        const res = await fetchApi<any>(endpoint);
         const data = res.data || res || [];
         setAllBookings(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -37,7 +41,7 @@ export default function BookingsPage() {
       }
     }
     loadBookings();
-  }, []);
+  }, [user]);
 
   const calculateDuration = (start: string, end: string) => {
     // If not properly formatted, return default
