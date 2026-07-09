@@ -183,6 +183,33 @@ func (h *Handler) GetAvailability(w http.ResponseWriter, r *http.Request) {
 	response.OK(w, plan.Availability)
 }
 
+// GetAvailableTimeSlots GET /api/v1/plans/:id/slots?date=YYYY-MM-DD
+func (h *Handler) GetAvailableTimeSlots(w http.ResponseWriter, r *http.Request) {
+	id, err := uuid.Parse(chi.URLParam(r, "id"))
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, "invalid plan ID")
+		return
+	}
+
+	dateStr := r.URL.Query().Get("date")
+	if dateStr == "" {
+		response.Error(w, http.StatusBadRequest, "date query parameter is required (YYYY-MM-DD)")
+		return
+	}
+
+	slots, err := h.service.GetAvailableTimeSlots(r.Context(), id, dateStr)
+	if err != nil {
+		if err.Error() == "plan not found" {
+			response.Error(w, http.StatusNotFound, err.Error())
+			return
+		}
+		response.Error(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	response.OK(w, slots)
+}
+
 // ── Admin endpoints ──
 
 // ListPending GET /api/v1/admin/plans/pending (admin)

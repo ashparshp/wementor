@@ -142,6 +142,7 @@ func SetupRouter(
 			r.Get("/", planHandler.List)
 			r.Get("/{id}", planHandler.Get)
 			r.Get("/{id}/availability", planHandler.GetAvailability)
+			r.Get("/{id}/slots", planHandler.GetAvailableTimeSlots)
 
 			// Mentor-only
 			r.Group(func(r chi.Router) {

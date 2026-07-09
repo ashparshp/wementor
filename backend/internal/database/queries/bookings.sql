@@ -65,3 +65,8 @@ AND status NOT IN ('cancelled_by_student', 'cancelled_by_mentor');
 
 -- name: CountBookingsByStatus :one
 SELECT COUNT(*) FROM bookings WHERE status = $1;
+
+-- name: GetBookingsByMentorAndDate :many
+SELECT * FROM bookings 
+WHERE mentor_id = $1 AND session_date = $2 
+AND status NOT IN ('cancelled_by_student', 'cancelled_by_mentor');

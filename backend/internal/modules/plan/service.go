@@ -225,6 +225,94 @@ func (s *Service) SetAvailability(ctx context.Context, planID, mentorID uuid.UUI
 	return result, nil
 }
 
+// GetAvailableTimeSlots calculates the exact bookable time chunks for a given date, subtracting existing bookings.
+func (s *Service) GetAvailableTimeSlots(ctx context.Context, planID uuid.UUID, targetDateStr string) ([]string, error) {
+	plan, err := s.queries.GetMentorshipPlanByID(ctx, planID)
+	if err != nil {
+		return nil, fmt.Errorf("plan not found")
+	}
+
+	targetDate, err := time.Parse("2006-01-02", targetDateStr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid date format, use YYYY-MM-DD")
+	}
+	
+	pgDate := pgtype.Date{
+		Time:  targetDate,
+		Valid: true,
+	}
+
+	// 1. Get raw availability slots
+	slots, err := s.queries.GetAvailabilitySlotsByPlanID(ctx, planID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get availability slots: %w", err)
+	}
+
+	// 2. Filter slots that apply to this specific date
+	var matchingSlots []db.AvailabilitySlot
+	dayOfWeek := int32(targetDate.Weekday()) // 0 = Sunday, 1 = Monday
+	
+	for _, slot := range slots {
+		if slot.SlotType == "weekly" && slot.DayOfWeek != nil && *slot.DayOfWeek == dayOfWeek {
+			matchingSlots = append(matchingSlots, slot)
+		} else if slot.SlotType == "specific_date" && slot.SpecificDate.Valid {
+			if slot.SpecificDate.Time.Format("2006-01-02") == targetDateStr {
+				matchingSlots = append(matchingSlots, slot)
+			}
+		}
+	}
+
+	if len(matchingSlots) == 0 {
+		return []string{}, nil
+	}
+
+	// 3. Fetch existing bookings to avoid conflicts
+	bookings, err := s.queries.GetBookingsByMentorAndDate(ctx, db.GetBookingsByMentorAndDateParams{
+		MentorID:    plan.MentorID,
+		SessionDate: pgDate,
+	})
+	if err != nil && err.Error() != "sql: no rows in result set" {
+		s.logger.Error("failed to get bookings", zap.Error(err))
+	}
+
+	// 4. Generate time chunks
+	durationSec := int64(plan.DurationMinutes) * 60
+	availableTimes := make([]string, 0)
+
+	for _, slot := range matchingSlots {
+		if !slot.StartTime.Valid || !slot.EndTime.Valid {
+			continue
+		}
+		
+		startSec := slot.StartTime.Microseconds / 1_000_000
+		endSec := slot.EndTime.Microseconds / 1_000_000
+
+		for cur := startSec; cur+durationSec <= endSec; cur += durationSec {
+			conflict := false
+			for _, b := range bookings {
+				if !b.StartTime.Valid || !b.EndTime.Valid {
+					continue
+				}
+				bStart := b.StartTime.Microseconds / 1_000_000
+				bEnd := b.EndTime.Microseconds / 1_000_000
+				
+				// Overlap condition: chunkStart < bookingEnd AND chunkEnd > bookingStart
+				if cur < bEnd && (cur+durationSec) > bStart {
+					conflict = true
+					break
+				}
+			}
+			if !conflict {
+				hh := cur / 3600
+				mm := (cur % 3600) / 60
+				availableTimes = append(availableTimes, fmt.Sprintf("%02d:%02d", hh, mm))
+			}
+		}
+	}
+
+	return availableTimes, nil
+}
+
 // ListPending returns pending plans for admin review.
 func (s *Service) ListPending(ctx context.Context, limit, offset int32) ([]PendingPlanResponse, int64, error) {
 	plans, err := s.queries.ListPendingPlans(ctx, db.ListPendingPlansParams{
