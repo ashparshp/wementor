@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -58,7 +59,10 @@ export default function LoginScreen() {
             showsVerticalScrollIndicator={false}
           >
             {/* Login Card */}
-            <View style={styles.card}>
+            <LinearGradient 
+              colors={['rgba(255, 255, 255, 0.98)', 'rgba(235, 240, 245, 0.9)']}
+              style={styles.card}
+            >
               {/* Logo Area */}
               <Image
                 source={require('@/assets/images/logo-hor-no-bg.png')}
@@ -147,7 +151,7 @@ export default function LoginScreen() {
                 </View>
 
               </View>
-            </View>
+            </LinearGradient>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -197,12 +201,12 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontFamily: 'Doto_500Medium',
-    fontSize: 14, // Slightly increased since Doto is highly stylistic and can be small
-    fontWeight: '500',
-    color: '#1E293B', // Premium deep slate/navy for great contrast and elegance
-    letterSpacing: 2, // Added more spacing since Doto is a dotted matrix font
-    marginTop: -16, // Pulled up even tighter to the logo
-    marginBottom: 32, // Compensating for the top margin
+    fontSize: 16, // Increased for better visibility
+    fontWeight: '900', // Thicker weight for visibility
+    color: '#000000', // Pure black for maximum contrast and pop
+    letterSpacing: 2,
+    marginTop: -16,
+    marginBottom: 32,
     textAlign: 'center',
   },
   form: {
