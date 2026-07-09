@@ -36,9 +36,17 @@ export default function Login() {
   };
 
   return (
-    <div className="flex-grow flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Decorative bg */}
-      <div className="absolute inset-0 bg-[#F29440]/5 blur-3xl -z-10 rounded-full w-[500px] h-[500px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+    <div className="flex-grow flex items-center justify-center lg:justify-end py-8 px-4 sm:px-6 lg:pr-24 xl:pr-32 relative overflow-hidden">
+      {/* Background Image overriding universal bg for this page */}
+      <div className="absolute inset-0 -z-20">
+        <img 
+          src="/images/bg-v2.png" 
+          alt="Login Background" 
+          className="object-cover object-left w-full h-full"
+        />
+        {/* Semi-transparent overlay to ensure form readability */}
+        <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+      </div>
 
       <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
         <div>
