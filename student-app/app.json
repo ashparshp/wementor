@@ -8,11 +8,11 @@
     "scheme": "tvanetra",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.tvanetra.student",
+      "bundleIdentifier": "com.tvanetra.app",
       "icon": "./assets/expo.icon"
     },
     "android": {
-      "package": "com.tvanetra.student",
+      "package": "com.tvanetra.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
