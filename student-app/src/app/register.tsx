@@ -69,10 +69,7 @@ export default function RegisterScreen() {
               entering={FadeInDown.duration(800).springify()} 
               style={{ width: '100%', alignItems: 'center' }}
             >
-              <LinearGradient 
-                colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.1)']}
-                style={styles.card}
-              >
+              <View style={styles.card}>
               {/* Logo Area */}
               <Image
                 source={require('@/assets/images/logo-hor-no-bg.png')}
@@ -183,7 +180,7 @@ export default function RegisterScreen() {
                 </View>
 
               </Animated.View>
-              </LinearGradient>
+              </View>
             </Animated.View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -217,13 +214,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 32,
     alignItems: 'center',
+    backgroundColor: '#FFFFFF', // Solid background to fix Android shadow bleed-through
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 16,
+    elevation: 3, // Softer shadow on Android
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderColor: '#EADBCB', // Clean cream border matching the theme
   },
   logo: {
     width: 240,
