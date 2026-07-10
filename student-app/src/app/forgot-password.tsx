@@ -181,7 +181,6 @@ const styles = StyleSheet.create({
   tagline: {
     fontFamily: 'Doto_500Medium',
     fontSize: 16,
-    fontWeight: '900',
     color: '#000000',
     letterSpacing: 2,
     marginTop: -16,
@@ -206,7 +205,6 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 12,
-    fontWeight: 'bold',
     color: '#1F2937',
   },
   input: {
@@ -246,7 +244,6 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceGrotesk_600SemiBold',
     color: '#FFF',
     fontSize: 15,
-    fontWeight: 'bold',
   },
   footer: {
     flexDirection: 'row',
@@ -258,6 +255,5 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceGrotesk_600SemiBold',
     fontSize: 13,
     color: '#6C63FF',
-    fontWeight: 'bold',
   },
 });
