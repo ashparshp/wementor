@@ -7,25 +7,39 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
-  KeyboardAvoidingView,
   Platform,
-  ScrollView,
   ActivityIndicator,
-  Alert
+  Alert,
+  LayoutAnimation,
+  UIManager
 } from 'react-native';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Link } from 'expo-router';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
-export default function LoginScreen() {
+type AuthView = 'login' | 'register' | 'forgot';
+
+export default function AuthScreen() {
+  const [currentView, setCurrentView] = useState<AuthView>('login');
+
+  const switchView = (newView: AuthView) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setCurrentView(newView);
+  };
+  
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   // Styling helpers for focus states
+  const [nameFocused, setNameFocused] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
@@ -36,10 +50,37 @@ export default function LoginScreen() {
     }
     
     setLoading(true);
-    // Simulate API validation
     setTimeout(() => {
       setLoading(false);
       Alert.alert('Success', 'Logged in successfully!');
+    }, 1500);
+  };
+
+  const handleRegister = () => {
+    if (!name || !email || !password) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+    
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      Alert.alert('Success', 'Account created successfully!');
+      switchView('login');
+    }, 1500);
+  };
+
+  const handleResetPassword = () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter your email address.');
+      return;
+    }
+    
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      Alert.alert('Check Your Email', `We've sent a password reset link to ${email}`);
+      switchView('login');
     }, 1500);
   };
 
@@ -52,21 +93,16 @@ export default function LoginScreen() {
       <StatusBar style="dark" />
 
       <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <KeyboardAwareScrollView
           style={styles.keyboardView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          enableOnAndroid={true}
+          extraScrollHeight={20}
+          keyboardShouldPersistTaps="handled"
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Login Card */}
-            <Animated.View 
-              entering={FadeInDown.duration(800).springify()} 
-              style={{ width: '100%', alignItems: 'center' }}
-            >
+          <View style={{ width: '100%', alignItems: 'center' }}>
               <View style={styles.card}>
-              {/* Logo Area */}
               <Image
                 source={require('@/assets/images/logo-hor-no-bg.png')}
                 style={styles.logo}
@@ -75,97 +111,193 @@ export default function LoginScreen() {
               
               <Text style={styles.tagline}>We wanna be your eyes</Text>
 
-              {/* Form Fields */}
-              <Animated.View 
-                style={styles.form}
-                entering={FadeInUp.delay(300).duration(800).springify()}
-              >
+              <View style={styles.form}>
                 
-                {/* Email Input */}
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>Email Address</Text>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      emailFocused && styles.inputActive
-                    ]}
-                    placeholder="Enter your email"
-                    placeholderTextColor="#9CA3AF"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    value={email}
-                    onChangeText={setEmail}
-                    onFocus={() => setEmailFocused(true)}
-                    onBlur={() => setEmailFocused(false)}
-                  />
-                </View>
+                {currentView === 'forgot' && (
+                  <>
+                    <Text style={styles.instructionText}>
+                      Enter your email address and we'll send you a link to reset your password.
+                    </Text>
 
-                {/* Password Input */}
-                <View style={styles.inputContainer}>
-                  <View style={styles.passwordHeader}>
-                    <Text style={styles.label}>Password</Text>
-                    <Link href="/forgot-password" asChild>
-                      <TouchableOpacity>
-                        <Text style={styles.forgotText}>Forgot?</Text>
-                      </TouchableOpacity>
-                    </Link>
-                  </View>
-                  <View style={styles.passwordWrapper}>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        styles.passwordInput,
-                        passwordFocused && styles.inputActive
-                      ]}
-                      placeholder="Enter your password"
-                      placeholderTextColor="#9CA3AF"
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                      autoComplete="password"
-                      value={password}
-                      onChangeText={setPassword}
-                      onFocus={() => setPasswordFocused(true)}
-                      onBlur={() => setPasswordFocused(false)}
-                    />
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.label}>Email Address</Text>
+                      <TextInput
+                        style={[styles.input, emailFocused && styles.inputActive]}
+                        placeholder="Enter your email"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                        value={email}
+                        onChangeText={setEmail}
+                        onFocus={() => setEmailFocused(true)}
+                        onBlur={() => setEmailFocused(false)}
+                      />
+                    </View>
+
                     <TouchableOpacity
-                      style={styles.eyeButton}
-                      onPress={() => setShowPassword(!showPassword)}
+                      style={styles.button}
+                      onPress={handleResetPassword}
+                      disabled={loading}
+                      activeOpacity={0.8}
                     >
-                      <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+                      {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.buttonText}>Reset Password</Text>}
                     </TouchableOpacity>
-                  </View>
-                </View>
 
-                {/* Submit Button */}
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={handleLogin}
-                  disabled={loading}
-                  activeOpacity={0.8}
-                >
-                  {loading ? (
-                    <ActivityIndicator color="#FFF" />
-                  ) : (
-                    <Text style={styles.buttonText}>Sign In</Text>
-                  )}
-                </TouchableOpacity>
+                    <View style={styles.footer}>
+                      <TouchableOpacity onPress={() => switchView('login')}>
+                        <Text style={styles.signUpText}>Back to Sign In</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
 
-                {/* Register Link */}
-                <View style={styles.footer}>
-                  <Text style={styles.footerText}>Don't have an account? </Text>
-                  <Link href="/register" asChild>
-                    <TouchableOpacity>
-                      <Text style={styles.signUpText}>Sign Up</Text>
+                {currentView === 'register' && (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.label}>Full Name</Text>
+                      <TextInput
+                        style={[styles.input, nameFocused && styles.inputActive]}
+                        placeholder="Enter your full name"
+                        placeholderTextColor="#9CA3AF"
+                        autoCapitalize="words"
+                        autoComplete="name"
+                        value={name}
+                        onChangeText={setName}
+                        onFocus={() => setNameFocused(true)}
+                        onBlur={() => setNameFocused(false)}
+                      />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.label}>Email Address</Text>
+                      <TextInput
+                        style={[styles.input, emailFocused && styles.inputActive]}
+                        placeholder="Enter your email"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                        value={email}
+                        onChangeText={setEmail}
+                        onFocus={() => setEmailFocused(true)}
+                        onBlur={() => setEmailFocused(false)}
+                      />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                      <View style={styles.passwordHeader}>
+                        <Text style={styles.label}>Password</Text>
+                      </View>
+                      <View style={styles.passwordWrapper}>
+                        <TextInput
+                          style={[styles.input, styles.passwordInput, passwordFocused && styles.inputActive]}
+                          placeholder="Create a password"
+                          placeholderTextColor="#9CA3AF"
+                          secureTextEntry={!showPassword}
+                          autoCapitalize="none"
+                          autoComplete="password-new"
+                          value={password}
+                          onChangeText={setPassword}
+                          onFocus={() => setPasswordFocused(true)}
+                          onBlur={() => setPasswordFocused(false)}
+                        />
+                        <TouchableOpacity
+                          style={styles.eyeButton}
+                          onPress={() => setShowPassword(!showPassword)}
+                        >
+                          <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handleRegister}
+                      disabled={loading}
+                      activeOpacity={0.8}
+                    >
+                      {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.buttonText}>Sign Up</Text>}
                     </TouchableOpacity>
-                  </Link>
-                </View>
 
-              </Animated.View>
+                    <View style={styles.footer}>
+                      <Text style={styles.footerText}>Already have an account? </Text>
+                      <TouchableOpacity onPress={() => switchView('login')}>
+                        <Text style={styles.signUpText}>Sign In</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+
+                {currentView === 'login' && (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.label}>Email Address</Text>
+                      <TextInput
+                        style={[styles.input, emailFocused && styles.inputActive]}
+                        placeholder="Enter your email"
+                        placeholderTextColor="#9CA3AF"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                        value={email}
+                        onChangeText={setEmail}
+                        onFocus={() => setEmailFocused(true)}
+                        onBlur={() => setEmailFocused(false)}
+                      />
+                    </View>
+
+                    <View style={styles.inputContainer}>
+                      <View style={styles.passwordHeader}>
+                        <Text style={styles.label}>Password</Text>
+                        <TouchableOpacity onPress={() => switchView('forgot')}>
+                          <Text style={styles.forgotText}>Forgot?</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <View style={styles.passwordWrapper}>
+                        <TextInput
+                          style={[styles.input, styles.passwordInput, passwordFocused && styles.inputActive]}
+                          placeholder="Enter your password"
+                          placeholderTextColor="#9CA3AF"
+                          secureTextEntry={!showPassword}
+                          autoCapitalize="none"
+                          autoComplete="password"
+                          value={password}
+                          onChangeText={setPassword}
+                          onFocus={() => setPasswordFocused(true)}
+                          onBlur={() => setPasswordFocused(false)}
+                        />
+                        <TouchableOpacity
+                          style={styles.eyeButton}
+                          onPress={() => setShowPassword(!showPassword)}
+                        >
+                          <Text style={styles.eyeText}>{showPassword ? 'Hide' : 'Show'}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handleLogin}
+                      disabled={loading}
+                      activeOpacity={0.8}
+                    >
+                      {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.buttonText}>Sign In</Text>}
+                    </TouchableOpacity>
+
+                    <View style={styles.footer}>
+                      <Text style={styles.footerText}>Don't have an account? </Text>
+                      <TouchableOpacity onPress={() => switchView('register')}>
+                        <Text style={styles.signUpText}>Sign Up</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+
               </View>
-            </Animated.View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+              </View>
+            </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -196,14 +328,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 32,
     alignItems: 'center',
-    backgroundColor: '#FFFFFF', // Solid background to fix Android shadow bleed-through
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
     shadowRadius: 16,
-    elevation: 3, // Softer shadow on Android
+    elevation: 3,
     borderWidth: 1,
-    borderColor: '#EADBCB', // Clean cream border matching the theme
+    borderColor: '#EADBCB',
   },
   logo: {
     width: 240,
@@ -212,8 +344,8 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontFamily: 'Doto_500Medium',
-    fontSize: 16, // Increased for better visibility
-    color: '#000000', // Pure black for maximum contrast and pop
+    fontSize: 16,
+    color: '#000000',
     letterSpacing: 2,
     marginTop: -16,
     marginBottom: 32,
@@ -222,6 +354,13 @@ const styles = StyleSheet.create({
   form: {
     width: '100%',
     gap: 20,
+  },
+  instructionText: {
+    fontFamily: 'SpaceGrotesk_500Medium',
+    fontSize: 13,
+    color: '#374151',
+    textAlign: 'center',
+    marginBottom: 4,
   },
   inputContainer: {
     width: '100%',
