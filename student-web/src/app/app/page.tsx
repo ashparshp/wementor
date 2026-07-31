@@ -27,7 +27,7 @@ const platforms = [
   {
     name: "Android",
     subtitle: "Google Play",
-    description: "For phones and tablets running Android 8.0 and above.",
+    description: "For phones running Android 11 and above.",
     icon: AndroidIcon,
     accent: "from-[#3DDC84]/15 to-[#3DDC84]/5",
     iconBg: "bg-[#3DDC84]/10 text-[#2DA55E]",
