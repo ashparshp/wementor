@@ -46,8 +46,11 @@ export default function Navbar() {
             <Link href="/" className={`text-base font-bold transition-colors ${pathname === "/" ? "text-[#F29440]" : "text-gray-800 hover:text-[#F29440]"}`}>
               Home
             </Link>
-            <Link href="/book" className={`text-base font-bold transition-colors ${pathname === "/book" ? "text-[#F29440]" : "text-gray-800 hover:text-[#F29440]"}`}>
+            <Link href="/book" className={`text-base font-bold transition-colors ${pathname === "/book" || pathname.startsWith("/book/") ? "text-[#F29440]" : "text-gray-800 hover:text-[#F29440]"}`}>
               Book Session
+            </Link>
+            <Link href="/app" className={`text-base font-bold transition-colors ${pathname === "/app" ? "text-[#F29440]" : "text-gray-800 hover:text-[#F29440]"}`}>
+              Mobile App
             </Link>
           </div>
 

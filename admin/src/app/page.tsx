@@ -34,10 +34,10 @@ export default function LoginPage() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image 
-          src="/images/bg-v2.png" 
+          src="/hero-bg.png" 
           alt="Login Background" 
           fill 
-          className="object-cover object-left"
+          className="object-cover object-center"
           priority
         />
       </div>

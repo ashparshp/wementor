@@ -37,17 +37,6 @@ export default function Login() {
 
   return (
     <div className="flex-grow flex items-center justify-center lg:justify-end py-8 px-4 sm:px-6 lg:pr-24 xl:pr-32 relative overflow-hidden">
-      {/* Background Image overriding universal bg for this page */}
-      <div className="absolute inset-0 -z-20">
-        <img 
-          src="/images/bg-v2.png" 
-          alt="Login Background" 
-          className="object-cover object-left w-full h-full"
-        />
-        {/* Semi-transparent overlay to ensure form readability */}
-        <div className="absolute inset-0 bg-white/20"></div>
-      </div>
-
       <div className="max-w-md w-full space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
         <div>
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
