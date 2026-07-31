@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { lockScroll, unlockScroll, preventBackgroundTouchMove } from "@/lib/scroll-lock";
 
 const navLinks = [
   { href: "/", label: "Home", match: (path: string) => path === "/" },
@@ -32,23 +31,13 @@ export default function Navbar() {
     setIsLoggedIn(!!token);
   }, [pathname]);
 
-  useEffect(() => {
-    if (!isMobileMenuOpen) return;
-
-    lockScroll();
-    document.addEventListener("touchmove", preventBackgroundTouchMove, { passive: false });
-
-    return () => {
-      document.removeEventListener("touchmove", preventBackgroundTouchMove);
-      unlockScroll();
-    };
-  }, [isMobileMenuOpen]);
+  const closeMenu = () => setIsMobileMenuOpen(false);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     setIsLoggedIn(false);
-    setIsMobileMenuOpen(false);
+    closeMenu();
     router.push("/");
   };
 
@@ -64,16 +53,14 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`top-0 left-0 right-0 z-[60] bg-white/80 backdrop-blur-md border-b border-[#E88935]/20 ${
-          isMobileMenuOpen ? "fixed md:sticky" : "sticky"
-        }`}
+        className="sticky top-0 left-0 right-0 z-[60] bg-white/80 backdrop-blur-md border-b border-[#E88935]/20"
       >
         <div className="max-w-[90rem] mx-auto px-4 lg:px-6">
           <div className="flex justify-between h-16 sm:h-20 items-center gap-4">
-            <Link href="/" className="flex items-center shrink-0 -ml-2">
+            <Link href="/" className="flex items-center shrink-0 -ml-2" onClick={closeMenu}>
               <Image
                 src="/logo-hor-no-bg.png"
-                alt="Logo"
+                alt="TvaNetra"
                 width={260}
                 height={80}
                 className="w-28 sm:w-40 lg:w-44 h-auto object-contain"
@@ -131,7 +118,11 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 -mr-2 text-gray-700 hover:text-[#F29440] hover:bg-black/5 rounded-lg transition-colors"
+              className={`md:hidden p-2 -mr-2 rounded-lg transition-colors ${
+                isMobileMenuOpen
+                  ? "text-[#F29440] bg-[#FDF1E9]"
+                  : "text-gray-700 hover:text-[#F29440] hover:bg-black/5"
+              }`}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
             >
@@ -139,63 +130,65 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-      </nav>
 
-      {/* Mobile menu — fixed below header, not inline (avoids sticky/scroll jump) */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 touch-none">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"
-            onClick={() => setIsMobileMenuOpen(false)}
-            aria-label="Close menu"
-          />
+        {/* Mobile dropdown — expands below the header, no full-screen modal */}
+        <div
+          className={`md:hidden overflow-hidden transition-[max-height,opacity] duration-300 ease-out ${
+            isMobileMenuOpen ? "max-h-[calc(100dvh-4rem)] opacity-100" : "max-h-0 opacity-0"
+          }`}
+          aria-hidden={!isMobileMenuOpen}
+        >
           <div
             data-scroll-lock-ignore
-            className="absolute left-0 right-0 top-16 sm:top-20 max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain bg-white border-b border-[#E88935]/20 shadow-lg touch-auto"
+            className="border-t border-[#E88935]/15 bg-white/95 backdrop-blur-md px-4 py-4 space-y-1 max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain"
           >
-            <div className="max-w-[90rem] mx-auto px-4 py-4 space-y-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={linkClass(link.match(pathname))}
-                >
-                  {link.label}
-                </Link>
-              ))}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                className={linkClass(link.match(pathname))}
+              >
+                {link.label}
+              </Link>
+            ))}
 
-              <div className="pt-3 mt-3 border-t border-gray-100 space-y-2">
-                {isLoggedIn ? (
-                  <>
-                    <Link href="/dashboard" className={linkClass(pathname.startsWith("/dashboard"))}>
-                      Dashboard
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-3 rounded-xl text-base font-bold text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/login" className={linkClass(pathname === "/login")}>
-                      Log in
-                    </Link>
-                    <Link
-                      href="/register"
-                      className="block w-full text-center bg-[#111827] hover:bg-black text-white px-4 py-3 rounded-xl text-base font-bold transition-all"
-                    >
-                      Sign up
-                    </Link>
-                  </>
-                )}
-              </div>
+            <div className="pt-3 mt-3 border-t border-gray-100 space-y-2">
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={closeMenu}
+                    className={linkClass(pathname.startsWith("/dashboard"))}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 rounded-xl text-base font-bold text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={closeMenu} className={linkClass(pathname === "/login")}>
+                    Log in
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={closeMenu}
+                    className="block w-full text-center bg-[#111827] hover:bg-black text-white px-4 py-3 rounded-xl text-base font-bold transition-all"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
-      )}
+      </nav>
     </>
   );
 }

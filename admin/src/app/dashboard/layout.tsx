@@ -34,6 +34,19 @@ export default function DashboardLayout({
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
   const handleLogout = () => {
     setIsLoggingOut(true);
     logout();
@@ -111,23 +124,15 @@ export default function DashboardLayout({
   return (
     <div className="h-screen bg-[#FDF8F5] flex font-sans">
       
-      {/* Mobile Sidebar Overlay */}
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
       {/* Sidebar */}
       <aside className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-[#E5E7EB] transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
-        ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+        ${isMobileMenuOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"}
       `}>
         <div className="flex flex-col h-full">
           
           {/* Logo Area */}
-          <div className="h-20 flex items-center px-6 border-b border-[#E5E7EB]">
+          <div className="h-20 flex items-center justify-between px-6 border-b border-[#E5E7EB]">
             <div className="relative w-56 h-16">
               <Image 
                 src="/images/logo-hor-no-bg.png" 
@@ -137,6 +142,14 @@ export default function DashboardLayout({
                 className="object-contain object-left" 
               />
             </div>
+            <button
+              type="button"
+              className="p-2 -mr-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Navigation */}
@@ -148,6 +161,7 @@ export default function DashboardLayout({
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`
                     flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 font-medium text-sm
                     ${isActive 
@@ -185,10 +199,17 @@ export default function DashboardLayout({
           
           <div className="flex items-center gap-4">
             <button 
-              className="p-2 -ml-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100"
-              onClick={() => setIsMobileMenuOpen(true)}
+              type="button"
+              className={`p-2 -ml-2 rounded-lg lg:hidden transition-colors ${
+                isMobileMenuOpen
+                  ? "text-[#F29440] bg-[#FDF1E9]"
+                  : "text-gray-500 hover:bg-gray-100"
+              }`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
             >
-              <Menu className="w-6 h-6" />
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
             <h1 className="text-xl font-bold text-[#111827]">
               {navItems.find(i => i.href === pathname)?.name || "Dashboard"}
