@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Video, Zap } from "lucide-react";
+import { ShieldCheck, Video, Zap } from "lucide-react";
 
 export default function Home() {
   return (
@@ -18,11 +18,8 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 sm:pt-10">
-              <Link href="/book" className="group w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-900 px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-lg sm:text-xl font-bold transition-all shadow-[0_0_15px_rgba(0,0,0,0.08)] hover:shadow-[0_0_20px_rgba(0,0,0,0.12)] border border-gray-100 active:scale-95">
-                <span>Book a Session</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="w-6 h-6 group-hover:translate-x-1.5 transition-transform text-[#F29440]" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 12H20M20 12L15.5 8.5M20 12L15.5 15.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <Link href="/book" className="group w-full sm:w-auto inline-flex items-center justify-center bg-white hover:bg-gray-50 text-gray-900 px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-lg sm:text-xl font-bold transition-all shadow-[0_0_15px_rgba(0,0,0,0.08)] hover:shadow-[0_0_20px_rgba(0,0,0,0.12)] border border-gray-100 active:scale-95">
+                Book a Session
               </Link>
             </div>
 
