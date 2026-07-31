@@ -26,10 +26,10 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="pt-10 sm:pt-16 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 sm:gap-8 text-sm font-medium text-gray-500">
-              <div className="flex items-center gap-2"><ShieldCheck className="w-5 h-5 text-emerald-500"/> Vetted Experts</div>
-              <div className="flex items-center gap-2"><Video className="w-5 h-5 text-blue-500"/> 1-on-1 Video Calls</div>
-              <div className="flex items-center gap-2"><Zap className="w-5 h-5 text-[#F29440]"/> Instant Booking</div>
+            <div className="pt-10 sm:pt-16 flex flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 sm:gap-x-8 sm:gap-y-0 text-xs sm:text-sm font-medium text-gray-500">
+              <div className="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"><ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-emerald-500"/> Vetted Experts</div>
+              <div className="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"><Video className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-blue-500"/> 1-on-1 Video Calls</div>
+              <div className="flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"><Zap className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 text-[#F29440]"/> Instant Booking</div>
             </div>
           </div>
         </div>
