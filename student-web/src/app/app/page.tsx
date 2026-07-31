@@ -86,8 +86,7 @@ export default function MobileAppPage() {
                       >
                         <Icon className="w-6 h-6" />
                       </div>
-                      <span className="inline-flex items-center gap-1.5 bg-[#FDF1E9] text-[#F29440] text-[11px] uppercase tracking-wider font-bold px-3 py-1.5 rounded-lg border border-[#F29440]/15">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#F29440] animate-pulse" />
+                      <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
                         Coming Soon
                       </span>
                     </div>
@@ -100,7 +99,7 @@ export default function MobileAppPage() {
                       disabled
                       className="mt-6 w-full py-3 rounded-xl text-sm font-bold text-gray-400 bg-gray-50 border border-gray-100 cursor-not-allowed"
                     >
-                      Download — Coming Soon
+                      Download
                     </button>
                   </div>
                 </div>
