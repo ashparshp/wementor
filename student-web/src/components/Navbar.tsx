@@ -59,7 +59,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="sticky top-0 left-0 right-0 z-[60] bg-white/80 backdrop-blur-md border-b border-[#E88935]/20"
+        className="fixed top-0 left-0 right-0 z-[60] bg-white/80 backdrop-blur-md border-b border-[#E88935]/20"
       >
         <div className="max-w-[90rem] mx-auto px-4 lg:px-6">
           <div className="flex justify-between h-16 sm:h-20 items-center gap-4">
@@ -193,6 +193,8 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+      {/* Spacer for fixed navbar height */}
+      <div className="h-16 sm:h-20 shrink-0" aria-hidden="true" />
     </>
   );
 }
