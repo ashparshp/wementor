@@ -61,14 +61,14 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex flex-col lg:flex-row gap-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
         
         {/* Left Col: Profile info */}
-        <div className="lg:w-2/3 space-y-10">
+        <div className="lg:w-2/3 space-y-8 sm:space-y-10">
           
-          <div className="flex flex-col sm:flex-row gap-8 items-start">
-            <div className="w-32 h-32 shrink-0">
+          <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 mx-auto sm:mx-0">
               {mentor.avatar_url ? (
                 <Image src={mentor.avatar_url} alt={mentor.name} width={128} height={128} className="w-full h-full rounded-3xl object-cover shadow-lg" />
               ) : (
@@ -78,13 +78,13 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
               )}
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-4 text-center sm:text-left w-full">
               <div>
-                <h1 className="text-4xl font-black text-gray-900 tracking-tight">{mentor.name}</h1>
-                <p className="text-xl text-gray-600 mt-2 font-medium">{mentor.bio || "Professional Mentor"}</p>
+                <h1 className="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight">{mentor.name}</h1>
+                <p className="text-base sm:text-xl text-gray-600 mt-2 font-medium">{mentor.bio || "Professional Mentor"}</p>
               </div>
               
-              <div className="flex flex-wrap gap-4 text-sm font-semibold">
+              <div className="flex flex-wrap justify-center sm:justify-start gap-3 sm:gap-4 text-sm font-semibold">
                 <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-xl border border-amber-100">
                   <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
                   {mentor.avg_rating.toFixed(1)} ({mentor.total_reviews} reviews)
@@ -100,7 +100,7 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
           <hr className="border-gray-100" />
 
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900">About Me</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">About Me</h2>
             <div className="prose prose-gray max-w-none text-gray-600 leading-relaxed">
               {mentor.about ? (
                 <p>{mentor.about}</p>
@@ -111,7 +111,7 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900">What to expect</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">What to expect</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-white border border-gray-100 p-5 rounded-2xl flex items-start gap-4 shadow-sm">
                 <div className="bg-[#FDF1E9] p-2 rounded-xl text-[#F29440]"><ShieldCheck className="w-5 h-5"/></div>
@@ -134,7 +134,7 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
 
         {/* Right Col: Booking/Plans */}
         <div className="lg:w-1/3">
-          <div className="sticky top-28 space-y-6">
+          <div className="lg:sticky lg:top-28 space-y-4 sm:space-y-6">
             <h3 className="text-xl font-bold text-gray-900">Mentorship Plans</h3>
             
             {!mentor.plans || mentor.plans.length === 0 ? (
@@ -144,10 +144,10 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
             ) : (
               <div className="space-y-4">
                 {mentor.plans.map((plan) => (
-                  <div key={plan.id} className="bg-white border-2 border-gray-100 hover:border-[#F29440] rounded-3xl p-6 transition-colors shadow-sm group">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-bold text-lg text-gray-900">{plan.title}</h4>
-                      <span className="font-black text-xl text-gray-900">₹{(plan.price_paise / 100).toFixed(2)}</span>
+                  <div key={plan.id} className="bg-white border-2 border-gray-100 hover:border-[#F29440] rounded-3xl p-5 sm:p-6 transition-colors shadow-sm group">
+                    <div className="flex justify-between items-start gap-3 mb-2">
+                      <h4 className="font-bold text-base sm:text-lg text-gray-900">{plan.title}</h4>
+                      <span className="font-black text-lg sm:text-xl text-gray-900 shrink-0">₹{(plan.price_paise / 100).toFixed(2)}</span>
                     </div>
                     <p className="text-sm text-gray-500 mb-6 line-clamp-2">{plan.description}</p>
                     

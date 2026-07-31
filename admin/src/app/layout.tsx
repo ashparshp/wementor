@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import AuthShell from "@/components/AuthShell";
 import { AuthProvider } from "@/lib/auth";
 
 const spaceGrotesk = Space_Grotesk({
@@ -20,9 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.className} antialiased`}>
+      <body className={`${spaceGrotesk.className} antialiased min-h-screen flex flex-col relative`}>
         <AuthProvider>
-          {children}
+          <AuthShell>{children}</AuthShell>
         </AuthProvider>
       </body>
     </html>

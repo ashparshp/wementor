@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import Image from "next/image";
+import AppBackground from "@/components/AppBackground";
 import Navbar from "@/components/Navbar";
 
 const spaceGrotesk = Space_Grotesk({
@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   description: "Connect with industry experts and accelerate your career with 1-on-1 mentorship sessions.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -21,11 +26,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.className} antialiased min-h-screen flex flex-col relative`}>
-        {/* Universal Background */}
-        <div className="fixed inset-0 -z-50 bg-cover bg-center bg-no-repeat bg-[#FDF8F5]" style={{ backgroundImage: 'url(/hero-bg.png)' }}>
-          <div className="absolute inset-0 bg-white/60"></div>
-        </div>
+      <body className={`${spaceGrotesk.className} antialiased min-h-screen flex flex-col relative overflow-x-hidden`}>
+        <AppBackground />
 
         <Navbar />
 

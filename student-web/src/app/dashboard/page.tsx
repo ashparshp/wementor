@@ -20,9 +20,9 @@ export default function DashboardOverview() {
   if (!user) return null;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <header>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
           Welcome back, {user.name.split(" ")[0]}! 👋
         </h1>
         <p className="mt-2 text-[#6B7280]">
@@ -33,7 +33,7 @@ export default function DashboardOverview() {
       {/* Quick Actions & Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Book a session card */}
-        <div className="col-span-1 md:col-span-2 lg:col-span-2 bg-gradient-to-br from-[#FFFFFF] to-[#FFF9F3] p-8 rounded-3xl border border-[#EA8A2F]/20 shadow-[0_20px_45px_rgba(185,120,40,0.08),0_4px_12px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="col-span-1 md:col-span-2 lg:col-span-2 bg-gradient-to-br from-[#FFFFFF] to-[#FFF9F3] p-5 sm:p-8 rounded-3xl border border-[#EA8A2F]/20 shadow-[0_20px_45px_rgba(185,120,40,0.08),0_4px_12px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="space-y-4 text-center sm:text-left">
             <h3 className="text-xl font-bold text-gray-900">Need some guidance?</h3>
             <p className="text-[#6B7280] max-w-sm">
@@ -74,7 +74,7 @@ export default function DashboardOverview() {
         </div>
 
         {/* Placeholder for no bookings */}
-        <div className="bg-[#FFFFFF] rounded-3xl border border-[#EADBCB] border-dashed p-12 text-center flex flex-col items-center justify-center space-y-4">
+        <div className="bg-[#FFFFFF] rounded-3xl border border-[#EADBCB] border-dashed p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-[#FFF8F1] flex items-center justify-center text-[#A08D7C]">
             <Calendar className="w-8 h-8" />
           </div>

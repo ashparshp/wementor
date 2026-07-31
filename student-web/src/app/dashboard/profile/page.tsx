@@ -81,15 +81,32 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-4xl">
-      <header className="flex justify-between items-end">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-4xl w-full">
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-          <p className="mt-2 text-[#6B7280]">Manage your personal information and account settings.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Profile</h1>
+          <p className="mt-2 text-sm sm:text-base text-[#6B7280]">Manage your personal information and account settings.</p>
         </div>
         
         {isEditing ? (
-          <div className="hidden sm:flex gap-2">
+          <>
+            <div className="flex sm:hidden gap-2 w-full sm:w-auto">
+              <button 
+                onClick={() => { setIsEditing(false); setEditName(user.name); }}
+                disabled={saving}
+                className="flex-1 px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSave}
+                disabled={saving}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#EA8A2F] text-white text-sm font-bold rounded-xl hover:bg-[#D97706] transition-colors shadow-sm disabled:opacity-50"
+              >
+                {saving ? "Saving..." : <><Check size={16} /> Save</>}
+              </button>
+            </div>
+            <div className="hidden sm:flex gap-2">
             <button 
               onClick={() => { setIsEditing(false); setEditName(user.name); }}
               disabled={saving}
@@ -105,6 +122,7 @@ export default function ProfilePage() {
               {saving ? "Saving..." : <><Check size={16} /> Save Changes</>}
             </button>
           </div>
+          </>
         ) : (
           <button 
             onClick={() => setIsEditing(true)}
@@ -120,26 +138,26 @@ export default function ProfilePage() {
         {/* Profile Header Banner */}
         <div className="h-32 bg-gradient-to-r from-[#EA8A2F]/20 to-[#FFF8F1]"></div>
         
-        <div className="px-8 pb-8">
+        <div className="px-4 sm:px-8 pb-6 sm:pb-8">
           {/* Avatar & Name */}
-          <div className="relative flex justify-between items-end -mt-12 mb-8">
-            <div className="flex items-end gap-6">
-              <div className="w-24 h-24 rounded-full bg-white p-1 shadow-sm border border-[#EADBCB]">
+          <div className="relative flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 -mt-10 sm:-mt-12 mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white p-1 shadow-sm border border-[#EADBCB] shrink-0">
                 <div className="w-full h-full rounded-full bg-[#FFF8F1] text-[#EA8A2F] flex items-center justify-center text-3xl font-bold">
                   {user.name?.charAt(0).toUpperCase()}
                 </div>
               </div>
-              <div className="mb-2">
+              <div className="mb-0 sm:mb-2">
                 {isEditing ? (
                   <input
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="text-2xl font-bold text-gray-900 bg-white border border-[#EADBCB] rounded-lg px-3 py-1 mb-1 focus:outline-none focus:ring-2 focus:ring-[#EA8A2F] w-full max-w-xs"
+                    className="text-xl sm:text-2xl font-bold text-gray-900 bg-white border border-[#EADBCB] rounded-lg px-3 py-1 mb-1 focus:outline-none focus:ring-2 focus:ring-[#EA8A2F] w-full max-w-xs"
                     autoFocus
                   />
                 ) : (
-                  <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{user.name}</h2>
                 )}
                 <div className="flex items-center gap-2 mt-1">
                   <span className="px-2.5 py-0.5 rounded-full bg-[#EA8A2F]/10 text-[#EA8A2F] text-xs font-bold uppercase tracking-wider">
@@ -151,7 +169,7 @@ export default function ProfilePage() {
             
             <button 
               onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-              className="sm:hidden p-2 text-[#6B7280] hover:text-[#111827] bg-gray-50 rounded-lg border border-gray-200"
+              className="sm:hidden self-end p-2 text-[#6B7280] hover:text-[#111827] bg-gray-50 rounded-lg border border-gray-200 shrink-0"
             >
               {isEditing ? <Check size={20} className="text-[#EA8A2F]" /> : <PencilLine size={20} />}
             </button>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Bell, Calendar, MessageCircle, Smartphone } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Mobile App — TvaNetra",
@@ -23,24 +22,6 @@ function AppleIcon({ className }: { className?: string }) {
     </svg>
   );
 }
-
-const features = [
-  {
-    icon: Calendar,
-    title: "Book on the go",
-    description: "Browse mentors and schedule sessions from anywhere.",
-  },
-  {
-    icon: Bell,
-    title: "Session reminders",
-    description: "Never miss a mentorship call with timely notifications.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Stay connected",
-    description: "Keep track of your bookings and mentor updates in one place.",
-  },
-];
 
 const platforms = [
   {
@@ -66,56 +47,33 @@ const platforms = [
 export default function MobileAppPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="relative overflow-hidden pt-16 pb-24 lg:pb-32">
+      <section className="relative overflow-hidden pt-12 sm:pt-16 pb-16 sm:pb-24 lg:pb-32">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero */}
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-[#EADBCB] rounded-full px-4 py-1.5 text-sm font-bold text-[#F29440] mb-8 shadow-sm">
-              <Smartphone className="w-4 h-4" />
-              Mobile App
-            </div>
-
-            <div className="relative mx-auto w-28 h-28 mb-6">
-              <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-[#F29440]/20 to-[#6C63FF]/10 blur-xl scale-110" />
-              <div className="relative w-full h-full rounded-[28px] bg-white border border-[#EADBCB] shadow-[0_8px_40px_rgb(0,0,0,0.08)] flex items-center justify-center overflow-hidden">
-                <Image
-                  src="/icon.png"
-                  alt="TvaNetra app icon"
-                  width={88}
-                  height={88}
-                  className="w-[72px] h-[72px] object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
             <Image
               src="/logo-hor-no-bg.png"
               alt="TvaNetra"
               width={220}
               height={70}
-              className="w-44 sm:w-52 h-auto mx-auto object-contain mb-3"
+              className="w-44 sm:w-52 h-auto mx-auto object-contain"
             />
-            <p className="text-sm font-medium tracking-[0.2em] text-gray-500 uppercase mb-4">
+            <p className="text-sm font-medium tracking-[0.2em] text-gray-500 uppercase -mt-3 mb-2">
               We wanna be your eyes
             </p>
-            <h1 className="text-3xl sm:text-4xl font-black text-[#111827] tracking-tight leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl font-black text-[#111827] tracking-tight leading-tight">
               Mentorship in your pocket
             </h1>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              The TvaNetra app brings expert mentorship to your phone. Book sessions, manage
-              bookings, and grow your career — wherever you are.
-            </p>
           </div>
 
           {/* Platform cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 max-w-3xl mx-auto">
             {platforms.map((platform) => {
               const Icon = platform.icon;
               return (
                 <div
                   key={platform.name}
-                  className={`group relative bg-white rounded-2xl border border-gray-100 p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 ${platform.borderHover}`}
+                  className={`group relative bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 ${platform.borderHover}`}
                 >
                   <div
                     className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${platform.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
@@ -148,30 +106,6 @@ export default function MobileAppPage() {
                 </div>
               );
             })}
-          </div>
-
-          {/* Features */}
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-center text-sm font-bold uppercase tracking-wider text-gray-400 mb-8">
-              What you&apos;ll get
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {features.map((feature) => {
-                const Icon = feature.icon;
-                return (
-                  <div
-                    key={feature.title}
-                    className="bg-white/70 backdrop-blur-sm rounded-2xl border border-[#EADBCB]/60 p-5 text-center"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-[#FDF1E9] text-[#F29440] flex items-center justify-center mx-auto mb-3">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-bold text-gray-900 text-sm mb-1">{feature.title}</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">{feature.description}</p>
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
       </section>

@@ -130,7 +130,7 @@ export default function SessionDetailsPage() {
             setTime("");
             setBookingStep("time");
           }}
-          className={`h-10 w-full flex items-center justify-center rounded-xl text-sm font-medium transition-colors
+          className={`h-9 sm:h-10 w-full flex items-center justify-center rounded-xl text-xs sm:text-sm font-medium transition-colors
             ${!isCurrentMonth ? "text-transparent" : ""}
             ${isSelected ? "bg-[#F29440] text-white shadow-md" : ""}
             ${!isSelected && bookable && isCurrentMonth ? "bg-white text-gray-900 hover:bg-[#FDF1E9] hover:text-[#F29440] border border-gray-100" : ""}
@@ -341,13 +341,13 @@ export default function SessionDetailsPage() {
 
   if (bookingSuccess) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-24 text-center">
-        <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          <ShieldCheck className="w-10 h-10" />
+      <div className="max-w-3xl mx-auto px-4 py-12 sm:py-24 text-center">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <ShieldCheck className="w-8 h-8 sm:w-10 sm:h-10" />
         </div>
-        <h1 className="text-4xl font-black text-gray-900 mb-4">Booking Confirmed!</h1>
-        <p className="text-xl text-gray-600 mb-8">Your session with {mentor.name} has been successfully scheduled.</p>
-        <button onClick={() => window.location.href="/dashboard/bookings"} className="bg-[#111827] text-white px-8 py-4 rounded-full font-bold hover:bg-gray-900 transition-colors">
+        <h1 className="text-2xl sm:text-4xl font-black text-gray-900 mb-4">Booking Confirmed!</h1>
+        <p className="text-base sm:text-xl text-gray-600 mb-8 px-2">Your session with {mentor.name} has been successfully scheduled.</p>
+        <button onClick={() => window.location.href="/dashboard/bookings"} className="w-full sm:w-auto bg-[#111827] text-white px-8 py-4 rounded-full font-bold hover:bg-gray-900 transition-colors">
           View My Bookings
         </button>
       </div>
@@ -355,10 +355,10 @@ export default function SessionDetailsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <button 
         onClick={() => router.push('/book')}
-        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-8 font-semibold transition-colors"
+        className="flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 sm:mb-8 font-semibold transition-colors text-sm sm:text-base"
       >
         <ArrowLeft className="w-5 h-5" /> Back to Sessions
       </button>
@@ -369,13 +369,13 @@ export default function SessionDetailsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Left Column: Session Details & Mentor Profile */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           
           <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
-            <div className="p-8 md:p-10">
-              <div className="flex items-center gap-3 mb-6">
+            <div className="p-5 sm:p-8 md:p-10">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6">
                 <span className="bg-[#FDF1E9] text-[#F29440] text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider">
                   {plan.category}
                 </span>
@@ -384,18 +384,18 @@ export default function SessionDetailsPage() {
                 </span>
               </div>
               
-              <h1 className="text-3xl md:text-4xl font-black text-[#111827] mb-8 leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#111827] mb-6 sm:mb-8 leading-tight">
                 {plan.title}
               </h1>
 
               {/* Rich text description */}
-              <div className="prose prose-lg max-w-none text-gray-600 prose-headings:text-gray-900 prose-a:text-[#F29440]">
+              <div className="prose prose-sm sm:prose-lg max-w-none text-gray-600 prose-headings:text-gray-900 prose-a:text-[#F29440]">
                 <div dangerouslySetInnerHTML={{ __html: plan.description }} />
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-3xl border border-gray-200 p-8 md:p-10">
+          <div className="bg-gray-50 rounded-3xl border border-gray-200 p-5 sm:p-8 md:p-10">
             <h3 className="text-xl font-bold text-gray-900 mb-6">About your mentor</h3>
             <div className="flex flex-col md:flex-row gap-6 items-start">
               <div className="shrink-0">
@@ -406,7 +406,7 @@ export default function SessionDetailsPage() {
                 )}
               </div>
               <div>
-                <h4 className="text-2xl font-bold text-gray-900 mb-2">{mentor.name}</h4>
+                <h4 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{mentor.name}</h4>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex items-center gap-1 bg-[#FDF1E9] text-[#F29440] px-2 py-1 rounded font-bold text-sm">
                     <Star className="w-4 h-4 fill-[#F29440]" /> {mentor.avg_rating.toFixed(1)}
@@ -423,10 +423,10 @@ export default function SessionDetailsPage() {
 
         {/* Right Column: Booking Widget */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-6 md:p-8 sticky top-24">
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-6 md:p-8 lg:sticky lg:top-24">
             <div className="mb-6 pb-6 border-b border-gray-100">
               <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider block mb-1">Session Price</span>
-              <div className="text-4xl font-black text-[#111827]">
+              <div className="text-3xl sm:text-4xl font-black text-[#111827]">
                 ₹{(plan.price_paise/100).toFixed(0)}
               </div>
             </div>
@@ -458,7 +458,7 @@ export default function SessionDetailsPage() {
                   {fetchingTimes ? (
                     <div className="text-sm text-gray-500 py-8 text-center bg-gray-50 rounded-xl border border-gray-100">Loading available slots...</div>
                   ) : availableTimes.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {availableTimes.map(t => (
                         <button
                           key={t}

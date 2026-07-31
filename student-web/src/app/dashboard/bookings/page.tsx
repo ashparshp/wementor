@@ -37,9 +37,9 @@ export default function MyBookings() {
   if (!user) return null;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <header>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
           My Bookings
         </h1>
         <p className="mt-2 text-[#6B7280]">
@@ -55,7 +55,7 @@ export default function MyBookings() {
           </div>
         </div>
       ) : bookings.length === 0 ? (
-        <div className="bg-[#FFFFFF] rounded-3xl border border-[#EADBCB] border-dashed p-12 text-center flex flex-col items-center justify-center space-y-4">
+        <div className="bg-[#FFFFFF] rounded-3xl border border-[#EADBCB] border-dashed p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-[#FFF8F1] flex items-center justify-center text-[#A08D7C]">
             <Calendar className="w-8 h-8" />
           </div>
@@ -75,9 +75,9 @@ export default function MyBookings() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {bookings.map((booking) => (
-            <div key={booking.id} className="bg-white p-6 rounded-2xl border border-[#EADBCB] shadow-sm flex flex-col justify-between hover:border-[#EA8A2F]/30 transition-all">
+            <div key={booking.id} className="bg-white p-4 sm:p-6 rounded-2xl border border-[#EADBCB] shadow-sm flex flex-col justify-between hover:border-[#EA8A2F]/30 transition-all">
               <div>
-                <div className="flex justify-between items-start mb-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">
                   <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${
                     booking.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' :
                     booking.status === 'pending' ? 'bg-amber-100 text-amber-700' :
@@ -86,8 +86,8 @@ export default function MyBookings() {
                     {booking.status.toUpperCase()}
                   </span>
                   <div className="text-[#6B7280] text-sm flex items-center gap-1">
-                    <Clock size={14} />
-                    {new Date(booking.session_date).toLocaleDateString()} at {booking.start_time.substring(0, 5)}
+                    <Clock size={14} className="shrink-0" />
+                    <span className="break-words">{new Date(booking.session_date).toLocaleDateString()} at {booking.start_time.substring(0, 5)}</span>
                   </div>
                 </div>
                 
@@ -99,7 +99,7 @@ export default function MyBookings() {
                 </p>
               </div>
               
-              <div className="pt-4 border-t border-[#EADBCB] flex justify-between items-center">
+              <div className="pt-4 border-t border-[#EADBCB] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                 <span className="font-semibold text-gray-900">
                   {booking.payment_status === 'captured' ? 'Paid & Confirmed' : 'Pending Payment'}
                 </span>

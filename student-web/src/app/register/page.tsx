@@ -39,8 +39,8 @@ export default function Register() {
 
   if (success) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="max-w-md w-full text-center space-y-6 bg-white/80 backdrop-blur-xl p-10 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
+      <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] flex items-center justify-center py-6 sm:py-12 px-4 sm:px-6 relative overflow-hidden">
+        <div className="max-w-md w-full text-center space-y-6 bg-white/80 backdrop-blur-xl p-6 sm:p-10 rounded-3xl border border-gray-100 shadow-[0_8px_40px_rgb(0,0,0,0.04)]">
           <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 text-emerald-600">
             <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -56,10 +56,10 @@ export default function Register() {
   }
 
   return (
-    <div className="flex-grow flex items-center justify-center lg:justify-end py-8 px-4 sm:px-6 lg:pr-24 xl:pr-32 relative overflow-hidden">
-      <div className="max-w-md w-full space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
+    <div className="flex-grow flex items-center justify-center min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] py-6 sm:py-8 px-4 sm:px-6 relative overflow-hidden">
+      <div className="max-w-md w-full space-y-5 sm:space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
         <div>
-          <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
             Create an account
           </h2>
           <p className="mt-3 text-center text-sm text-gray-600">

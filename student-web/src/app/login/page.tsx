@@ -36,10 +36,10 @@ export default function Login() {
   };
 
   return (
-    <div className="flex-grow flex items-center justify-center lg:justify-end py-8 px-4 sm:px-6 lg:pr-24 xl:pr-32 relative overflow-hidden">
-      <div className="max-w-md w-full space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
+    <div className="flex-grow flex items-center justify-center min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] py-6 sm:py-8 px-4 sm:px-6 relative overflow-hidden">
+      <div className="max-w-md w-full space-y-5 sm:space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
         <div>
-          <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
             Welcome back
           </h2>
           <p className="mt-3 text-center text-sm text-gray-600">
@@ -93,7 +93,7 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center">
               <input id="remember-me" type="checkbox" className="h-4 w-4 text-[#F29440] focus:ring-[#F29440] border-gray-300 rounded text-[#F29440]" />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">

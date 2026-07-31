@@ -63,18 +63,18 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-black text-gray-900">Discover Sessions</h1>
-        <p className="text-gray-600 mt-2">Browse available mentorship sessions and book a time that works for you.</p>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="text-center mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-black text-gray-900">Discover Sessions</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-2 px-2">Browse available mentorship sessions and book a time that works for you.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {enrichedPlans.map(plan => (
           <div 
             key={plan.id}
             onClick={() => router.push(`/book/${plan.id}`)}
-            className="cursor-pointer flex flex-col justify-between bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            className="cursor-pointer flex flex-col justify-between bg-white rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 sm:p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 active:scale-[0.98]"
           >
             <div>
               <div className="flex justify-between items-start mb-3">
