@@ -20,7 +20,7 @@ const loginButtonClass =
   "inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-bold text-gray-800 border border-[#EADBCB] bg-white hover:bg-[#FDF1E9] hover:text-[#F29440] hover:border-[#F29440]/30 transition-all active:scale-[0.98]";
 
 const signupButtonClass =
-  "inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#F29440] hover:bg-[#E88935] shadow-sm hover:shadow-md transition-all active:scale-[0.98]";
+  "inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[#111827] hover:bg-black border border-gray-800 shadow-sm hover:shadow-md transition-all active:scale-[0.98]";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
