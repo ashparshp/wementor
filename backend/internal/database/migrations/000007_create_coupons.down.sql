@@ -1,2 +1,0 @@
-ALTER TABLE bookings DROP COLUMN IF EXISTS coupon_id;
-DROP TABLE IF EXISTS coupons;

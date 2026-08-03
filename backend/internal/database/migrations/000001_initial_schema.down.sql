@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS payments;
+DROP SEQUENCE IF EXISTS payment_order_seq;
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS coupons;
+DROP TABLE IF EXISTS availability_slots;
+DROP TABLE IF EXISTS mentorship_plans;
+DROP TABLE IF EXISTS mentor_profiles;
+DROP TABLE IF EXISTS mentor_applications;
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS otp_codes;
+DROP TABLE IF EXISTS users;

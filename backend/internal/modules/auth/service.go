@@ -221,58 +221,6 @@ func (s *Service) Logout(ctx context.Context, req RefreshTokenRequest) error {
 	return s.queries.RevokeRefreshToken(ctx, stored.ID)
 }
 
-// MentorRegister creates a mentor account using an approved invite code.
-func (s *Service) MentorRegister(ctx context.Context, req MentorRegisterRequest) (*AuthResponse, error) {
-	// Validate invite code
-	app, err := s.queries.GetMentorApplicationByInviteCode(ctx, &req.InviteCode)
-	if err != nil {
-		return nil, fmt.Errorf("invalid or expired invite code")
-	}
-
-	// Check if email matches the application
-	if app.Email != req.Email {
-		return nil, fmt.Errorf("email does not match the application")
-	}
-
-	// Check if user already exists
-	if _, err := s.queries.GetUserByEmail(ctx, req.Email); err == nil {
-		return nil, fmt.Errorf("email already registered")
-	}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), 12)
-	if err != nil {
-		return nil, fmt.Errorf("failed to hash password: %w", err)
-	}
-
-	user, err := s.queries.CreateUser(ctx, db.CreateUserParams{
-		Email:        req.Email,
-		PasswordHash: string(hash),
-		Name:         req.Name,
-		Role:         "mentor",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create mentor user: %w", err)
-	}
-
-	// Mark email as verified (they verified via invite)
-	_ = s.queries.UpdateEmailVerified(ctx, user.ID)
-	user.EmailVerified = true
-
-	// Create empty mentor profile
-	_, err = s.queries.CreateMentorProfile(ctx, db.CreateMentorProfileParams{
-		UserID: user.ID,
-		Phone:  &app.Phone,
-	})
-	if err != nil {
-		s.logger.Error("failed to create mentor profile", zap.Error(err))
-	}
-
-	// Invalidate the invite code
-	_ = s.queries.InvalidateInviteCode(ctx, app.ID)
-
-	return s.generateAuthResponse(ctx, user)
-}
-
 // GetMe returns the current user's info.
 func (s *Service) GetMe(ctx context.Context, userID interface{ String() string }) (*UserInfo, error) {
 	id, err := parseUUID(userID)
@@ -286,12 +234,13 @@ func (s *Service) GetMe(ctx context.Context, userID interface{ String() string }
 	}
 
 	return &UserInfo{
-		ID:            user.ID,
-		Email:         user.Email,
-		Name:          user.Name,
-		Role:          user.Role,
-		EmailVerified: user.EmailVerified,
-		AvatarURL:     user.AvatarUrl,
+		ID:                 user.ID,
+		Email:              user.Email,
+		Name:               user.Name,
+		Role:               user.Role,
+		EmailVerified:      user.EmailVerified,
+		MustChangePassword: user.MustChangePassword,
+		AvatarURL:          user.AvatarUrl,
 	}, nil
 }
 
@@ -368,12 +317,13 @@ func (s *Service) generateAuthResponse(ctx context.Context, user db.User) (*Auth
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		User: UserInfo{
-			ID:            user.ID,
-			Email:         user.Email,
-			Name:          user.Name,
-			Role:          user.Role,
-			EmailVerified: user.EmailVerified,
-			AvatarURL:     user.AvatarUrl,
+			ID:                 user.ID,
+			Email:              user.Email,
+			Name:               user.Name,
+			Role:               user.Role,
+			EmailVerified:      user.EmailVerified,
+			MustChangePassword: user.MustChangePassword,
+			AvatarURL:          user.AvatarUrl,
 		},
 	}, nil
 }

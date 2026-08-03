@@ -59,7 +59,7 @@ const createAvailabilitySlot = `-- name: CreateAvailabilitySlot :one
 
 INSERT INTO availability_slots (mentor_id, slot_type, day_of_week, specific_date, start_time, end_time)
 VALUES ($1, $2, $3, $4, $5, $6)
-RETURNING id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id
+RETURNING id, mentor_id, slot_type, day_of_week, specific_date, start_time, end_time, created_at
 `
 
 type CreateAvailabilitySlotParams struct {
@@ -86,13 +86,13 @@ func (q *Queries) CreateAvailabilitySlot(ctx context.Context, arg CreateAvailabi
 	var i AvailabilitySlot
 	err := row.Scan(
 		&i.ID,
+		&i.MentorID,
 		&i.SlotType,
 		&i.DayOfWeek,
 		&i.SpecificDate,
 		&i.StartTime,
 		&i.EndTime,
 		&i.CreatedAt,
-		&i.MentorID,
 	)
 	return i, err
 }
@@ -149,7 +149,7 @@ func (q *Queries) DeleteAvailabilitySlotsByMentorID(ctx context.Context, mentorI
 }
 
 const getAvailabilitySlotsByMentorID = `-- name: GetAvailabilitySlotsByMentorID :many
-SELECT id, slot_type, day_of_week, specific_date, start_time, end_time, created_at, mentor_id FROM availability_slots
+SELECT id, mentor_id, slot_type, day_of_week, specific_date, start_time, end_time, created_at FROM availability_slots
 WHERE mentor_id = $1
 ORDER BY COALESCE(day_of_week, 7), specific_date, start_time
 `
@@ -165,13 +165,13 @@ func (q *Queries) GetAvailabilitySlotsByMentorID(ctx context.Context, mentorID u
 		var i AvailabilitySlot
 		if err := rows.Scan(
 			&i.ID,
+			&i.MentorID,
 			&i.SlotType,
 			&i.DayOfWeek,
 			&i.SpecificDate,
 			&i.StartTime,
 			&i.EndTime,
 			&i.CreatedAt,
-			&i.MentorID,
 		); err != nil {
 			return nil, err
 		}
@@ -267,6 +267,45 @@ type ListApprovedPlansByCategoryParams struct {
 
 func (q *Queries) ListApprovedPlansByCategory(ctx context.Context, arg ListApprovedPlansByCategoryParams) ([]MentorshipPlan, error) {
 	rows, err := q.db.Query(ctx, listApprovedPlansByCategory, arg.Category, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []MentorshipPlan{}
+	for rows.Next() {
+		var i MentorshipPlan
+		if err := rows.Scan(
+			&i.ID,
+			&i.MentorID,
+			&i.Title,
+			&i.Description,
+			&i.Category,
+			&i.PricePaise,
+			&i.DurationMinutes,
+			&i.Status,
+			&i.RejectionReason,
+			&i.ReviewedBy,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listApprovedPlansByMentor = `-- name: ListApprovedPlansByMentor :many
+SELECT id, mentor_id, title, description, category, price_paise, duration_minutes, status, rejection_reason, reviewed_by, created_at, updated_at FROM mentorship_plans
+WHERE mentor_id = $1 AND status = 'approved'
+ORDER BY created_at DESC
+`
+
+func (q *Queries) ListApprovedPlansByMentor(ctx context.Context, mentorID uuid.UUID) ([]MentorshipPlan, error) {
+	rows, err := q.db.Query(ctx, listApprovedPlansByMentor, mentorID)
 	if err != nil {
 		return nil, err
 	}

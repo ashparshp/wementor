@@ -102,19 +102,19 @@ func (c *Client) SendNewPassword(to, newPassword string) error {
 	return c.Send(to, subject, html)
 }
 
-// SendMentorInvite sends the approved mentor their invite code and admin panel link.
-func (c *Client) SendMentorInvite(to, inviteCode, adminPanelURL string) error {
+// SendMentorWelcome emails approved mentors their login credentials.
+func (c *Client) SendMentorWelcome(to, name, tempPassword, loginURL string) error {
 	html := fmt.Sprintf(`
 	<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px">
-		<h2 style="color:#6C63FF">Welcome to WeMentor! 🎉</h2>
-		<p style="font-size:16px;color:#333">Your mentor application has been approved!</p>
-		<p style="font-size:16px;color:#333">Use this invite code to create your mentor account:</p>
-		<div style="font-size:36px;letter-spacing:10px;font-weight:700;color:#1a1a2e;background:#f0f0f5;padding:24px;text-align:center;border-radius:12px;margin:24px 0">%s</div>
-		<a href="%s/mentor/register" style="display:inline-block;background:#6C63FF;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px">Set Up Your Account →</a>
-		<p style="font-size:14px;color:#888;margin-top:24px">This invite code expires in 7 days.</p>
-	</div>`, inviteCode, adminPanelURL)
+		<h2 style="color:#6C63FF">Welcome to WeMentor, %s! 🎉</h2>
+		<p style="font-size:16px;color:#333">Your mentor application has been approved. Your account is ready.</p>
+		<p style="font-size:16px;color:#333">Sign in with your temporary password:</p>
+		<div style="font-size:28px;letter-spacing:2px;font-weight:700;color:#1a1a2e;background:#f0f0f5;padding:24px;text-align:center;border-radius:12px;margin:24px 0">%s</div>
+		<a href="%s" style="display:inline-block;background:#6C63FF;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px">Sign In to Mentor Panel →</a>
+		<p style="font-size:14px;color:#888;margin-top:24px">Please change your password after your first login.</p>
+	</div>`, name, tempPassword, loginURL)
 
-	return c.Send(to, "You're Approved as a WeMentor Mentor!", html)
+	return c.Send(to, "Your WeMentor Mentor Account is Ready!", html)
 }
 
 // SendBookingConfirmation notifies the student of a confirmed booking.

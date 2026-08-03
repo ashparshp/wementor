@@ -1,10 +1,13 @@
 -- name: CreateMentorApplication :one
-INSERT INTO mentor_applications (email, phone, about)
-VALUES ($1, $2, $3)
+INSERT INTO mentor_applications (name, email, phone, about)
+VALUES ($1, $2, $3, $4)
 RETURNING *;
 
 -- name: GetMentorApplicationByID :one
 SELECT * FROM mentor_applications WHERE id = $1;
+
+-- name: GetMentorApplicationByEmail :one
+SELECT * FROM mentor_applications WHERE email = $1 AND status = 'pending';
 
 -- name: ListMentorApplications :many
 SELECT * FROM mentor_applications
@@ -25,20 +28,10 @@ SELECT COUNT(*) FROM mentor_applications WHERE status = $1;
 
 -- name: ApproveMentorApplication :exec
 UPDATE mentor_applications
-SET status = 'approved', invite_code = $2, invite_code_expires_at = $3,
-    reviewed_by = $4, updated_at = NOW()
+SET status = 'approved', reviewed_by = $2, updated_at = NOW()
 WHERE id = $1;
 
 -- name: RejectMentorApplication :exec
 UPDATE mentor_applications
 SET status = 'rejected', reviewed_by = $2, updated_at = NOW()
-WHERE id = $1;
-
--- name: GetMentorApplicationByInviteCode :one
-SELECT * FROM mentor_applications
-WHERE invite_code = $1 AND status = 'approved' AND invite_code_expires_at > NOW();
-
--- name: InvalidateInviteCode :exec
-UPDATE mentor_applications
-SET invite_code = NULL, invite_code_expires_at = NULL
 WHERE id = $1;

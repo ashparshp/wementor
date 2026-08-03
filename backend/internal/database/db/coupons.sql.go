@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -110,7 +111,7 @@ type ListAllCouponsRow struct {
 	DiscountPercentage int32              `json:"discount_percentage"`
 	IsUsed             bool               `json:"is_used"`
 	ExpiresAt          pgtype.Timestamptz `json:"expires_at"`
-	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+	CreatedAt          time.Time          `json:"created_at"`
 	StudentName        string             `json:"student_name"`
 	StudentEmail       string             `json:"student_email"`
 }

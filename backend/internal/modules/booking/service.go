@@ -175,10 +175,12 @@ func (s *Service) Create(ctx context.Context, studentID uuid.UUID, req CreateBoo
 	}
 
 	payment, err := s.queries.CreatePayment(ctx, db.CreatePaymentParams{
-		BookingID:       booking.ID,
-		StudentID:       studentID,
-		AmountPaise:     finalAmountPaise,
-		RazorpayOrderID: rzpOrderIDPtr,
+		BookingID:         booking.ID,
+		StudentID:         studentID,
+		AmountPaise:       finalAmountPaise,
+		PlatformFeePaise:  finalAmountPaise * 15 / 100,
+		MentorPayoutPaise: finalAmountPaise * 85 / 100,
+		RazorpayOrderID:   rzpOrderIDPtr,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create payment record: %w", err)

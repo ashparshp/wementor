@@ -14,25 +14,17 @@ import (
 
 const approveMentorApplication = `-- name: ApproveMentorApplication :exec
 UPDATE mentor_applications
-SET status = 'approved', invite_code = $2, invite_code_expires_at = $3,
-    reviewed_by = $4, updated_at = NOW()
+SET status = 'approved', reviewed_by = $2, updated_at = NOW()
 WHERE id = $1
 `
 
 type ApproveMentorApplicationParams struct {
-	ID                  uuid.UUID          `json:"id"`
-	InviteCode          *string            `json:"invite_code"`
-	InviteCodeExpiresAt pgtype.Timestamptz `json:"invite_code_expires_at"`
-	ReviewedBy          pgtype.UUID        `json:"reviewed_by"`
+	ID         uuid.UUID   `json:"id"`
+	ReviewedBy pgtype.UUID `json:"reviewed_by"`
 }
 
 func (q *Queries) ApproveMentorApplication(ctx context.Context, arg ApproveMentorApplicationParams) error {
-	_, err := q.db.Exec(ctx, approveMentorApplication,
-		arg.ID,
-		arg.InviteCode,
-		arg.InviteCodeExpiresAt,
-		arg.ReviewedBy,
-	)
+	_, err := q.db.Exec(ctx, approveMentorApplication, arg.ID, arg.ReviewedBy)
 	return err
 }
 
@@ -59,28 +51,54 @@ func (q *Queries) CountMentorApplicationsByStatus(ctx context.Context, status st
 }
 
 const createMentorApplication = `-- name: CreateMentorApplication :one
-INSERT INTO mentor_applications (email, phone, about)
-VALUES ($1, $2, $3)
-RETURNING id, email, phone, about, status, invite_code, invite_code_expires_at, reviewed_by, created_at, updated_at
+INSERT INTO mentor_applications (name, email, phone, about)
+VALUES ($1, $2, $3, $4)
+RETURNING id, name, email, phone, about, status, reviewed_by, created_at, updated_at
 `
 
 type CreateMentorApplicationParams struct {
+	Name  string `json:"name"`
 	Email string `json:"email"`
 	Phone string `json:"phone"`
 	About string `json:"about"`
 }
 
 func (q *Queries) CreateMentorApplication(ctx context.Context, arg CreateMentorApplicationParams) (MentorApplication, error) {
-	row := q.db.QueryRow(ctx, createMentorApplication, arg.Email, arg.Phone, arg.About)
+	row := q.db.QueryRow(ctx, createMentorApplication,
+		arg.Name,
+		arg.Email,
+		arg.Phone,
+		arg.About,
+	)
 	var i MentorApplication
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
 		&i.Phone,
 		&i.About,
 		&i.Status,
-		&i.InviteCode,
-		&i.InviteCodeExpiresAt,
+		&i.ReviewedBy,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getMentorApplicationByEmail = `-- name: GetMentorApplicationByEmail :one
+SELECT id, name, email, phone, about, status, reviewed_by, created_at, updated_at FROM mentor_applications WHERE email = $1 AND status = 'pending'
+`
+
+func (q *Queries) GetMentorApplicationByEmail(ctx context.Context, email string) (MentorApplication, error) {
+	row := q.db.QueryRow(ctx, getMentorApplicationByEmail, email)
+	var i MentorApplication
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Phone,
+		&i.About,
+		&i.Status,
 		&i.ReviewedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -89,7 +107,7 @@ func (q *Queries) CreateMentorApplication(ctx context.Context, arg CreateMentorA
 }
 
 const getMentorApplicationByID = `-- name: GetMentorApplicationByID :one
-SELECT id, email, phone, about, status, invite_code, invite_code_expires_at, reviewed_by, created_at, updated_at FROM mentor_applications WHERE id = $1
+SELECT id, name, email, phone, about, status, reviewed_by, created_at, updated_at FROM mentor_applications WHERE id = $1
 `
 
 func (q *Queries) GetMentorApplicationByID(ctx context.Context, id uuid.UUID) (MentorApplication, error) {
@@ -97,55 +115,20 @@ func (q *Queries) GetMentorApplicationByID(ctx context.Context, id uuid.UUID) (M
 	var i MentorApplication
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
 		&i.Phone,
 		&i.About,
 		&i.Status,
-		&i.InviteCode,
-		&i.InviteCodeExpiresAt,
 		&i.ReviewedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
-}
-
-const getMentorApplicationByInviteCode = `-- name: GetMentorApplicationByInviteCode :one
-SELECT id, email, phone, about, status, invite_code, invite_code_expires_at, reviewed_by, created_at, updated_at FROM mentor_applications
-WHERE invite_code = $1 AND status = 'approved' AND invite_code_expires_at > NOW()
-`
-
-func (q *Queries) GetMentorApplicationByInviteCode(ctx context.Context, inviteCode *string) (MentorApplication, error) {
-	row := q.db.QueryRow(ctx, getMentorApplicationByInviteCode, inviteCode)
-	var i MentorApplication
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Phone,
-		&i.About,
-		&i.Status,
-		&i.InviteCode,
-		&i.InviteCodeExpiresAt,
-		&i.ReviewedBy,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const invalidateInviteCode = `-- name: InvalidateInviteCode :exec
-UPDATE mentor_applications
-SET invite_code = NULL, invite_code_expires_at = NULL
-WHERE id = $1
-`
-
-func (q *Queries) InvalidateInviteCode(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, invalidateInviteCode, id)
-	return err
 }
 
 const listMentorApplications = `-- name: ListMentorApplications :many
-SELECT id, email, phone, about, status, invite_code, invite_code_expires_at, reviewed_by, created_at, updated_at FROM mentor_applications
+SELECT id, name, email, phone, about, status, reviewed_by, created_at, updated_at FROM mentor_applications
 ORDER BY created_at DESC
 LIMIT $1 OFFSET $2
 `
@@ -166,12 +149,11 @@ func (q *Queries) ListMentorApplications(ctx context.Context, arg ListMentorAppl
 		var i MentorApplication
 		if err := rows.Scan(
 			&i.ID,
+			&i.Name,
 			&i.Email,
 			&i.Phone,
 			&i.About,
 			&i.Status,
-			&i.InviteCode,
-			&i.InviteCodeExpiresAt,
 			&i.ReviewedBy,
 			&i.CreatedAt,
 			&i.UpdatedAt,
@@ -187,7 +169,7 @@ func (q *Queries) ListMentorApplications(ctx context.Context, arg ListMentorAppl
 }
 
 const listMentorApplicationsByStatus = `-- name: ListMentorApplicationsByStatus :many
-SELECT id, email, phone, about, status, invite_code, invite_code_expires_at, reviewed_by, created_at, updated_at FROM mentor_applications
+SELECT id, name, email, phone, about, status, reviewed_by, created_at, updated_at FROM mentor_applications
 WHERE status = $1
 ORDER BY created_at DESC
 LIMIT $2 OFFSET $3
@@ -210,12 +192,11 @@ func (q *Queries) ListMentorApplicationsByStatus(ctx context.Context, arg ListMe
 		var i MentorApplication
 		if err := rows.Scan(
 			&i.ID,
+			&i.Name,
 			&i.Email,
 			&i.Phone,
 			&i.About,
 			&i.Status,
-			&i.InviteCode,
-			&i.InviteCodeExpiresAt,
 			&i.ReviewedBy,
 			&i.CreatedAt,
 			&i.UpdatedAt,

@@ -23,17 +23,34 @@ func (q *Queries) CountAllPayments(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const countMentorPayments = `-- name: CountMentorPayments :one
+SELECT COUNT(*)
+FROM payments p
+JOIN bookings b ON b.id = p.booking_id
+WHERE b.mentor_id = $1 AND p.status = 'captured'
+`
+
+func (q *Queries) CountMentorPayments(ctx context.Context, mentorID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, countMentorPayments, mentorID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createPayment = `-- name: CreatePayment :one
-INSERT INTO payments (booking_id, student_id, amount_paise, razorpay_order_id)
-VALUES ($1, $2, $3, $4)
-RETURNING id, booking_id, student_id, amount_paise, currency, razorpay_order_id, razorpay_payment_id, razorpay_signature, status, created_at, updated_at, order_number
+INSERT INTO payments (
+    booking_id, student_id, amount_paise, platform_fee_paise, mentor_payout_paise, razorpay_order_id
+) VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, booking_id, student_id, amount_paise, platform_fee_paise, mentor_payout_paise, currency, order_number, razorpay_order_id, razorpay_payment_id, razorpay_signature, status, created_at, updated_at
 `
 
 type CreatePaymentParams struct {
-	BookingID       uuid.UUID `json:"booking_id"`
-	StudentID       uuid.UUID `json:"student_id"`
-	AmountPaise     int32     `json:"amount_paise"`
-	RazorpayOrderID *string   `json:"razorpay_order_id"`
+	BookingID         uuid.UUID `json:"booking_id"`
+	StudentID         uuid.UUID `json:"student_id"`
+	AmountPaise       int32     `json:"amount_paise"`
+	PlatformFeePaise  int32     `json:"platform_fee_paise"`
+	MentorPayoutPaise int32     `json:"mentor_payout_paise"`
+	RazorpayOrderID   *string   `json:"razorpay_order_id"`
 }
 
 func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error) {
@@ -41,6 +58,8 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		arg.BookingID,
 		arg.StudentID,
 		arg.AmountPaise,
+		arg.PlatformFeePaise,
+		arg.MentorPayoutPaise,
 		arg.RazorpayOrderID,
 	)
 	var i Payment
@@ -49,20 +68,22 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		&i.BookingID,
 		&i.StudentID,
 		&i.AmountPaise,
+		&i.PlatformFeePaise,
+		&i.MentorPayoutPaise,
 		&i.Currency,
+		&i.OrderNumber,
 		&i.RazorpayOrderID,
 		&i.RazorpayPaymentID,
 		&i.RazorpaySignature,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.OrderNumber,
 	)
 	return i, err
 }
 
 const getPaymentByBookingID = `-- name: GetPaymentByBookingID :one
-SELECT id, booking_id, student_id, amount_paise, currency, razorpay_order_id, razorpay_payment_id, razorpay_signature, status, created_at, updated_at, order_number FROM payments WHERE booking_id = $1
+SELECT id, booking_id, student_id, amount_paise, platform_fee_paise, mentor_payout_paise, currency, order_number, razorpay_order_id, razorpay_payment_id, razorpay_signature, status, created_at, updated_at FROM payments WHERE booking_id = $1
 `
 
 func (q *Queries) GetPaymentByBookingID(ctx context.Context, bookingID uuid.UUID) (Payment, error) {
@@ -73,20 +94,22 @@ func (q *Queries) GetPaymentByBookingID(ctx context.Context, bookingID uuid.UUID
 		&i.BookingID,
 		&i.StudentID,
 		&i.AmountPaise,
+		&i.PlatformFeePaise,
+		&i.MentorPayoutPaise,
 		&i.Currency,
+		&i.OrderNumber,
 		&i.RazorpayOrderID,
 		&i.RazorpayPaymentID,
 		&i.RazorpaySignature,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.OrderNumber,
 	)
 	return i, err
 }
 
 const getPaymentByRazorpayOrderID = `-- name: GetPaymentByRazorpayOrderID :one
-SELECT id, booking_id, student_id, amount_paise, currency, razorpay_order_id, razorpay_payment_id, razorpay_signature, status, created_at, updated_at, order_number FROM payments WHERE razorpay_order_id = $1
+SELECT id, booking_id, student_id, amount_paise, platform_fee_paise, mentor_payout_paise, currency, order_number, razorpay_order_id, razorpay_payment_id, razorpay_signature, status, created_at, updated_at FROM payments WHERE razorpay_order_id = $1
 `
 
 func (q *Queries) GetPaymentByRazorpayOrderID(ctx context.Context, razorpayOrderID *string) (Payment, error) {
@@ -97,24 +120,32 @@ func (q *Queries) GetPaymentByRazorpayOrderID(ctx context.Context, razorpayOrder
 		&i.BookingID,
 		&i.StudentID,
 		&i.AmountPaise,
+		&i.PlatformFeePaise,
+		&i.MentorPayoutPaise,
 		&i.Currency,
+		&i.OrderNumber,
 		&i.RazorpayOrderID,
 		&i.RazorpayPaymentID,
 		&i.RazorpaySignature,
 		&i.Status,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.OrderNumber,
 	)
 	return i, err
 }
 
 const listAllPayments = `-- name: ListAllPayments :many
 SELECT
-    p.id, p.booking_id, p.student_id, p.amount_paise, p.currency, p.razorpay_order_id, p.razorpay_payment_id, p.razorpay_signature, p.status, p.created_at, p.updated_at, p.order_number,
-    u.name AS student_name, u.email AS student_email
+    p.id, p.booking_id, p.student_id, p.amount_paise, p.platform_fee_paise, p.mentor_payout_paise, p.currency, p.order_number, p.razorpay_order_id, p.razorpay_payment_id, p.razorpay_signature, p.status, p.created_at, p.updated_at,
+    u.name AS student_name,
+    u.email AS student_email,
+    mu.name AS mentor_name,
+    mp.title AS plan_title
 FROM payments p
 JOIN users u ON u.id = p.student_id
+JOIN bookings b ON b.id = p.booking_id
+JOIN users mu ON mu.id = b.mentor_id
+JOIN mentorship_plans mp ON mp.id = b.plan_id
 ORDER BY p.created_at DESC
 LIMIT $1 OFFSET $2
 `
@@ -129,16 +160,20 @@ type ListAllPaymentsRow struct {
 	BookingID         uuid.UUID `json:"booking_id"`
 	StudentID         uuid.UUID `json:"student_id"`
 	AmountPaise       int32     `json:"amount_paise"`
+	PlatformFeePaise  int32     `json:"platform_fee_paise"`
+	MentorPayoutPaise int32     `json:"mentor_payout_paise"`
 	Currency          string    `json:"currency"`
+	OrderNumber       *string   `json:"order_number"`
 	RazorpayOrderID   *string   `json:"razorpay_order_id"`
 	RazorpayPaymentID *string   `json:"razorpay_payment_id"`
 	RazorpaySignature *string   `json:"razorpay_signature"`
 	Status            string    `json:"status"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`
-	OrderNumber       *string   `json:"order_number"`
 	StudentName       string    `json:"student_name"`
 	StudentEmail      string    `json:"student_email"`
+	MentorName        string    `json:"mentor_name"`
+	PlanTitle         string    `json:"plan_title"`
 }
 
 func (q *Queries) ListAllPayments(ctx context.Context, arg ListAllPaymentsParams) ([]ListAllPaymentsRow, error) {
@@ -155,16 +190,96 @@ func (q *Queries) ListAllPayments(ctx context.Context, arg ListAllPaymentsParams
 			&i.BookingID,
 			&i.StudentID,
 			&i.AmountPaise,
+			&i.PlatformFeePaise,
+			&i.MentorPayoutPaise,
 			&i.Currency,
+			&i.OrderNumber,
 			&i.RazorpayOrderID,
 			&i.RazorpayPaymentID,
 			&i.RazorpaySignature,
 			&i.Status,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.OrderNumber,
 			&i.StudentName,
 			&i.StudentEmail,
+			&i.MentorName,
+			&i.PlanTitle,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMentorPayments = `-- name: ListMentorPayments :many
+SELECT
+    p.id, p.booking_id, p.student_id, p.amount_paise, p.platform_fee_paise, p.mentor_payout_paise, p.currency, p.order_number, p.razorpay_order_id, p.razorpay_payment_id, p.razorpay_signature, p.status, p.created_at, p.updated_at,
+    mp.title AS plan_title,
+    su.name AS student_name
+FROM payments p
+JOIN bookings b ON b.id = p.booking_id
+JOIN mentorship_plans mp ON mp.id = b.plan_id
+JOIN users su ON su.id = p.student_id
+WHERE b.mentor_id = $1 AND p.status = 'captured'
+ORDER BY p.created_at DESC
+LIMIT $2 OFFSET $3
+`
+
+type ListMentorPaymentsParams struct {
+	MentorID uuid.UUID `json:"mentor_id"`
+	Limit    int32     `json:"limit"`
+	Offset   int32     `json:"offset"`
+}
+
+type ListMentorPaymentsRow struct {
+	ID                uuid.UUID `json:"id"`
+	BookingID         uuid.UUID `json:"booking_id"`
+	StudentID         uuid.UUID `json:"student_id"`
+	AmountPaise       int32     `json:"amount_paise"`
+	PlatformFeePaise  int32     `json:"platform_fee_paise"`
+	MentorPayoutPaise int32     `json:"mentor_payout_paise"`
+	Currency          string    `json:"currency"`
+	OrderNumber       *string   `json:"order_number"`
+	RazorpayOrderID   *string   `json:"razorpay_order_id"`
+	RazorpayPaymentID *string   `json:"razorpay_payment_id"`
+	RazorpaySignature *string   `json:"razorpay_signature"`
+	Status            string    `json:"status"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
+	PlanTitle         string    `json:"plan_title"`
+	StudentName       string    `json:"student_name"`
+}
+
+func (q *Queries) ListMentorPayments(ctx context.Context, arg ListMentorPaymentsParams) ([]ListMentorPaymentsRow, error) {
+	rows, err := q.db.Query(ctx, listMentorPayments, arg.MentorID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListMentorPaymentsRow{}
+	for rows.Next() {
+		var i ListMentorPaymentsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.BookingID,
+			&i.StudentID,
+			&i.AmountPaise,
+			&i.PlatformFeePaise,
+			&i.MentorPayoutPaise,
+			&i.Currency,
+			&i.OrderNumber,
+			&i.RazorpayOrderID,
+			&i.RazorpayPaymentID,
+			&i.RazorpaySignature,
+			&i.Status,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.PlanTitle,
+			&i.StudentName,
 		); err != nil {
 			return nil, err
 		}
@@ -182,6 +297,42 @@ SELECT COALESCE(SUM(amount_paise), 0)::bigint AS total FROM payments WHERE statu
 
 func (q *Queries) SumCapturedPayments(ctx context.Context) (int64, error) {
 	row := q.db.QueryRow(ctx, sumCapturedPayments)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
+const sumMentorEarnings = `-- name: SumMentorEarnings :one
+SELECT COALESCE(SUM(p.mentor_payout_paise), 0)::bigint AS total
+FROM payments p
+JOIN bookings b ON b.id = p.booking_id
+WHERE b.mentor_id = $1 AND p.status = 'captured'
+`
+
+func (q *Queries) SumMentorEarnings(ctx context.Context, mentorID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, sumMentorEarnings, mentorID)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
+const sumMentorPayouts = `-- name: SumMentorPayouts :one
+SELECT COALESCE(SUM(mentor_payout_paise), 0)::bigint AS total FROM payments WHERE status = 'captured'
+`
+
+func (q *Queries) SumMentorPayouts(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, sumMentorPayouts)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
+const sumPlatformFees = `-- name: SumPlatformFees :one
+SELECT COALESCE(SUM(platform_fee_paise), 0)::bigint AS total FROM payments WHERE status = 'captured'
+`
+
+func (q *Queries) SumPlatformFees(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, sumPlatformFees)
 	var total int64
 	err := row.Scan(&total)
 	return total, err

@@ -171,10 +171,8 @@ func (s *Service) ListCoupons(ctx context.Context, limit, offset int32) ([]Admin
 			expiresStr = &str
 		}
 		var createdStr *string
-		if c.CreatedAt.Valid {
-			str := c.CreatedAt.Time.Format(time.RFC3339)
-			createdStr = &str
-		}
+		str := c.CreatedAt.Format(time.RFC3339)
+		createdStr = &str
 
 		res = append(res, AdminCouponResponse{
 			ID:                 c.ID.String(),

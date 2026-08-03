@@ -3,11 +3,11 @@ package mentor
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 
 	db "wementor-backend/internal/database/db"
 	"wementor-backend/internal/infrastructure/email"
@@ -34,7 +34,12 @@ func NewService(queries db.Querier, emailClient *email.Client, logger *zap.Logge
 
 // Apply submits a new mentor application (public, no auth required).
 func (s *Service) Apply(ctx context.Context, req ApplyRequest) (*ApplicationResponse, error) {
+	if _, err := s.queries.GetMentorApplicationByEmail(ctx, req.Email); err == nil {
+		return nil, fmt.Errorf("you already have a pending application with this email")
+	}
+
 	app, err := s.queries.CreateMentorApplication(ctx, db.CreateMentorApplicationParams{
+		Name:  req.Name,
 		Email: req.Email,
 		Phone: req.Phone,
 		About: req.About,
@@ -43,22 +48,13 @@ func (s *Service) Apply(ctx context.Context, req ApplyRequest) (*ApplicationResp
 		return nil, fmt.Errorf("failed to submit application: %w", err)
 	}
 
-	// Send confirmation email asynchronously
 	go func() {
 		if err := s.emailClient.SendApplicationReceived(req.Email); err != nil {
 			s.logger.Error("failed to send application confirmation", zap.Error(err))
 		}
 	}()
 
-	return &ApplicationResponse{
-		ID:        app.ID,
-		Email:     app.Email,
-		Phone:     app.Phone,
-		About:     app.About,
-		Status:    app.Status,
-		CreatedAt: app.CreatedAt,
-		UpdatedAt: app.UpdatedAt,
-	}, nil
+	return toApplicationResponse(app), nil
 }
 
 // ListApplications returns paginated mentor applications (admin only).
@@ -90,15 +86,7 @@ func (s *Service) ListApplications(ctx context.Context, status string, limit, of
 
 	result := make([]ApplicationResponse, len(apps))
 	for i, a := range apps {
-		result[i] = ApplicationResponse{
-			ID:        a.ID,
-			Email:     a.Email,
-			Phone:     a.Phone,
-			About:     a.About,
-			Status:    a.Status,
-			CreatedAt: a.CreatedAt,
-			UpdatedAt: a.UpdatedAt,
-		}
+		result[i] = *toApplicationResponse(a)
 	}
 
 	return result, total, nil
@@ -111,18 +99,10 @@ func (s *Service) GetApplication(ctx context.Context, id uuid.UUID) (*Applicatio
 		return nil, fmt.Errorf("application not found")
 	}
 
-	return &ApplicationResponse{
-		ID:        app.ID,
-		Email:     app.Email,
-		Phone:     app.Phone,
-		About:     app.About,
-		Status:    app.Status,
-		CreatedAt: app.CreatedAt,
-		UpdatedAt: app.UpdatedAt,
-	}, nil
+	return toApplicationResponse(app), nil
 }
 
-// ApproveApplication approves a mentor application and sends the invite code.
+// ApproveApplication creates the mentor account and emails a temporary password.
 func (s *Service) ApproveApplication(ctx context.Context, appID, adminID uuid.UUID) error {
 	app, err := s.queries.GetMentorApplicationByID(ctx, appID)
 	if err != nil {
@@ -133,20 +113,38 @@ func (s *Service) ApproveApplication(ctx context.Context, appID, adminID uuid.UU
 		return fmt.Errorf("application is already %s", app.Status)
 	}
 
-	code, err := auth.GenerateInviteCode()
-	if err != nil {
-		return fmt.Errorf("failed to generate invite code: %w", err)
+	if _, err := s.queries.GetUserByEmail(ctx, app.Email); err == nil {
+		return fmt.Errorf("a user with this email already exists")
 	}
 
-	expiresAt := time.Now().Add(7 * 24 * time.Hour) // 7 days
+	tempPassword, err := auth.GenerateRandomPassword()
+	if err != nil {
+		return fmt.Errorf("failed to generate temporary password: %w", err)
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(tempPassword), 12)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	user, err := s.queries.CreateMentorUser(ctx, db.CreateMentorUserParams{
+		Email:        app.Email,
+		PasswordHash: string(hash),
+		Name:         app.Name,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create mentor account: %w", err)
+	}
+
+	if _, err := s.queries.CreateMentorProfile(ctx, db.CreateMentorProfileParams{
+		UserID: user.ID,
+		Phone:  &app.Phone,
+	}); err != nil {
+		s.logger.Error("failed to create mentor profile", zap.Error(err))
+	}
 
 	err = s.queries.ApproveMentorApplication(ctx, db.ApproveMentorApplicationParams{
-		ID:         appID,
-		InviteCode: &code,
-		InviteCodeExpiresAt: pgtype.Timestamptz{
-			Time:  expiresAt,
-			Valid: true,
-		},
+		ID: appID,
 		ReviewedBy: pgtype.UUID{
 			Bytes: adminID,
 			Valid: true,
@@ -156,10 +154,9 @@ func (s *Service) ApproveApplication(ctx context.Context, appID, adminID uuid.UU
 		return fmt.Errorf("failed to approve application: %w", err)
 	}
 
-	// Send invite email asynchronously
 	go func() {
-		if err := s.emailClient.SendMentorInvite(app.Email, code, s.adminPanelURL); err != nil {
-			s.logger.Error("failed to send mentor invite", zap.Error(err))
+		if err := s.emailClient.SendMentorWelcome(app.Email, app.Name, tempPassword, s.adminPanelURL); err != nil {
+			s.logger.Error("failed to send mentor welcome email", zap.Error(err))
 		}
 	}()
 
@@ -300,4 +297,17 @@ func (s *Service) GetPublicProfile(ctx context.Context, userID uuid.UUID) (*Ment
 		TotalReviews:  p.TotalReviews,
 		TotalSessions: p.TotalSessions,
 	}, nil
+}
+
+func toApplicationResponse(app db.MentorApplication) *ApplicationResponse {
+	return &ApplicationResponse{
+		ID:        app.ID,
+		Name:      app.Name,
+		Email:     app.Email,
+		Phone:     app.Phone,
+		About:     app.About,
+		Status:    app.Status,
+		CreatedAt: app.CreatedAt,
+		UpdatedAt: app.UpdatedAt,
+	}
 }

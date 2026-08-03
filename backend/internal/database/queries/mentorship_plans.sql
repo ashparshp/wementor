@@ -29,6 +29,11 @@ SELECT * FROM mentorship_plans
 WHERE mentor_id = $1
 ORDER BY created_at DESC;
 
+-- name: ListApprovedPlansByMentor :many
+SELECT * FROM mentorship_plans
+WHERE mentor_id = $1 AND status = 'approved'
+ORDER BY created_at DESC;
+
 -- name: UpdateMentorshipPlan :one
 UPDATE mentorship_plans
 SET title = $2, description = $3, category = $4, price_paise = $5,

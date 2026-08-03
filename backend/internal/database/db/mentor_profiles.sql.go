@@ -26,7 +26,7 @@ func (q *Queries) CountMentorProfiles(ctx context.Context) (int64, error) {
 const createMentorProfile = `-- name: CreateMentorProfile :one
 INSERT INTO mentor_profiles (user_id, phone, google_meet_link, bio)
 VALUES ($1, $2, $3, $4)
-RETURNING id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, created_at, updated_at, min_booking_notice_hours, max_booking_advance_days
+RETURNING id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, min_booking_notice_hours, max_booking_advance_days, created_at, updated_at
 `
 
 type CreateMentorProfileParams struct {
@@ -55,16 +55,16 @@ func (q *Queries) CreateMentorProfile(ctx context.Context, arg CreateMentorProfi
 		&i.AvgRating,
 		&i.TotalReviews,
 		&i.TotalSessions,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 		&i.MinBookingNoticeHours,
 		&i.MaxBookingAdvanceDays,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const getMentorProfileByUserID = `-- name: GetMentorProfileByUserID :one
-SELECT id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, created_at, updated_at, min_booking_notice_hours, max_booking_advance_days FROM mentor_profiles WHERE user_id = $1
+SELECT id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, min_booking_notice_hours, max_booking_advance_days, created_at, updated_at FROM mentor_profiles WHERE user_id = $1
 `
 
 func (q *Queries) GetMentorProfileByUserID(ctx context.Context, userID uuid.UUID) (MentorProfile, error) {
@@ -81,10 +81,10 @@ func (q *Queries) GetMentorProfileByUserID(ctx context.Context, userID uuid.UUID
 		&i.AvgRating,
 		&i.TotalReviews,
 		&i.TotalSessions,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 		&i.MinBookingNoticeHours,
 		&i.MaxBookingAdvanceDays,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -228,7 +228,7 @@ const updateMentorAvailabilitySettings = `-- name: UpdateMentorAvailabilitySetti
 UPDATE mentor_profiles
 SET min_booking_notice_hours = $2, max_booking_advance_days = $3, updated_at = NOW()
 WHERE user_id = $1
-RETURNING id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, created_at, updated_at, min_booking_notice_hours, max_booking_advance_days
+RETURNING id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, min_booking_notice_hours, max_booking_advance_days, created_at, updated_at
 `
 
 type UpdateMentorAvailabilitySettingsParams struct {
@@ -251,10 +251,10 @@ func (q *Queries) UpdateMentorAvailabilitySettings(ctx context.Context, arg Upda
 		&i.AvgRating,
 		&i.TotalReviews,
 		&i.TotalSessions,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 		&i.MinBookingNoticeHours,
 		&i.MaxBookingAdvanceDays,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -264,7 +264,7 @@ UPDATE mentor_profiles
 SET bio = $2, achievements = $3, documents = $4,
     google_meet_link = $5, phone = $6, updated_at = NOW()
 WHERE user_id = $1
-RETURNING id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, created_at, updated_at, min_booking_notice_hours, max_booking_advance_days
+RETURNING id, user_id, bio, achievements, documents, google_meet_link, phone, avg_rating, total_reviews, total_sessions, min_booking_notice_hours, max_booking_advance_days, created_at, updated_at
 `
 
 type UpdateMentorProfileParams struct {
@@ -297,10 +297,10 @@ func (q *Queries) UpdateMentorProfile(ctx context.Context, arg UpdateMentorProfi
 		&i.AvgRating,
 		&i.TotalReviews,
 		&i.TotalSessions,
-		&i.CreatedAt,
-		&i.UpdatedAt,
 		&i.MinBookingNoticeHours,
 		&i.MaxBookingAdvanceDays,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

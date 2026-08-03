@@ -82,7 +82,7 @@ INSERT INTO bookings (
 ) VALUES (
     $1, $2, $3, $4, $5, $6, $7, 'confirmed', $8
 )
-RETURNING id, student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, created_at, updated_at, coupon_id
+RETURNING id, student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, coupon_id, created_at, updated_at
 `
 
 type CreateBookingParams struct {
@@ -118,15 +118,15 @@ func (q *Queries) CreateBooking(ctx context.Context, arg CreateBookingParams) (B
 		&i.EndTime,
 		&i.GoogleMeetLink,
 		&i.Status,
+		&i.CouponID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.CouponID,
 	)
 	return i, err
 }
 
 const getBookingByID = `-- name: GetBookingByID :one
-SELECT id, student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, created_at, updated_at, coupon_id FROM bookings WHERE id = $1
+SELECT id, student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, coupon_id, created_at, updated_at FROM bookings WHERE id = $1
 `
 
 func (q *Queries) GetBookingByID(ctx context.Context, id uuid.UUID) (Booking, error) {
@@ -142,15 +142,15 @@ func (q *Queries) GetBookingByID(ctx context.Context, id uuid.UUID) (Booking, er
 		&i.EndTime,
 		&i.GoogleMeetLink,
 		&i.Status,
+		&i.CouponID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.CouponID,
 	)
 	return i, err
 }
 
 const getBookingsByMentorAndDate = `-- name: GetBookingsByMentorAndDate :many
-SELECT id, student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, created_at, updated_at, coupon_id FROM bookings 
+SELECT id, student_id, mentor_id, plan_id, session_date, start_time, end_time, google_meet_link, status, coupon_id, created_at, updated_at FROM bookings 
 WHERE mentor_id = $1 AND session_date = $2 
 AND status NOT IN ('cancelled_by_student', 'cancelled_by_mentor')
 `
@@ -179,9 +179,9 @@ func (q *Queries) GetBookingsByMentorAndDate(ctx context.Context, arg GetBooking
 			&i.EndTime,
 			&i.GoogleMeetLink,
 			&i.Status,
+			&i.CouponID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.CouponID,
 		); err != nil {
 			return nil, err
 		}
@@ -195,7 +195,7 @@ func (q *Queries) GetBookingsByMentorAndDate(ctx context.Context, arg GetBooking
 
 const listAllBookings = `-- name: ListAllBookings :many
 SELECT 
-    b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.created_at, b.updated_at, b.coupon_id,
+    b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.coupon_id, b.created_at, b.updated_at,
     mp.title AS plan_title,
     su.name AS student_name,
     mu.name AS mentor_name
@@ -222,9 +222,9 @@ type ListAllBookingsRow struct {
 	EndTime        pgtype.Time `json:"end_time"`
 	GoogleMeetLink *string     `json:"google_meet_link"`
 	Status         string      `json:"status"`
+	CouponID       pgtype.UUID `json:"coupon_id"`
 	CreatedAt      time.Time   `json:"created_at"`
 	UpdatedAt      time.Time   `json:"updated_at"`
-	CouponID       pgtype.UUID `json:"coupon_id"`
 	PlanTitle      string      `json:"plan_title"`
 	StudentName    string      `json:"student_name"`
 	MentorName     string      `json:"mentor_name"`
@@ -249,9 +249,9 @@ func (q *Queries) ListAllBookings(ctx context.Context, arg ListAllBookingsParams
 			&i.EndTime,
 			&i.GoogleMeetLink,
 			&i.Status,
+			&i.CouponID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.CouponID,
 			&i.PlanTitle,
 			&i.StudentName,
 			&i.MentorName,
@@ -268,7 +268,7 @@ func (q *Queries) ListAllBookings(ctx context.Context, arg ListAllBookingsParams
 
 const listMentorBookings = `-- name: ListMentorBookings :many
 SELECT
-    b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.created_at, b.updated_at, b.coupon_id,
+    b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.coupon_id, b.created_at, b.updated_at,
     mp.title AS plan_title,
     u.name AS student_name,
     p.status AS payment_status
@@ -297,9 +297,9 @@ type ListMentorBookingsRow struct {
 	EndTime        pgtype.Time `json:"end_time"`
 	GoogleMeetLink *string     `json:"google_meet_link"`
 	Status         string      `json:"status"`
+	CouponID       pgtype.UUID `json:"coupon_id"`
 	CreatedAt      time.Time   `json:"created_at"`
 	UpdatedAt      time.Time   `json:"updated_at"`
-	CouponID       pgtype.UUID `json:"coupon_id"`
 	PlanTitle      string      `json:"plan_title"`
 	StudentName    string      `json:"student_name"`
 	PaymentStatus  *string     `json:"payment_status"`
@@ -324,9 +324,9 @@ func (q *Queries) ListMentorBookings(ctx context.Context, arg ListMentorBookings
 			&i.EndTime,
 			&i.GoogleMeetLink,
 			&i.Status,
+			&i.CouponID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.CouponID,
 			&i.PlanTitle,
 			&i.StudentName,
 			&i.PaymentStatus,
@@ -343,7 +343,7 @@ func (q *Queries) ListMentorBookings(ctx context.Context, arg ListMentorBookings
 
 const listStudentBookings = `-- name: ListStudentBookings :many
 SELECT
-    b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.created_at, b.updated_at, b.coupon_id,
+    b.id, b.student_id, b.mentor_id, b.plan_id, b.session_date, b.start_time, b.end_time, b.google_meet_link, b.status, b.coupon_id, b.created_at, b.updated_at,
     mp.title AS plan_title,
     u.name AS mentor_name,
     p.status AS payment_status
@@ -372,9 +372,9 @@ type ListStudentBookingsRow struct {
 	EndTime        pgtype.Time `json:"end_time"`
 	GoogleMeetLink *string     `json:"google_meet_link"`
 	Status         string      `json:"status"`
+	CouponID       pgtype.UUID `json:"coupon_id"`
 	CreatedAt      time.Time   `json:"created_at"`
 	UpdatedAt      time.Time   `json:"updated_at"`
-	CouponID       pgtype.UUID `json:"coupon_id"`
 	PlanTitle      string      `json:"plan_title"`
 	MentorName     string      `json:"mentor_name"`
 	PaymentStatus  *string     `json:"payment_status"`
@@ -399,9 +399,9 @@ func (q *Queries) ListStudentBookings(ctx context.Context, arg ListStudentBookin
 			&i.EndTime,
 			&i.GoogleMeetLink,
 			&i.Status,
+			&i.CouponID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.CouponID,
 			&i.PlanTitle,
 			&i.MentorName,
 			&i.PaymentStatus,

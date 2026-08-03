@@ -110,7 +110,6 @@ func SetupRouter(
 			r.Post("/reset-password", authHandler.ResetPassword)
 			r.Post("/refresh", authHandler.RefreshToken)
 			r.Post("/logout", authHandler.Logout)
-			r.Post("/mentor/register", authHandler.MentorRegister)
 
 			r.With(requireAuth).Get("/me", authHandler.GetMe)
 		})

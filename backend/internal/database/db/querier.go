@@ -23,6 +23,7 @@ type Querier interface {
 	CountMentorApplications(ctx context.Context) (int64, error)
 	CountMentorApplicationsByStatus(ctx context.Context, status string) (int64, error)
 	CountMentorBookings(ctx context.Context, mentorID uuid.UUID) (int64, error)
+	CountMentorPayments(ctx context.Context, mentorID uuid.UUID) (int64, error)
 	CountMentorProfiles(ctx context.Context) (int64, error)
 	CountMentorReviews(ctx context.Context, mentorID uuid.UUID) (int64, error)
 	CountPendingPlans(ctx context.Context) (int64, error)
@@ -38,6 +39,7 @@ type Querier interface {
 	CreateCoupon(ctx context.Context, arg CreateCouponParams) (Coupon, error)
 	CreateMentorApplication(ctx context.Context, arg CreateMentorApplicationParams) (MentorApplication, error)
 	CreateMentorProfile(ctx context.Context, arg CreateMentorProfileParams) (MentorProfile, error)
+	CreateMentorUser(ctx context.Context, arg CreateMentorUserParams) (User, error)
 	CreateMentorshipPlan(ctx context.Context, arg CreateMentorshipPlanParams) (MentorshipPlan, error)
 	CreateOTP(ctx context.Context, arg CreateOTPParams) (OtpCode, error)
 	CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error)
@@ -51,8 +53,8 @@ type Querier interface {
 	GetBookingByID(ctx context.Context, id uuid.UUID) (Booking, error)
 	GetBookingsByMentorAndDate(ctx context.Context, arg GetBookingsByMentorAndDateParams) ([]Booking, error)
 	GetLatestOTP(ctx context.Context, arg GetLatestOTPParams) (OtpCode, error)
+	GetMentorApplicationByEmail(ctx context.Context, email string) (MentorApplication, error)
 	GetMentorApplicationByID(ctx context.Context, id uuid.UUID) (MentorApplication, error)
-	GetMentorApplicationByInviteCode(ctx context.Context, inviteCode *string) (MentorApplication, error)
 	GetMentorAverageRating(ctx context.Context, mentorID uuid.UUID) (GetMentorAverageRatingRow, error)
 	GetMentorProfileByUserID(ctx context.Context, userID uuid.UUID) (MentorProfile, error)
 	GetMentorPublicProfile(ctx context.Context, userID uuid.UUID) (GetMentorPublicProfileRow, error)
@@ -66,15 +68,16 @@ type Querier interface {
 	GetValidCoupon(ctx context.Context, arg GetValidCouponParams) (Coupon, error)
 	IncrementMentorSessions(ctx context.Context, userID uuid.UUID) error
 	IncrementOTPAttempts(ctx context.Context, id uuid.UUID) error
-	InvalidateInviteCode(ctx context.Context, id uuid.UUID) error
 	ListAllBookings(ctx context.Context, arg ListAllBookingsParams) ([]ListAllBookingsRow, error)
 	ListAllCoupons(ctx context.Context, arg ListAllCouponsParams) ([]ListAllCouponsRow, error)
 	ListAllPayments(ctx context.Context, arg ListAllPaymentsParams) ([]ListAllPaymentsRow, error)
 	ListApprovedPlans(ctx context.Context, arg ListApprovedPlansParams) ([]MentorshipPlan, error)
 	ListApprovedPlansByCategory(ctx context.Context, arg ListApprovedPlansByCategoryParams) ([]MentorshipPlan, error)
+	ListApprovedPlansByMentor(ctx context.Context, mentorID uuid.UUID) ([]MentorshipPlan, error)
 	ListMentorApplications(ctx context.Context, arg ListMentorApplicationsParams) ([]MentorApplication, error)
 	ListMentorApplicationsByStatus(ctx context.Context, arg ListMentorApplicationsByStatusParams) ([]MentorApplication, error)
 	ListMentorBookings(ctx context.Context, arg ListMentorBookingsParams) ([]ListMentorBookingsRow, error)
+	ListMentorPayments(ctx context.Context, arg ListMentorPaymentsParams) ([]ListMentorPaymentsRow, error)
 	ListMentorPlans(ctx context.Context, mentorID uuid.UUID) ([]MentorshipPlan, error)
 	ListMentorProfiles(ctx context.Context, arg ListMentorProfilesParams) ([]ListMentorProfilesRow, error)
 	ListMentorReviews(ctx context.Context, arg ListMentorReviewsParams) ([]ListMentorReviewsRow, error)
@@ -88,6 +91,9 @@ type Querier interface {
 	RevokeAllUserRefreshTokens(ctx context.Context, userID uuid.UUID) error
 	RevokeRefreshToken(ctx context.Context, id uuid.UUID) error
 	SumCapturedPayments(ctx context.Context) (int64, error)
+	SumMentorEarnings(ctx context.Context, mentorID uuid.UUID) (int64, error)
+	SumMentorPayouts(ctx context.Context) (int64, error)
+	SumPlatformFees(ctx context.Context) (int64, error)
 	UpdateBookingStatus(ctx context.Context, arg UpdateBookingStatusParams) error
 	UpdateEmailVerified(ctx context.Context, id uuid.UUID) error
 	UpdateMentorAvailabilitySettings(ctx context.Context, arg UpdateMentorAvailabilitySettingsParams) (MentorProfile, error)

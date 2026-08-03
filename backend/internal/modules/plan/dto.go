@@ -11,7 +11,7 @@ import (
 type CreatePlanRequest struct {
 	Title                 string `json:"title" validate:"required,min=3,max=255"`
 	Description           string `json:"description" validate:"required,min=10"`
-	Category              string `json:"category" validate:"required,oneof=jee neet gsoc placements upsc gate cat other"`
+	Category              string `json:"category" validate:"required,oneof=jee neet gsoc lfx placements upsc gate cat other"`
 	PricePaise            int32  `json:"price_paise" validate:"required,gte=100"`
 	DurationMinutes       int32  `json:"duration_minutes" validate:"required,gte=15,lte=180"`
 }
@@ -19,7 +19,7 @@ type CreatePlanRequest struct {
 type UpdatePlanRequest struct {
 	Title                 string `json:"title" validate:"required,min=3,max=255"`
 	Description           string `json:"description" validate:"required,min=10"`
-	Category              string `json:"category" validate:"required,oneof=jee neet gsoc placements upsc gate cat other"`
+	Category              string `json:"category" validate:"required,oneof=jee neet gsoc lfx placements upsc gate cat other"`
 	PricePaise            int32  `json:"price_paise" validate:"required,gte=100"`
 	DurationMinutes       int32  `json:"duration_minutes" validate:"required,gte=15,lte=180"`
 }

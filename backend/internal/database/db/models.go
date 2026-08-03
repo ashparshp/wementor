@@ -13,13 +13,13 @@ import (
 
 type AvailabilitySlot struct {
 	ID           uuid.UUID   `json:"id"`
+	MentorID     uuid.UUID   `json:"mentor_id"`
 	SlotType     string      `json:"slot_type"`
 	DayOfWeek    *int32      `json:"day_of_week"`
 	SpecificDate pgtype.Date `json:"specific_date"`
 	StartTime    pgtype.Time `json:"start_time"`
 	EndTime      pgtype.Time `json:"end_time"`
 	CreatedAt    time.Time   `json:"created_at"`
-	MentorID     uuid.UUID   `json:"mentor_id"`
 }
 
 type Booking struct {
@@ -32,9 +32,9 @@ type Booking struct {
 	EndTime        pgtype.Time `json:"end_time"`
 	GoogleMeetLink *string     `json:"google_meet_link"`
 	Status         string      `json:"status"`
+	CouponID       pgtype.UUID `json:"coupon_id"`
 	CreatedAt      time.Time   `json:"created_at"`
 	UpdatedAt      time.Time   `json:"updated_at"`
-	CouponID       pgtype.UUID `json:"coupon_id"`
 }
 
 type Coupon struct {
@@ -44,20 +44,19 @@ type Coupon struct {
 	DiscountPercentage int32              `json:"discount_percentage"`
 	IsUsed             bool               `json:"is_used"`
 	ExpiresAt          pgtype.Timestamptz `json:"expires_at"`
-	CreatedAt          pgtype.Timestamptz `json:"created_at"`
+	CreatedAt          time.Time          `json:"created_at"`
 }
 
 type MentorApplication struct {
-	ID                  uuid.UUID          `json:"id"`
-	Email               string             `json:"email"`
-	Phone               string             `json:"phone"`
-	About               string             `json:"about"`
-	Status              string             `json:"status"`
-	InviteCode          *string            `json:"invite_code"`
-	InviteCodeExpiresAt pgtype.Timestamptz `json:"invite_code_expires_at"`
-	ReviewedBy          pgtype.UUID        `json:"reviewed_by"`
-	CreatedAt           time.Time          `json:"created_at"`
-	UpdatedAt           time.Time          `json:"updated_at"`
+	ID         uuid.UUID   `json:"id"`
+	Name       string      `json:"name"`
+	Email      string      `json:"email"`
+	Phone      string      `json:"phone"`
+	About      string      `json:"about"`
+	Status     string      `json:"status"`
+	ReviewedBy pgtype.UUID `json:"reviewed_by"`
+	CreatedAt  time.Time   `json:"created_at"`
+	UpdatedAt  time.Time   `json:"updated_at"`
 }
 
 type MentorProfile struct {
@@ -71,10 +70,10 @@ type MentorProfile struct {
 	AvgRating             float64   `json:"avg_rating"`
 	TotalReviews          int32     `json:"total_reviews"`
 	TotalSessions         int32     `json:"total_sessions"`
-	CreatedAt             time.Time `json:"created_at"`
-	UpdatedAt             time.Time `json:"updated_at"`
 	MinBookingNoticeHours int32     `json:"min_booking_notice_hours"`
 	MaxBookingAdvanceDays int32     `json:"max_booking_advance_days"`
+	CreatedAt             time.Time `json:"created_at"`
+	UpdatedAt             time.Time `json:"updated_at"`
 }
 
 type MentorshipPlan struct {
@@ -108,14 +107,16 @@ type Payment struct {
 	BookingID         uuid.UUID `json:"booking_id"`
 	StudentID         uuid.UUID `json:"student_id"`
 	AmountPaise       int32     `json:"amount_paise"`
+	PlatformFeePaise  int32     `json:"platform_fee_paise"`
+	MentorPayoutPaise int32     `json:"mentor_payout_paise"`
 	Currency          string    `json:"currency"`
+	OrderNumber       *string   `json:"order_number"`
 	RazorpayOrderID   *string   `json:"razorpay_order_id"`
 	RazorpayPaymentID *string   `json:"razorpay_payment_id"`
 	RazorpaySignature *string   `json:"razorpay_signature"`
 	Status            string    `json:"status"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`
-	OrderNumber       *string   `json:"order_number"`
 }
 
 type RefreshToken struct {
@@ -138,13 +139,14 @@ type Review struct {
 }
 
 type User struct {
-	ID            uuid.UUID `json:"id"`
-	Email         string    `json:"email"`
-	PasswordHash  string    `json:"password_hash"`
-	Name          string    `json:"name"`
-	Role          string    `json:"role"`
-	EmailVerified bool      `json:"email_verified"`
-	AvatarUrl     *string   `json:"avatar_url"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID                 uuid.UUID `json:"id"`
+	Email              string    `json:"email"`
+	PasswordHash       string    `json:"password_hash"`
+	Name               string    `json:"name"`
+	Role               string    `json:"role"`
+	EmailVerified      bool      `json:"email_verified"`
+	MustChangePassword bool      `json:"must_change_password"`
+	AvatarUrl          *string   `json:"avatar_url"`
+	CreatedAt          time.Time `json:"created_at"`
+	UpdatedAt          time.Time `json:"updated_at"`
 }

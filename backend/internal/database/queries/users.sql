@@ -3,6 +3,11 @@ INSERT INTO users (email, password_hash, name, role)
 VALUES ($1, $2, $3, $4)
 RETURNING *;
 
+-- name: CreateMentorUser :one
+INSERT INTO users (email, password_hash, name, role, email_verified, must_change_password)
+VALUES ($1, $2, $3, 'mentor', TRUE, TRUE)
+RETURNING *;
+
 -- name: GetUserByEmail :one
 SELECT * FROM users WHERE email = $1;
 
@@ -13,7 +18,7 @@ SELECT * FROM users WHERE id = $1;
 UPDATE users SET email_verified = TRUE, updated_at = NOW() WHERE id = $1;
 
 -- name: UpdatePassword :exec
-UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2;
+UPDATE users SET password_hash = $1, must_change_password = FALSE, updated_at = NOW() WHERE id = $2;
 
 -- name: UpdateUserProfile :one
 UPDATE users SET name = $2, avatar_url = $3, updated_at = NOW()

@@ -39,13 +39,6 @@ type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
 
-type MentorRegisterRequest struct {
-	Email      string `json:"email" validate:"required,email"`
-	Password   string `json:"password" validate:"required,min=8"`
-	Name       string `json:"name" validate:"required,min=2,max=100"`
-	InviteCode string `json:"invite_code" validate:"required,len=6"`
-}
-
 // ───── Responses ─────
 
 type AuthResponse struct {
@@ -55,10 +48,11 @@ type AuthResponse struct {
 }
 
 type UserInfo struct {
-	ID            uuid.UUID `json:"id"`
-	Email         string    `json:"email"`
-	Name          string    `json:"name"`
-	Role          string    `json:"role"`
-	EmailVerified bool      `json:"email_verified"`
-	AvatarURL     *string   `json:"avatar_url"`
+	ID                 uuid.UUID `json:"id"`
+	Email              string    `json:"email"`
+	Name               string    `json:"name"`
+	Role               string    `json:"role"`
+	EmailVerified      bool      `json:"email_verified"`
+	MustChangePassword bool      `json:"must_change_password"`
+	AvatarURL          *string   `json:"avatar_url"`
 }

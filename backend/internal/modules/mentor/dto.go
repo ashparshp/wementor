@@ -9,6 +9,7 @@ import (
 // ───── Requests ─────
 
 type ApplyRequest struct {
+	Name  string `json:"name" validate:"required,min=2,max=100"`
 	Email string `json:"email" validate:"required,email"`
 	Phone string `json:"phone" validate:"required,min=10,max=15"`
 	About string `json:"about" validate:"required,min=20"`
@@ -25,13 +26,14 @@ type UpdateProfileRequest struct {
 // ───── Responses ─────
 
 type ApplicationResponse struct {
-	ID        uuid.UUID  `json:"id"`
-	Email     string     `json:"email"`
-	Phone     string     `json:"phone"`
-	About     string     `json:"about"`
-	Status    string     `json:"status"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
+	About     string    `json:"about"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type MentorPublicResponse struct {

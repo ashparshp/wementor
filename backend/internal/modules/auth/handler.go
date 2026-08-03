@@ -170,27 +170,6 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	response.Message(w, http.StatusOK, "logged out successfully")
 }
 
-// MentorRegister POST /api/v1/auth/mentor/register
-func (h *Handler) MentorRegister(w http.ResponseWriter, r *http.Request) {
-	var req MentorRegisterRequest
-	if err := request.Decode(r, &req); err != nil {
-		if request.IsValidationError(err) {
-			response.ErrorWithDetails(w, http.StatusBadRequest, "validation failed", request.ValidationErrorDetails(err))
-			return
-		}
-		response.Error(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp, err := h.service.MentorRegister(r.Context(), req)
-	if err != nil {
-		response.Error(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	response.Created(w, resp)
-}
-
 // GetMe GET /api/v1/auth/me
 func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.UserIDFromContext(r.Context())
@@ -202,11 +181,12 @@ func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.OK(w, UserInfo{
-		ID:            user.ID,
-		Email:         user.Email,
-		Name:          user.Name,
-		Role:          user.Role,
-		EmailVerified: user.EmailVerified,
-		AvatarURL:     user.AvatarUrl,
+		ID:                 user.ID,
+		Email:              user.Email,
+		Name:               user.Name,
+		Role:               user.Role,
+		EmailVerified:      user.EmailVerified,
+		MustChangePassword: user.MustChangePassword,
+		AvatarURL:          user.AvatarUrl,
 	})
 }

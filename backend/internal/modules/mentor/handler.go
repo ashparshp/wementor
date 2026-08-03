@@ -90,7 +90,7 @@ func (h *Handler) ApproveApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Message(w, http.StatusOK, "application approved, invite sent")
+	response.Message(w, http.StatusOK, "application approved, mentor account created")
 }
 
 // RejectApplication POST /api/v1/mentor-applications/:id/reject (admin)
