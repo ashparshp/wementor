@@ -91,13 +91,15 @@ export default function BecomeMentorPage() {
           )}
 
           <form onSubmit={handleSubmit} className="card-surface p-6 sm:p-8 space-y-5">
-            <div>
-              <label className="text-sm font-bold text-gray-700 block mb-1.5">Full Name</label>
-              <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="input-field" />
-            </div>
-            <div>
-              <label className="text-sm font-bold text-gray-700 block mb-1.5">Email</label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label className="text-sm font-bold text-gray-700 block mb-1.5">Full Name</label>
+                <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="input-field" />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-gray-700 block mb-1.5">Email</label>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" />
+              </div>
             </div>
             <div>
               <label className="text-sm font-bold text-gray-700 block mb-1.5">Phone</label>
