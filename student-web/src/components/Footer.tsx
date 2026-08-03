@@ -3,38 +3,37 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const links = [
+  { href: "/book", label: "Book" },
+  { href: "/become-mentor", label: "Become a Mentor" },
+  { href: "/login", label: "Sign In" },
+];
+
 export default function Footer() {
   const pathname = usePathname();
   if (pathname.startsWith("/dashboard")) return null;
 
   return (
-    <footer className="border-t border-[#EADBCB]/60 bg-white/40 backdrop-blur-sm mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          <div>
-            <p className="font-black text-gray-900 text-lg">TvaNetra</p>
-            <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-              1-on-1 mentorship for JEE, NEET, GSoC, placements, and more.
-            </p>
-          </div>
-          <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Students</p>
-            <div className="flex flex-col gap-2 text-sm">
-              <Link href="/book" className="text-gray-600 hover:text-[#F29440] transition-colors">Book a Session</Link>
-              <Link href="/login" className="text-gray-600 hover:text-[#F29440] transition-colors">Sign In</Link>
-              <Link href="/register" className="text-gray-600 hover:text-[#F29440] transition-colors">Create Account</Link>
-            </div>
-          </div>
-          <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Mentors</p>
-            <div className="flex flex-col gap-2 text-sm">
-              <Link href="/become-mentor" className="text-gray-600 hover:text-[#F29440] transition-colors">Become a Mentor</Link>
-            </div>
-          </div>
+    <footer className="mt-auto border-t border-[#EADBCB]/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+          <p className="text-sm font-bold text-gray-900">TvaNetra</p>
+
+          <nav className="flex flex-wrap items-center justify-center gap-x-1 gap-y-1 text-sm text-gray-500">
+            {links.map((link, i) => (
+              <span key={link.href} className="inline-flex items-center">
+                {i > 0 && <span className="mx-2 text-gray-300 select-none" aria-hidden>·</span>}
+                <Link href={link.href} className="hover:text-[#F29440] transition-colors">
+                  {link.label}
+                </Link>
+              </span>
+            ))}
+          </nav>
+
+          <p className="text-xs text-gray-400 sm:text-right">
+            © {new Date().getFullYear()} TvaNetra
+          </p>
         </div>
-        <p className="text-center text-xs text-gray-400 mt-10 pt-6 border-t border-gray-100">
-          © {new Date().getFullYear()} TvaNetra. All rights reserved.
-        </p>
       </div>
     </footer>
   );

@@ -116,7 +116,7 @@ export default function BecomeMentorPage() {
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
                 placeholder="Tell us about your background, achievements, and what you can help students with..."
-                className="input-field resize-none"
+                className="textarea-field"
               />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full py-4">
