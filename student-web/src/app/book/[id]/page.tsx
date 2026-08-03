@@ -7,6 +7,7 @@ import { Calendar, Clock, Star, ShieldCheck, ArrowLeft, ChevronLeft, ChevronRigh
 import Image from "next/image";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { getCategoryLabel } from "@/lib/categories";
+import CategoryIcon from "@/components/CategoryIcon";
 import {
   startOfMonth,
   endOfMonth,
@@ -384,7 +385,8 @@ export default function SessionDetailsPage() {
           <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
             <div className="p-5 sm:p-8 md:p-10">
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6">
-                <span className="bg-[#FDF1E9] text-[#F29440] text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider">
+                <span className="bg-[#FDF1E9] text-[#F29440] text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider inline-flex items-center gap-1.5">
+                  <CategoryIcon category={plan.category} size="sm" />
                   {getCategoryLabel(plan.category)}
                 </span>
                 <span className="flex items-center gap-1.5 text-sm font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-md">

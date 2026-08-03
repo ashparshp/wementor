@@ -12,6 +12,7 @@ import {
   Zap,
 } from "lucide-react";
 import { CATEGORIES } from "@/lib/categories";
+import CategoryIcon from "@/components/CategoryIcon";
 
 const STEPS = [
   {
@@ -93,7 +94,9 @@ export default function Home() {
                 href={`/book?category=${cat.id}`}
                 className="card-surface-hover p-4 sm:p-5 text-center group"
               >
-                <span className="text-2xl sm:text-3xl block mb-2 group-hover:scale-110 transition-transform">{cat.emoji}</span>
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#FDF1E9] flex items-center justify-center text-[#F29440] mx-auto mb-3 group-hover:scale-110 transition-transform">
+                  <CategoryIcon category={cat.id} size="lg" />
+                </div>
                 <span className="font-bold text-gray-900 text-sm">{cat.label}</span>
               </Link>
             ))}

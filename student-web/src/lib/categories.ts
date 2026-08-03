@@ -1,15 +1,17 @@
 export const CATEGORIES = [
-  { id: "all", label: "All", emoji: "✨" },
-  { id: "jee", label: "JEE", emoji: "🎯" },
-  { id: "neet", label: "NEET", emoji: "🩺" },
-  { id: "gsoc", label: "GSoC", emoji: "💻" },
-  { id: "lfx", label: "LFX", emoji: "🐧" },
-  { id: "placements", label: "Placements", emoji: "💼" },
-  { id: "gate", label: "GATE", emoji: "📐" },
-  { id: "cat", label: "CAT", emoji: "📊" },
-  { id: "upsc", label: "UPSC", emoji: "🏛️" },
-  { id: "other", label: "Other", emoji: "📚" },
+  { id: "all", label: "All" },
+  { id: "jee", label: "JEE" },
+  { id: "neet", label: "NEET" },
+  { id: "gsoc", label: "GSoC" },
+  { id: "lfx", label: "LFX" },
+  { id: "placements", label: "Placements" },
+  { id: "gate", label: "GATE" },
+  { id: "cat", label: "CAT" },
+  { id: "upsc", label: "UPSC" },
+  { id: "other", label: "Other" },
 ] as const;
+
+export type CategoryId = (typeof CATEGORIES)[number]["id"];
 
 export function getCategoryLabel(id: string) {
   return CATEGORIES.find((c) => c.id === id)?.label ?? id.toUpperCase();

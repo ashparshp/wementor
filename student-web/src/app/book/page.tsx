@@ -3,12 +3,13 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/api";
-import { Clock, Search, Star, Tag } from "lucide-react";
+import { Clock, Search, Star } from "lucide-react";
 import Image from "next/image";
 import PageHeader from "@/components/ui/PageHeader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import EmptyState from "@/components/ui/EmptyState";
 import { CATEGORIES, getCategoryLabel } from "@/lib/categories";
+import CategoryIcon from "@/components/CategoryIcon";
 
 interface Plan {
   id: string;
@@ -131,13 +132,18 @@ function BookingPageContent() {
             key={cat.id}
             type="button"
             onClick={() => setCategoryFilter(cat.id)}
-            className={`shrink-0 px-4 py-2 rounded-full text-sm font-bold transition-all ${
+            className={`shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all ${
               category === cat.id
                 ? "bg-[#111827] text-white shadow-md"
                 : "bg-white/80 text-gray-700 border border-gray-200 hover:border-[#F29440]/40 hover:text-[#F29440]"
             }`}
           >
-            {cat.emoji} {cat.label}
+            <CategoryIcon
+              category={cat.id}
+              size="sm"
+              className={category === cat.id ? "text-white" : "text-[#F29440]"}
+            />
+            {cat.label}
           </button>
         ))}
       </div>
@@ -169,8 +175,9 @@ function BookingPageContent() {
               >
                 <div className="flex-1">
                   <div className="flex justify-between items-start gap-2 mb-3">
-                    <span className="bg-[#FDF1E9] text-[#F29440] text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md flex items-center gap-1">
-                      <Tag className="w-3 h-3" /> {getCategoryLabel(plan.category)}
+                    <span className="bg-[#FDF1E9] text-[#F29440] text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-md inline-flex items-center gap-1">
+                      <CategoryIcon category={plan.category} size="sm" />
+                      {getCategoryLabel(plan.category)}
                     </span>
                     <span className="font-black text-gray-900 text-lg">₹{(plan.price_paise / 100).toFixed(0)}</span>
                   </div>
