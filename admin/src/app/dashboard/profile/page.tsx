@@ -33,11 +33,46 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const [bio, setBio] = useState("");
+  const [googleMeetLink, setGoogleMeetLink] = useState("");
+  const [profileLoading, setProfileLoading] = useState(false);
+
   useEffect(() => {
     if (user?.role === "mentor") {
       fetchAvailability();
+      fetchMentorProfile();
     }
   }, [user]);
+
+  const fetchMentorProfile = async () => {
+    try {
+      const res = await fetchApi<any>("/mentors/me/profile");
+      setBio(res.bio || "");
+      setGoogleMeetLink(res.google_meet_link || "");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    setProfileLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      await fetchApi("/mentors/me/profile", {
+        method: "PUT",
+        body: JSON.stringify({
+          bio: bio || null,
+          google_meet_link: googleMeetLink || null,
+        }),
+      });
+      setSuccess("Profile updated!");
+    } catch (err: any) {
+      setError(err.message || "Failed to update profile");
+    } finally {
+      setProfileLoading(false);
+    }
+  };
 
   const fetchAvailability = async () => {
     setFetchingAvail(true);
@@ -198,6 +233,44 @@ export default function ProfilePage() {
         {/* Right Side: Forms */}
         <div className="lg:col-span-2 space-y-6">
           
+          {user.role === "mentor" && (
+            <div className="bg-white rounded-3xl border border-[#E5E7EB] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8">
+              <h3 className="text-xl font-bold text-[#111827] mb-6">Mentor Profile</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block mb-2">Bio</label>
+                  <textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] focus:ring-2 focus:ring-[#F29440] outline-none text-sm"
+                    placeholder="Tell students about your experience..."
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wider block mb-2">Google Meet Link</label>
+                  <input
+                    type="url"
+                    value={googleMeetLink}
+                    onChange={(e) => setGoogleMeetLink(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-[#E5E7EB] focus:ring-2 focus:ring-[#F29440] outline-none text-sm"
+                    placeholder="https://meet.google.com/xxx-xxxx-xxx"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Sent to students when they book a session with you.</p>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleSaveProfile}
+                    disabled={profileLoading}
+                    className="px-6 py-3 bg-[#F29440] hover:bg-[#E88935] text-white font-semibold rounded-xl disabled:opacity-50"
+                  >
+                    {profileLoading ? "Saving..." : "Save Profile"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Availability Settings (Mentors Only) */}
           {user.role === "mentor" && (
             <div className="bg-white rounded-3xl border border-[#E5E7EB] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8">

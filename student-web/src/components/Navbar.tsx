@@ -13,6 +13,7 @@ const navLinks = [
     label: "Book Session",
     match: (path: string) => path === "/book" || path.startsWith("/book/"),
   },
+  { href: "/become-mentor", label: "Become a Mentor", match: (path: string) => path === "/become-mentor" },
   { href: "/app", label: "Mobile App", match: (path: string) => path === "/app" },
 ];
 

@@ -37,17 +37,25 @@ type ApplicationResponse struct {
 }
 
 type MentorPublicResponse struct {
-	ID             uuid.UUID `json:"id"`
-	UserID         uuid.UUID `json:"user_id"`
-	Name           string    `json:"name"`
-	Email          string    `json:"email"`
-	AvatarURL      *string   `json:"avatar_url"`
-	Bio            *string   `json:"bio"`
-	Achievements   []string  `json:"achievements"`
-	GoogleMeetLink *string   `json:"google_meet_link,omitempty"`
-	AvgRating      float64   `json:"avg_rating"`
-	TotalReviews   int32     `json:"total_reviews"`
-	TotalSessions  int32     `json:"total_sessions"`
+	ID            uuid.UUID `json:"id"`
+	UserID        uuid.UUID `json:"user_id"`
+	Name          string    `json:"name"`
+	Email         string    `json:"email"`
+	AvatarURL     *string   `json:"avatar_url"`
+	Bio           *string   `json:"bio"`
+	Achievements  []string  `json:"achievements"`
+	AvgRating     float64   `json:"avg_rating"`
+	TotalReviews  int32     `json:"total_reviews"`
+	TotalSessions int32     `json:"total_sessions"`
+}
+
+type MentorPlanPublic struct {
+	ID              uuid.UUID `json:"id"`
+	Title           string    `json:"title"`
+	Description     *string   `json:"description"`
+	Category        string    `json:"category"`
+	PricePaise      int32     `json:"price_paise"`
+	DurationMinutes int32     `json:"duration_minutes"`
 }
 
 type MentorProfileResponse struct {

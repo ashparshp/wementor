@@ -125,6 +125,7 @@ func SetupRouter(
 		// Mentors
 		r.Route("/mentors", func(r chi.Router) {
 			r.Get("/", mentorHandler.ListMentors)
+			r.Get("/{id}/plans", mentorHandler.GetMentorPlans)
 			r.Get("/{id}", mentorHandler.GetMentor)
 
 			// Mentor-only

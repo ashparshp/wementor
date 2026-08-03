@@ -33,9 +33,12 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchApi<{ data: MentorDetail }>(`/mentors/${resolvedParams.id}`)
-      .then((res) => {
-        setMentor(res.data);
+    Promise.all([
+      fetchApi<MentorDetail>(`/mentors/${resolvedParams.id}`),
+      fetchApi<Plan[]>(`/mentors/${resolvedParams.id}/plans`),
+    ])
+      .then(([mentorData, plans]) => {
+        setMentor({ ...mentorData, plans: plans || [] });
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
@@ -156,7 +159,7 @@ export default function MentorProfile({ params }: { params: Promise<{ id: string
                       {plan.duration_minutes} minutes video call
                     </div>
 
-                    <Link href={`/mentors/${mentor.id}/book/${plan.id}`} className="block w-full bg-[#111827] hover:bg-[#F29440] text-white text-center py-3.5 rounded-xl font-semibold transition-colors shadow-sm">
+                    <Link href={`/book/${plan.id}`} className="block w-full bg-[#111827] hover:bg-[#F29440] text-white text-center py-3.5 rounded-xl font-semibold transition-colors shadow-sm">
                       Select Plan
                     </Link>
                   </div>

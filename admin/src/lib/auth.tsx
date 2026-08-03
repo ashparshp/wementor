@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 interface User {
   id: string;
@@ -11,6 +11,7 @@ interface User {
   name: string;
   role: string;
   email_verified: boolean;
+  must_change_password?: boolean;
   avatar_url?: string | null;
 }
 
@@ -90,6 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setToken(accessToken);
     setUser(userData);
+
+    if (userData.must_change_password) {
+      window.location.href = "/dashboard/profile#password";
+    }
   }, []);
 
   const logout = useCallback(() => {

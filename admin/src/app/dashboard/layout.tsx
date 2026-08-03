@@ -15,7 +15,9 @@ import {
   LogOut,
   Menu,
   X,
-  Bell
+  Bell,
+  FileText,
+  ClipboardCheck,
 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -56,6 +58,8 @@ export default function DashboardLayout({
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "mentor"] },
     { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDays, roles: ["admin", "mentor"] },
     { name: "My Sessions", href: "/dashboard/plans", icon: CalendarDays, roles: ["mentor"] },
+    { name: "Applications", href: "/dashboard/applications", icon: FileText, roles: ["admin"] },
+    { name: "Session Reviews", href: "/dashboard/session-reviews", icon: ClipboardCheck, roles: ["admin"] },
     { name: "Payments", href: "/dashboard/payments", icon: CreditCard, roles: ["admin"] },
     { name: "Coupons", href: "/dashboard/coupons", icon: Ticket, roles: ["admin"] },
     { name: "Users", href: "/dashboard/users", icon: Users, roles: ["admin"] },

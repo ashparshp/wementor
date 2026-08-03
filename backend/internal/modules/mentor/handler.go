@@ -149,6 +149,23 @@ func (h *Handler) GetMentor(w http.ResponseWriter, r *http.Request) {
 	response.OK(w, mentor)
 }
 
+// GetMentorPlans GET /api/v1/mentors/:id/plans (public — approved only)
+func (h *Handler) GetMentorPlans(w http.ResponseWriter, r *http.Request) {
+	id, err := uuid.Parse(chi.URLParam(r, "id"))
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, "invalid mentor ID")
+		return
+	}
+
+	plans, err := h.service.ListApprovedPlans(r.Context(), id)
+	if err != nil {
+		response.Error(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	response.OK(w, plans)
+}
+
 // GetMyProfile GET /api/v1/mentors/me/profile (mentor)
 func (h *Handler) GetMyProfile(w http.ResponseWriter, r *http.Request) {
 	userID := middleware.UserIDFromContext(r.Context())

@@ -262,6 +262,7 @@ export default function PlansPage() {
                       <option value="jee">JEE</option>
                       <option value="neet">NEET</option>
                       <option value="gsoc">GSoC</option>
+                      <option value="lfx">LFX</option>
                       <option value="placements">Placements</option>
                       <option value="upsc">UPSC</option>
                       <option value="gate">GATE</option>

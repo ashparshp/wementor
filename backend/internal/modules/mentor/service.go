@@ -299,6 +299,28 @@ func (s *Service) GetPublicProfile(ctx context.Context, userID uuid.UUID) (*Ment
 	}, nil
 }
 
+// ListApprovedPlans returns approved sessions for a mentor (public).
+func (s *Service) ListApprovedPlans(ctx context.Context, mentorUserID uuid.UUID) ([]MentorPlanPublic, error) {
+	plans, err := s.queries.ListApprovedPlansByMentor(ctx, mentorUserID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list mentor plans: %w", err)
+	}
+
+	result := make([]MentorPlanPublic, len(plans))
+	for i, p := range plans {
+		result[i] = MentorPlanPublic{
+			ID:              p.ID,
+			Title:           p.Title,
+			Description:     p.Description,
+			Category:        p.Category,
+			PricePaise:      p.PricePaise,
+			DurationMinutes: p.DurationMinutes,
+		}
+	}
+
+	return result, nil
+}
+
 func toApplicationResponse(app db.MentorApplication) *ApplicationResponse {
 	return &ApplicationResponse{
 		ID:        app.ID,
