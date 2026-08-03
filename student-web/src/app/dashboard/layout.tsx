@@ -32,7 +32,8 @@ export default function DashboardLayout({
     const userStr = localStorage.getItem("user");
 
     if (!token) {
-      router.push("/login");
+      const redirect = encodeURIComponent(pathname);
+      router.push(`/login?redirect=${redirect}`);
       return;
     }
 

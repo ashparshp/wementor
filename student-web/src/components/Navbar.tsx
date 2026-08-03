@@ -42,6 +42,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     localStorage.removeItem("user");
     setIsLoggedIn(false);
     closeMenu();
@@ -89,6 +90,9 @@ export default function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center gap-3 shrink-0">
+              <Link href="/book" className="btn-primary !py-2.5 !px-5 text-sm">
+                Book Session
+              </Link>
               {isLoggedIn ? (
                 <>
                   <Link

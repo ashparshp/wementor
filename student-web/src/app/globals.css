@@ -5,7 +5,10 @@
   --background: #FEF1E3;
   --foreground: #171717;
   --brand-orange: #F29440;
+  --brand-orange-dark: #E88935;
   --brand-purple: #6C63FF;
+  --surface: #FFFFFF;
+  --border: #EADBCB;
 }
 
 @theme {
@@ -29,6 +32,7 @@ body {
 
 html {
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 @media (min-width: 768px) {
@@ -36,3 +40,46 @@ html {
     background-attachment: fixed;
   }
 }
+
+/* Reusable card surface */
+.card-surface {
+  @apply bg-white/90 backdrop-blur-sm rounded-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)];
+}
+
+.card-surface-hover {
+  @apply card-surface transition-all duration-300 hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] hover:-translate-y-0.5;
+}
+
+/* Input focus ring */
+.input-field {
+  @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm
+    focus:outline-none focus:ring-2 focus:ring-[#F29440]/25 focus:border-[#F29440]
+    transition-colors placeholder:text-gray-400;
+}
+
+/* Primary button */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold
+    text-white bg-[#111827] hover:bg-black transition-all active:scale-[0.98]
+    disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold
+    text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 transition-all active:scale-[0.98];
+}
+
+/* Fade-in animation */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out forwards;
+}
+
+.stagger-1 { animation-delay: 0.05s; opacity: 0; }
+.stagger-2 { animation-delay: 0.1s; opacity: 0; }
+.stagger-3 { animation-delay: 0.15s; opacity: 0; }
+.stagger-4 { animation-delay: 0.2s; opacity: 0; }

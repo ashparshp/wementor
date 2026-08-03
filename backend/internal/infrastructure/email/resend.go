@@ -159,7 +159,7 @@ func (c *Client) SendRateSession(to, mentorName, planTitle, frontendURL, booking
 		<h2 style="color:#6C63FF">How was your session? ⭐</h2>
 		<p style="font-size:16px;color:#333">Your session with <strong>%s</strong> for <strong>%s</strong> has been completed.</p>
 		<p style="font-size:16px;color:#333">We'd love to hear your feedback!</p>
-		<a href="%s/bookings/%s/review" style="display:inline-block;background:#6C63FF;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px">Rate Your Session →</a>
+		<a href="%s/dashboard/bookings/%s/review" style="display:inline-block;background:#6C63FF;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px">Rate Your Session →</a>
 	</div>`, mentorName, planTitle, frontendURL, bookingID)
 
 	return c.Send(to, "Rate Your WeMentor Session", html)

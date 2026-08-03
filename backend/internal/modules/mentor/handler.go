@@ -37,7 +37,7 @@ func (h *Handler) Apply(w http.ResponseWriter, r *http.Request) {
 
 	app, err := h.service.Apply(r.Context(), req)
 	if err != nil {
-		response.Error(w, http.StatusInternalServerError, err.Error())
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 

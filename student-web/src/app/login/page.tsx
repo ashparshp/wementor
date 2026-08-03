@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import { Mail, Lock, AlertCircle } from "lucide-react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function Login() {
+  return (
+    <Suspense fallback={<div className="flex-grow flex items-center justify-center py-20"><LoadingSpinner /></div>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/dashboard";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,104 +31,81 @@ export default function Login() {
     setError(null);
 
     try {
-      const res = await fetchApi<{ access_token: string, user: any }>("/auth/login", {
+      const res = await fetchApi<{ access_token: string; refresh_token?: string; user: { name: string } }>("/auth/login", {
         method: "POST",
         body: JSON.stringify({ email, password }),
       });
-      
+
       localStorage.setItem("access_token", res.access_token);
+      if (res.refresh_token) {
+        localStorage.setItem("refresh_token", res.refresh_token);
+      }
       localStorage.setItem("user", JSON.stringify(res.user));
-      
-      router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Failed to login");
+
+      router.push(redirect.startsWith("/") ? redirect : "/dashboard");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to login";
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex-grow flex items-center justify-center min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] py-6 sm:py-8 px-4 sm:px-6 relative overflow-hidden">
-      <div className="max-w-md w-full space-y-5 sm:space-y-6 bg-gradient-to-b from-white/50 to-white/10 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/40 shadow-[0_8px_40px_rgb(0,0,0,0.08)] relative z-10">
+    <div className="flex-grow flex items-center justify-center min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] py-6 sm:py-8 px-4 sm:px-6">
+      <div className="max-w-md w-full space-y-5 sm:space-y-6 card-surface p-6 sm:p-8">
         <div>
-          <h2 className="mt-2 text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
-            Welcome back
-          </h2>
+          <h2 className="text-center text-2xl sm:text-3xl font-black text-gray-900">Welcome back</h2>
           <p className="mt-3 text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link href="/register" className="font-semibold text-[#6C63FF] hover:text-[#5850E5] transition-colors">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="font-semibold text-[#6C63FF] hover:text-[#5850E5]">
               Sign up for free
             </Link>
           </p>
         </div>
 
-        <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-5" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
+              <AlertCircle className="w-5 h-5 shrink-0" />
               {error}
             </div>
           )}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email address</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <Mail className="h-5 w-5" />
-                </div>
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
+                  className="input-field pl-10"
                   placeholder="you@example.com"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <Lock className="h-5 w-5" />
-                </div>
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
+                  className="input-field pl-10"
                   placeholder="••••••••"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div className="flex items-center">
-              <input id="remember-me" type="checkbox" className="h-4 w-4 text-[#F29440] focus:ring-[#F29440] border-gray-300 rounded text-[#F29440]" />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <Link href="/forgot-password" className="font-semibold text-[#6C63FF] hover:text-[#5850E5] transition-colors">
-                Forgot password?
-              </Link>
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-2 w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white bg-[#111827] hover:bg-black focus:outline-none transition-all active:scale-[0.98] disabled:opacity-70 disabled:scale-100"
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </button>
-          </div>
+          <button type="submit" disabled={loading} className="btn-primary w-full py-4">
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
         </form>
       </div>
     </div>

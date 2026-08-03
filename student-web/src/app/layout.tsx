@@ -3,6 +3,7 @@ import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import AppBackground from "@/components/AppBackground";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -35,6 +36,8 @@ export default function RootLayout({
         <main className="flex-grow flex flex-col relative z-0">
           {children}
         </main>
+
+        <Footer />
       </body>
     </html>
   );

@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/api";
-import { Calendar, Clock, Star, ShieldCheck, Tag, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Clock, Star, ShieldCheck, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { getCategoryLabel } from "@/lib/categories";
 import {
   startOfMonth,
   endOfMonth,
@@ -237,6 +239,12 @@ export default function SessionDetailsPage() {
       return;
     }
 
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      router.push(`/login?redirect=${encodeURIComponent(`/book/${id}`)}`);
+      return;
+    }
+
     setBookingLoading(true);
     setError(null);
 
@@ -320,8 +328,8 @@ export default function SessionDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F29440]"></div>
+      <div className="max-w-7xl mx-auto px-4 py-20">
+        <LoadingSpinner label="Loading session..." />
       </div>
     );
   }
@@ -377,7 +385,7 @@ export default function SessionDetailsPage() {
             <div className="p-5 sm:p-8 md:p-10">
               <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-6">
                 <span className="bg-[#FDF1E9] text-[#F29440] text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wider">
-                  {plan.category}
+                  {getCategoryLabel(plan.category)}
                 </span>
                 <span className="flex items-center gap-1.5 text-sm font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-md">
                   <Clock className="w-4 h-4" /> {plan.duration_minutes} min
