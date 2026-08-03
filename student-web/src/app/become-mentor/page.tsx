@@ -7,6 +7,11 @@ import Link from "next/link";
 import PageHeader from "@/components/ui/PageHeader";
 
 const BENEFITS = [
+  {
+    icon: GraduationCap,
+    title: "Why mentor with us?",
+    desc: "After approval, you'll get access to the mentor portal to set availability, create sessions, and start earning.",
+  },
   { icon: Users, title: "Reach motivated students", desc: "Connect with learners preparing for JEE, NEET, GSoC, placements, and more." },
   { icon: IndianRupee, title: "Earn from your expertise", desc: "Set your own session prices and get paid for every booking." },
   { icon: Video, title: "Flexible scheduling", desc: "Set your availability and conduct sessions from anywhere via Google Meet." },
@@ -63,15 +68,6 @@ export default function BecomeMentorPage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
         {/* Benefits sidebar */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="card-surface p-6">
-            <div className="w-12 h-12 bg-[#FDF1E9] rounded-xl flex items-center justify-center mb-4">
-              <GraduationCap className="w-6 h-6 text-[#F29440]" />
-            </div>
-            <h2 className="font-bold text-gray-900 mb-2">Why mentor with us?</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              After approval, you&apos;ll get access to the mentor portal to set availability, create sessions, and start earning.
-            </p>
-          </div>
           {BENEFITS.map((b) => {
             const Icon = b.icon;
             return (
@@ -116,7 +112,7 @@ export default function BecomeMentorPage() {
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
                 placeholder="Tell us about your background, achievements, and what you can help students with..."
-                className="textarea-field"
+                className="block w-full min-h-[8rem] rounded-xl border border-gray-200 bg-white text-sm leading-relaxed py-3 px-4 focus:outline-none focus:ring-2 focus:ring-[#F29440]/25 focus:border-[#F29440] transition-colors placeholder:text-gray-400 resize-none"
               />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full py-4">
