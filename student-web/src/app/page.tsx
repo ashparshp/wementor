@@ -5,9 +5,7 @@ import {
   ArrowRight,
   BookOpen,
   Calendar,
-  GraduationCap,
   ShieldCheck,
-  Star,
   Video,
   Zap,
 } from "lucide-react";
@@ -41,37 +39,28 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="relative overflow-hidden pt-10 sm:pt-16 md:pt-20 pb-16 sm:pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="animate-fade-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-[#EADBCB] text-xs font-bold text-[#F29440] mb-6 shadow-sm">
-              <Star className="w-3.5 h-3.5 fill-[#F29440]" />
-              Trusted mentorship for ambitious students
-            </div>
-
-            <h1 className="animate-fade-up stagger-1 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 tracking-tight leading-[1.08]">
+      <section className="relative overflow-hidden pt-16 sm:pt-24 md:pt-32 pb-24 sm:pb-32 md:pb-40 min-h-[70vh] sm:min-h-[75vh] flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="text-center max-w-5xl mx-auto">
+            <h1 className="animate-fade-up text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gray-900 tracking-tight leading-[1.05]">
               Learn from people who&apos;ve{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F29440] to-[#E88935]">
                 already done it
               </span>
             </h1>
 
-            <p className="animate-fade-up stagger-2 text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mt-6 leading-relaxed">
+            <p className="animate-fade-up stagger-1 text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mt-8 sm:mt-10 leading-relaxed">
               Book 1-on-1 mentorship sessions with experts in JEE, NEET, GSoC, LFX, placements, and more. Personalized guidance, real results.
             </p>
 
-            <div className="animate-fade-up stagger-3 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-10">
-              <Link href="/book" className="btn-primary w-full sm:w-auto text-base px-8 py-4 shadow-lg shadow-gray-900/10">
+            <div className="animate-fade-up stagger-2 flex justify-center mt-12 sm:mt-14">
+              <Link href="/book" className="btn-primary text-base sm:text-lg px-10 py-4 sm:py-5 shadow-lg shadow-gray-900/10">
                 Find a Mentor
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link href="/become-mentor" className="btn-secondary w-full sm:w-auto text-base px-8 py-4">
-                <GraduationCap className="w-5 h-5" />
-                Become a Mentor
-              </Link>
             </div>
 
-            <div className="animate-fade-up stagger-4 mt-12 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs sm:text-sm font-semibold text-gray-500">
+            <div className="animate-fade-up stagger-3 mt-14 sm:mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm sm:text-base font-semibold text-gray-500">
               <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-emerald-500" /> Vetted mentors</span>
               <span className="flex items-center gap-2"><Video className="w-4 h-4 text-blue-500" /> Live video calls</span>
               <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-[#F29440]" /> Instant booking</span>

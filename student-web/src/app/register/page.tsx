@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import { Mail, Lock, User, AlertCircle } from "lucide-react";
+import IconInput from "@/components/ui/IconInput";
 
 export default function Register() {
   const router = useRouter();
@@ -80,54 +81,39 @@ export default function Register() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <User className="h-5 w-5" />
-                </div>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
-                  placeholder="John Doe"
-                />
-              </div>
+              <IconInput
+                icon={User}
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
-                  placeholder="you@example.com"
-                />
-              </div>
+              <IconInput
+                icon={Mail}
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <Lock className="h-5 w-5" />
-                </div>
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-[#F29440]/30 focus:border-[#F29440] transition-colors bg-white text-sm"
-                  placeholder="••••••••"
-                />
-              </div>
+              <IconInput
+                icon={Lock}
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+              />
               <p className="mt-1.5 text-xs text-gray-500">Must be at least 6 characters long.</p>
             </div>
           </div>

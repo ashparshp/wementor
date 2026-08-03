@@ -8,6 +8,7 @@ import Image from "next/image";
 import PageHeader from "@/components/ui/PageHeader";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import EmptyState from "@/components/ui/EmptyState";
+import IconInput from "@/components/ui/IconInput";
 import { CATEGORIES, getCategoryLabel } from "@/lib/categories";
 import CategoryIcon from "@/components/CategoryIcon";
 
@@ -114,14 +115,13 @@ function BookingPageContent() {
       )}
 
       {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-        <input
+      <div className="mb-6">
+        <IconInput
+          icon={Search}
           type="search"
           placeholder="Search by title, mentor, or category..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="input-field pl-12"
         />
       </div>
 

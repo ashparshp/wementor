@@ -53,9 +53,14 @@ html {
 
 /* Input focus ring */
 .input-field {
-  @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm
+  @apply block w-full h-11 rounded-xl border border-gray-200 bg-white text-sm leading-normal
+    py-2.5 px-4
     focus:outline-none focus:ring-2 focus:ring-[#F29440]/25 focus:border-[#F29440]
     transition-colors placeholder:text-gray-400;
+}
+
+.input-field--icon {
+  @apply pl-11;
 }
 
 /* Primary button */
